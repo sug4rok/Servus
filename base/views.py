@@ -2,9 +2,10 @@
 import os
 from django.conf import settings
 from django.shortcuts import render_to_response
+from Servus.Servus import SITE_NAME
 from base.models import Tab
 
-site_name = settings.SITE_NAME
+site_name = SITE_NAME
 static_url = settings.STATIC_URL
 
 def get_tab_options(active_app_name):
@@ -14,8 +15,3 @@ def get_tab_options(active_app_name):
     params['active_sub_title'] = tab_options.sub_title    
 
 params = {'site_name':site_name,'static_url':static_url, 'tabs':Tab.objects.all()}
-
-def base(request):   
-    active_app_name = os.path.dirname(os.path.relpath(__file__))
-    get_tab_options(active_app_name)
-    return render_to_response('base/tab.html', params)

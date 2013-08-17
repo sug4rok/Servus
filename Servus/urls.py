@@ -1,11 +1,12 @@
 ﻿from django.conf.urls import patterns, include, url
-from base.views import base
+from home.views import home
 from climate.views import climate
 from weather.views import weather
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
+
 
 urlpatterns = patterns('',
     # Examples:
@@ -16,7 +17,7 @@ urlpatterns = patterns('',
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
-    url(r'^$|^base/$', base),
+    url(r'^$|^home/$', home),
     url(r'^climate/$', climate),
     url(r'^weather/$', weather),
     

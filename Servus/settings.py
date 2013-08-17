@@ -1,19 +1,9 @@
 ﻿# Django settings for Servus project.
 # -*- coding: utf_8 -*-
 import os
+from .Servus import TAB_APPS, CRON_CLASSES
 
-# Added by me
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-
-SITE_NAME = 'Servus'
-SPEAKER_NAME = 'Servus'
-
-EMAIL_HOST = ''
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
-#EMAIL_PORT = 25
-#EMAIL_USE_TLS = True
-# End added by me
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -137,8 +127,9 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-	'base',
-)
+    'base',
+    'django_cron',
+) + TAB_APPS
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
