@@ -8,23 +8,24 @@
         <!--[if lt IE 9]>
         <script src='http://html5shim.googlecode.com/svn/trunk/html5.js'></script>
         <![endif]-->			
-        
+        <link rel='shortcut icon' href='{{ static_url }}base/img/favicon.ico'>
     </head>
 <body>
 {% spaceless %}
-<div class='container'>	
-<div class='row'>
+<div class='container-fluid'>	
+<div class='row-fluid'>
 	
 	<div class='col-12'>	
 		{% block navbar %}
 			{% include 'base/navbar.html' %}
 		{% endblock %}
-	</div>	
-	<div class='col-10'>			
+	</div>
+	
+	<div class='col-9'>			
 		<h4>{{ active_title }} <small>{{ active_sub_title }}</small></h4>			
 		<p align='justify'>{% block content %}{% endblock %}</p>
 	</div>
-	<div class='col-2'>
+	<div class='col-3'>
 		<p align='justify'>
 		{% block sidebar %}
 			{% include 'base/sidebar.html' %}

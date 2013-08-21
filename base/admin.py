@@ -25,7 +25,10 @@ class TabAdmin(admin.ModelAdmin):
     list_display = ('tab_name', 'title')
     ordering = ('id',)
     fieldsets = (
-        ('Основные настройки', {'fields':('app_name', 'tab_name',), 'description':'Поля, выделенные жирным цветом, необходимо заполнить'}),
+        ('Основные настройки', {
+                                'fields':('app_name', 'tab_name',),
+                                'description':'Поля, выделенные жирным цветом, необходимо заполнить'
+                                }),
         ('Дополнительно', {'fields':('title', 'sub_title')})
     )
     inlines = [

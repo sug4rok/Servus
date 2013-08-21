@@ -1,67 +1,22 @@
 {% extends 'base/index.html' %}
 
 {% block content %}	
-	<br>
-	<table>
-		<tr>
-			<th>Временной шаг (час)</th>
-			{% for rp5ru_item in rp5ru %}
-				<td>{{ rp5ru_item.time_step }}</td>
-			{% endfor %}
-		</tr>
-		<tr>
-			<th>Облачность (%)</th>
-			{% for rp5ru_item in rp5ru %}
-				<td>{{ rp5ru_item.cloud_cover }}</td>
-			{% endfor %}
-		</tr>
-		<tr>
-			<th>Толщина осадков (мм)</th>
-			{% for rp5ru_item in rp5ru %}
-				<td>{{ rp5ru_item.precipitation }}</td>
-			{% endfor %}
-		</tr>
-		<tr>
-			<th>Атмосферное давление (мм рт. ст.)</th>
-			{% for rp5ru_item in rp5ru %}
-				<td>{{ rp5ru_item.pressure }}</td>
-			{% endfor %}
-		</tr>
-		<tr>
-			<th>Температура воздуха</th>
-			{% for rp5ru_item in rp5ru %}
-				<td>{{ rp5ru_item.temperature }}</td>
-			{% endfor %}
-		</tr>
-		<tr>
-			<th>Влажность (%)</th>
-			{% for rp5ru_item in rp5ru %}
-				<td>{{ rp5ru_item.humidity }}</td>
-			{% endfor %}
-		</tr>
-		<tr>
-			<th>Направление ветра</th>
-			{% for rp5ru_item in rp5ru %}
-				<td>{{ rp5ru_item.wind_direction }}</td>
-			{% endfor %}
-		</tr>
-		<tr>
-			<th>Скорость ветра (м/c)</th>
-			{% for rp5ru_item in rp5ru %}
-				<td>{{ rp5ru_item.wind_velocity }}</td>
-			{% endfor %}
-		</tr>
-		<tr>
-			<th>Тип осадков</th>
-			{% for rp5ru_item in rp5ru %}
-				<td>{{ rp5ru_item.falls }}</td>
-			{% endfor %}
-		</tr>
-		<tr>
-			<th>Коэффициент визуализации осадков</th>
-			{% for rp5ru_item in rp5ru %}
-				<td>{{ rp5ru_item.drops }}</td>
-			{% endfor %}
-		</tr>
-	</table>
+	<table>	
+		{% for field, values in rp5ru %}
+			<tr>
+				<th>{{ field }}</th>
+				{% for value in values %}
+					<td>{{ value }}</td>
+				{% endfor %}
+			</tr>
+		{% endfor %}
+		{% for field, values in rp5ru_clouds %}
+			<tr>
+				<th>{{ field }}</th>
+				{% for value in values %}
+					<td><img src='{{ static_url }}weather/img/{{ value }}.png' width='30' height='25'/></td>
+				{% endfor %}
+			</tr>
+		{% endfor %}
+	</table>	
 {% endblock %}
