@@ -1,6 +1,7 @@
 ﻿# -*- coding: utf-8 -*-
 from django.db import models
 from base.models import Tab
+from datetime import datetime
 
 
 class Tab_Weather(models.Model):
@@ -20,36 +21,22 @@ class Tab_Weather(models.Model):
 class RP5RU (models.Model):
     time_step = models.IntegerField(
                                     max_length=2,
-                                    verbose_name='Временной шаг (час)'
-                                    )    
-    pressure = models.IntegerField(
-                                   max_length=3,
-                                   verbose_name='Давление (мм рт. ст.)',
-                                   default=0
-                                   )
-    temperature = models.IntegerField(
-                                      max_length=3,
-                                      verbose_name='Температура воздуха',
-                                      default=0
-                                      )
-    humidity = models.IntegerField(
-                                   max_length=2,
-                                   verbose_name='Влажность (%)',
-                                   default=0
-                                   )
-    wind_direction = models.CharField(
-                                      max_length=3,
-                                      verbose_name='Направление ветра',
-                                      default=''
-                                      )
-    wind_velocity = models.IntegerField(
-                                        max_length=2,
-                                        verbose_name='Скорость ветра (м/c)',
-                                        default=0
-                                        )
+                                    verbose_name='Временной шаг'
+                                    )
+    forecast_time = models.DateTimeField(
+                                         auto_now=False,
+                                         auto_now_add=False,
+                                         verbose_name='Местное время',
+                                         default=datetime.now().replace(
+                                                                        hour=0,
+                                                                        minute=0,
+                                                                        second=0,
+                                                                        microsecond=0
+                                                                        )
+                                         )
     cloud_cover = models.IntegerField(
                                       max_length=2,
-                                      verbose_name='Облачность (%)',
+                                      verbose_name='Облачность',
                                       default=0
                                       )    
     falls = models.IntegerField(
@@ -59,14 +46,39 @@ class RP5RU (models.Model):
                                 )
     precipitation = models.FloatField(
                                       max_length=4,
-                                      verbose_name='Толщина осадков (мм)',
+                                      verbose_name='Осадки',
                                       default=0.0
                                       )
-    drops = models.FloatField(
+    drops = models.IntegerField(
                               max_length=2,
-                              verbose_name='Коэффициент визуализации осадков',
+                              verbose_name='Визуализация осадков',
                               default=0.0
                               )
+    temperature = models.IntegerField(
+                                      max_length=3,
+                                      verbose_name='Температура',
+                                      default=0
+                                      )
+    pressure = models.IntegerField(
+                                   max_length=3,
+                                   verbose_name='Давление',
+                                   default=0
+                                   )    
+    humidity = models.IntegerField(
+                                   max_length=2,
+                                   verbose_name='Влажность',
+                                   default=0
+                                   )
+    wind_velocity = models.IntegerField(
+                                        max_length=2,
+                                        verbose_name='Ветер',
+                                        default=0
+                                        )
+    wind_direction = models.CharField(
+                                      max_length=3,
+                                      verbose_name='Направление ветра',
+                                      default=''
+                                      )      
                               
     def __unicode__(self):
 	    return self.time_step

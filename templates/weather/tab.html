@@ -1,22 +1,51 @@
 {% extends 'base/index.html' %}
 
-{% block content %}	
-	<table>	
-		{% for field, values in rp5ru %}
-			<tr>
-				<th>{{ field }}</th>
-				{% for value in values %}
-					<td>{{ value }}</td>
-				{% endfor %}
+{% block content %}
+	<table class='table table-striped table-hover table-condensed'>
+		<caption>Прогноз погоды по данным rp5.ru</caption>
+		{% for field, caption, measure, values in rp5ru %}
+			<tr align='center'>
+				<th style='vertical-align:middle'>{{ caption }}
+					{% if measure %}
+						, <small><em>{{ measure }}</em></small>
+					{% endif %}
+				</th>
+				{% if field == 'forecast_time' %}
+					{% for forecast_weekday, forecast_date, forecast_time in values %}
+						<td>
+							<small>{{ forecast_weekday }}<br>{{ forecast_date }} {{ forecast_time }}<small>
+						</td>
+					{% endfor %}
+				{% elif field == 'cloud_cover' %}
+					{% for img_prefix, cloud_percent, descr in values %}
+						<td>
+							<attr title='{{ descr }} (облачность {{ cloud_percent }}%)'>
+								<img src='{{ static_url }}weather/img/{{ img_prefix }}.png' width='30' height='25'/>
+							</attr>
+						</td>
+					{% endfor %}
+				{% elif field == 'precipitation' %}
+					{% for img_prefix, precipitation, descr in values %}
+						<td>
+							<attr title='{{ descr }}{% if precipitation %} ({{ precipitation }}мм воды / 6 часов{% endif %}'>
+								<img src='{{ static_url }}weather/img/{{ img_prefix }}.png' width='18' height='27'/>
+							</attr>
+						</td>
+					{% endfor %}
+				{% elif field == 'wind_velocity' %}
+					{% for wind_velocity, wind_direction, descr in values %}
+						<td>{{ wind_velocity }} 
+							<attr title='Ветер, дующий с {{ descr }}'>
+								<img src='{{ static_url }}weather/img/{{ wind_direction }}.gif' width='24' height='24'/>
+							</attr>
+						</td>
+					{% endfor %}
+				{% else %}
+					{% for value in values %}
+						<td>{{ value }}</td>
+					{% endfor %}
+				{% endif %}
 			</tr>
 		{% endfor %}
-		{% for field, values in rp5ru_clouds %}
-			<tr>
-				<th>{{ field }}</th>
-				{% for value in values %}
-					<td><img src='{{ static_url }}weather/img/{{ value }}.png' width='30' height='25'/></td>
-				{% endfor %}
-			</tr>
-		{% endfor %}
-	</table>	
+	</table>
 {% endblock %}

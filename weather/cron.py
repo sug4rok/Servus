@@ -2,26 +2,29 @@
 import urllib2
 from weather.models import RP5RU
 from django_cron import CronJobBase, Schedule
+from datetime import timedelta
 
 def weather_getter():
     '''
     Get the weather forecast from rp5.ru API and 
     put it into weather_rp5ru table of Servus's database
-    ''' 
-    
+    '''  
 
     url_sock = urllib2.urlopen("http://rp5.ru/xml/7285/00000/ru")
     parsed_xml = minidom.parse(url_sock)      
     
+    RP5RU.objects.all().delete()
     for i in range(1,5):        
         weather_data = {}
         
         for field in RP5RU._meta.fields[1:]:
-            point_names = parsed_xml.getElementsByTagName(field.name)
-            point_name = point_names[i-1].childNodes[0].nodeValue
-            weather_data[field.name] = point_name 
-            
-        obj_rp5ru, created = RP5RU.objects.get_or_create(time_step=int(weather_data['time_step']))
+            if field.name != 'forecast_time':
+                point_names = parsed_xml.getElementsByTagName(field.name)
+                point_name = point_names[i-1].childNodes[0].nodeValue
+                weather_data[field.name] = point_name 
+ 
+        obj_rp5ru = RP5RU.objects.create(time_step=int(weather_data['time_step']))
+        obj_rp5ru.forecast_time += timedelta(hours=+(int(weather_data['time_step'])+4)) 
         obj_rp5ru.pressure = int(weather_data['pressure'])
         obj_rp5ru.temperature = int(weather_data['temperature'])
         obj_rp5ru.humidity = int(weather_data['humidity'])
@@ -30,7 +33,7 @@ def weather_getter():
         obj_rp5ru.cloud_cover = int(weather_data['cloud_cover'])
         obj_rp5ru.falls = int(weather_data['falls'])
         obj_rp5ru.precipitation = float(weather_data['precipitation'])
-        obj_rp5ru.drops = float(weather_data['drops'])
+        obj_rp5ru.drops = int(float(weather_data['drops']))
         obj_rp5ru.save()
         
     url_sock.close()

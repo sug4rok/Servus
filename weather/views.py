@@ -1,35 +1,116 @@
 ﻿from base.views import *
 from weather.models import RP5RU
+from datetime import datetime, timedelta
 
-def weather(request):
-    active_app_name = os.path.dirname(os.path.relpath(__file__))
-    get_tab_options(active_app_name)
+def weather(request): 
     
+    def get_field_data(field, measure):
+        return (
+                field.name,
+                field.verbose_name, 
+                measure, 
+                [values for values in RP5RU.objects.values_list(field.name, flat=True)]
+                )
+   
+    def get_forecast_time():        
+        forecast_times = []
+        for forecast_time in RP5RU.objects.values_list('forecast_time', flat=True):            
+            forecast_times.append((
+                                   get_weekday(forecast_time .weekday()),
+                                   '%s %s' % ((forecast_time .day), get_month(forecast_time .month)),
+                                   str(forecast_time .hour) + ':00'
+                                   ))
+        return forecast_times
+
+    def get_cloud_cover():
+        '''
+        The addition of prefixes to the file name ('cd' for day, 'cn' for night).
+        Сonversion percentage of cloud cover in the range from 1 to 7.
+        For example 35% cloud cover for time_step = 12 turn into a prefix 'cd3'
+        '''
+        
+        cloud_cover = []
+        forecast_hours = RP5RU.objects.values_list('forecast_time', flat=True)
+        cloud_ranges = {
+                        0:(range(0, 11), 'Ясно'),
+                        1:(range(11, 21), 'Малооблачно'),
+                        2:(range(21, 31), 'Небольшая облачность'),
+                        3:(range(31, 51), 'Переменная облачность'),
+                        4:(range(51, 71), 'Облачно с прояснениями'),
+                        5:(range(71, 81), 'Облачно'),
+                        6:(range(81, 91), 'Значительная облачность'),
+                        7:(range(91, 100), 'Пасмурная погода')
+                        }
+        for num, cloud_percent in enumerate(RP5RU.objects.values_list('cloud_cover', flat=True)):
+            file_prefix = ''
+            if forecast_hours[num].hour == 4:
+                file_prefix = 'cn'
+            else:
+                file_prefix = 'cd'
+            for cloud_range in cloud_ranges:
+                rng, descr = cloud_ranges[cloud_range]
+                if cloud_percent in rng:
+                    cloud_cover.append((file_prefix + str(cloud_range), cloud_percent, descr))
+        return cloud_cover 
+
+    def get_wind():
+        wind_data = []
+        wind_velocity = RP5RU.objects.values_list('wind_velocity', flat=True)
+        wind_directions = {
+                           u'С':('wd_n', 'севера'),
+                           u'С-В':('wd_ne', 'северо-востока'),
+                           u'С-З':('wd_nw', 'северо-запада'),
+                           u'Ю':('wd_s', 'юга'),
+                           u'Ю-В':('wd_se', 'юго-востока'),
+                           u'Ю-З':('wd_sw', 'юго-запада'),
+                           u'В':('wd_e', 'востока'),
+                           u'З':('wd_w', 'запада')
+                          }         
+        for num, wind_direction in enumerate(RP5RU.objects.values_list('wind_direction', flat=True)):
+            wind_direction, descr = wind_directions[wind_direction]
+            wind_data.append((wind_velocity[num], wind_direction, descr))
+        return wind_data
+        
+    def get_precipitation():
+        precipitation_data = []
+        falls = RP5RU.objects.values_list('falls', flat=True)
+        drops = RP5RU.objects.values_list('drops', flat=True)
+        falls_range = {
+                       0:'Без осадков',
+                       1:'Дождь',
+                       2:'Мокрый снег',
+                       3:'Снег'
+                      }        
+        for num, precipitation in enumerate(RP5RU.objects.values_list('precipitation', flat=True)):
+            precipitation_data.append(('o%sd%s' % (falls[num], drops[num]), precipitation, falls_range[falls[num]]))
+        return precipitation_data
+        
+        
+    rp5ru = []
     fields = RP5RU._meta.fields
-    rp5ru = [(field.verbose_name, [values for values in RP5RU.objects.values_list(field.name, flat=True)]) for field in fields[1:-4]]
     
-    cloud_cover = []
-    cloud_ranges = {
-                    0:range(0, 11),
-                    1:range(11, 21),
-                    2:range(21, 31),
-                    3:range(31, 51),
-                    4:range(51, 71),
-                    5:range(71, 81),
-                    6:range(81, 91),
-                    7:range(91, 100)
-                    }
-    for num, item in enumerate(RP5RU.objects.values_list('cloud_cover', flat=True)):
-        cloud_item = ''
-        if num % 2:
-            cloud_item = 'cn'
-        else:
-            cloud_item = 'cd'
-        for cloud_range in cloud_ranges:
-            if item in cloud_ranges[cloud_range]:
-                cloud_cover.append(cloud_item + str(cloud_range))
-    rp5ru_clouds = [(fields[-4].verbose_name, cloud_cover)]
+    for field in fields[2:-1]:
+        if field.name == 'forecast_time':
+            rp5ru.append((field.name, field.verbose_name, '', get_forecast_time()))           
+        elif field.name == 'cloud_cover':
+            rp5ru.append((field.name, field.verbose_name, '%', get_cloud_cover()))
+        elif field.name == 'falls':
+            pass
+        elif field.name == 'precipitation':
+            rp5ru.append((field.name, field.verbose_name, '', get_precipitation()))
+        elif field.name == 'drops':
+            pass
+        elif field.name == 'temperature':
+            rp5ru.append(get_field_data(field, '°C'))
+        elif field.name == 'pressure':
+            rp5ru.append(get_field_data(field, 'мм рт. ст.'))
+        elif field.name == 'humidity':
+            rp5ru.append(get_field_data(field, '%'))
+        elif field.name == 'wind_velocity':
+            rp5ru.append((field.name, field.verbose_name, 'м/c', get_wind()))      
+      
     
+    active_app_name = os.path.dirname(os.path.relpath(__file__))
+    get_tab_options(active_app_name)    
     params['rp5ru'] = rp5ru
-    params['rp5ru_clouds'] = rp5ru_clouds
     return render_to_response('weather/tab.html', params)
