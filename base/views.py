@@ -4,7 +4,6 @@ from django.conf import settings
 from django.shortcuts import render_to_response
 from Servus.Servus import SITE_NAME
 from base.models import Tab
-#from datetime import datetime
 
 site_name = SITE_NAME
 static_url = settings.STATIC_URL

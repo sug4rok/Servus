@@ -5,6 +5,10 @@ from datetime import datetime, timedelta
 def weather(request): 
     
     def get_field_data(field, measure):
+        '''
+        A simple function to retrieve data from a table rp5r for onward dispatch to the template
+        '''
+        
         return (
                 field.name,
                 field.verbose_name, 
@@ -16,15 +20,15 @@ def weather(request):
         forecast_times = []
         for forecast_time in RP5RU.objects.values_list('forecast_time', flat=True):            
             forecast_times.append((
-                                   get_weekday(forecast_time .weekday()),
-                                   '%s %s' % ((forecast_time .day), get_month(forecast_time .month)),
-                                   str(forecast_time .hour) + ':00'
+                                   get_weekday(forecast_time.weekday()),
+                                   '%s %s' % ((forecast_time.day), get_month(forecast_time.month)),
+                                   '%s:00' % str(forecast_time.hour)
                                    ))
         return forecast_times
 
     def get_cloud_cover():
         '''
-        The addition of prefixes to the file name ('cd' for day, 'cn' for night).
+        Adding a prefixes to the filename ('cd' for day, 'cn' for night).
         Сonversion percentage of cloud cover in the range from 1 to 7.
         For example 35% cloud cover for time_step = 12 turn into a prefix 'cd3'
         '''
@@ -54,6 +58,11 @@ def weather(request):
         return cloud_cover 
 
     def get_wind():
+        '''
+        Adding a prefixes to the filename ('wd_n', 'wd_se', etc) to get the corresponding
+        GIF file for respective wind direction.        
+        '''
+        
         wind_data = []
         wind_velocity = RP5RU.objects.values_list('wind_velocity', flat=True)
         wind_directions = {
@@ -72,6 +81,11 @@ def weather(request):
         return wind_data
         
     def get_precipitation():
+        '''
+        Adding 'oXdY a prefix to the file name to get the corresponding PNG file for precipitation,
+        where X - type of precipitation, Y - the amount of precipitation.
+        '''
+        
         precipitation_data = []
         falls = RP5RU.objects.values_list('falls', flat=True)
         drops = RP5RU.objects.values_list('drops', flat=True)

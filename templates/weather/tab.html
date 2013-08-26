@@ -13,7 +13,7 @@
 				{% if field == 'forecast_time' %}
 					{% for forecast_weekday, forecast_date, forecast_time in values %}
 						<td>
-							<small>{{ forecast_weekday }}<br>{{ forecast_date }} {{ forecast_time }}<small>
+							<small><b>{{ forecast_weekday }}</b><br>{{ forecast_date }} {{ forecast_time }}<small>
 						</td>
 					{% endfor %}
 				{% elif field == 'cloud_cover' %}

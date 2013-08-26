@@ -2,7 +2,7 @@
 import urllib2
 from weather.models import RP5RU
 from django_cron import CronJobBase, Schedule
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 def weather_getter():
     '''
@@ -13,7 +13,12 @@ def weather_getter():
     url_sock = urllib2.urlopen("http://rp5.ru/xml/7285/00000/ru")
     parsed_xml = minidom.parse(url_sock)      
     
-    RP5RU.objects.all().delete()
+    try:
+        RP5RU.objects.get(time_step=60).delete()
+    except RP5RU.DoesNotExist:
+        pass
+    
+    today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
     for i in range(1,5):        
         weather_data = {}
         
@@ -23,8 +28,8 @@ def weather_getter():
                 point_name = point_names[i-1].childNodes[0].nodeValue
                 weather_data[field.name] = point_name 
  
-        obj_rp5ru = RP5RU.objects.create(time_step=int(weather_data['time_step']))
-        obj_rp5ru.forecast_time += timedelta(hours=+(int(weather_data['time_step'])+4)) 
+        obj_rp5ru, created = RP5RU.objects.get_or_create(time_step=int(weather_data['time_step']))
+        obj_rp5ru.forecast_time = today + timedelta(hours=+(int(weather_data['time_step'])+4)) 
         obj_rp5ru.pressure = int(weather_data['pressure'])
         obj_rp5ru.temperature = int(weather_data['temperature'])
         obj_rp5ru.humidity = int(weather_data['humidity'])
