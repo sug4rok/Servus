@@ -1,40 +1,42 @@
 <!DOCTYPE html>
 <html lang='ru'>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+		<meta name='viewport' content='width=device-width, initial-scale=1.0'>
         <title>{{ site_name }}</title>	
-        <link href='{{ static_url }}bootstrap/css/bootstrap.min.css' rel='stylesheet'>
+        <link href='{{ static_url }}bootstrap/css/bootstrap.min.css' rel='stylesheet' media='screen'>
         <!--[if lt IE 9]>
         <script src='http://html5shim.googlecode.com/svn/trunk/html5.js'></script>
         <![endif]-->			
         <link rel='shortcut icon' href='{{ static_url }}base/img/favicon.ico'>
+		<style>
+			body {padding-top:55px;}
+		</style>
     </head>
 <body>
 {% spaceless %}
-<div class='container-fluid'>	
-<div class='row-fluid'>
-	
-	<div class='col-12'>	
-		{% block navbar %}
-			{% include 'base/navbar.html' %}
-		{% endblock %}
+
+	{% block navbar %}
+		{% include 'base/navbar.html' %}
+	{% endblock %}
+
+	<div class='container'>		
+		<div class='panel panel-default'>
+			<div class="panel-body">	
+				<div class='row row-offcanvas row-offcanvas-right'>	
+					<div class='col-md-9'>
+						<h4>{{ active_title }} <small>{{ active_sub_title }}</small></h4>				
+							{% block content %}{% endblock %}				
+					</div>
+					<div class='col-md-3'>
+						{% block sidebar %}
+							{% include 'base/sidebar.html' %}
+						{% endblock %}	
+					</div>
+				</div>
+			</div>
+		</div>				
 	</div>
-	
-	<div class='col-9'>			
-		<h4>{{ active_title }} <small>{{ active_sub_title }}</small></h4>			
-		<p align='justify'>{% block content %}{% endblock %}</p>
-	</div>
-	<div class='col-3'>
-		<p align='justify'>
-		{% block sidebar %}
-			{% include 'base/sidebar.html' %}
-		{% endblock %}
-		</p>
-	</div>
-	
-</div>
-</div>
 
 {% endspaceless %}
 <script src='{{ static_url }}bootstrap/js/bootstrap.min.js' type='text/javascript'></script>
