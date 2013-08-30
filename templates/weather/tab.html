@@ -10,7 +10,7 @@
 						, <small><em>{{ measure }}</em></small>
 					{% endif %}
 				</th>
-				{% if field == 'forecast_time' %}
+				{% if field == 'datetime' %}
 					{% for forecast_weekday, forecast_date, forecast_time in values %}
 						<td>
 							<small><b>{{ forecast_weekday }}</b><br>{{ forecast_date }} {{ forecast_time }}<small>
@@ -35,9 +35,11 @@
 				{% elif field == 'wind_velocity' %}
 					{% for wind_velocity, wind_direction, descr in values %}
 						<td>{{ wind_velocity }} 
-							<attr title='Ветер, дующий с {{ descr }}'>
-								<img src='{{ static_url }}weather/img/{{ wind_direction }}.gif' width='24' height='24'/>
-							</attr>
+							{% if wind_velocity %}
+								<attr title='Ветер, дующий с {{ descr }}'>
+									<img src='{{ static_url }}weather/img/{{ wind_direction }}.gif' width='24' height='24'/>								
+								</attr>
+							{% endif %}	
 						</td>
 					{% endfor %}
 				{% else %}

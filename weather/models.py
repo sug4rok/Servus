@@ -1,7 +1,6 @@
 ﻿# -*- coding: utf-8 -*-
 from django.db import models
 from base.models import Tab
-from datetime import datetime
 
 
 class Tab_Weather(models.Model):
@@ -19,20 +18,11 @@ class Tab_Weather(models.Model):
 
         
 class RP5RU (models.Model):
-    time_step = models.IntegerField(
-                                    max_length=2,
-                                    verbose_name='Временной шаг'
-                                    )
-    forecast_time = models.DateTimeField(
-                                         auto_now=False,
-                                         auto_now_add=False,
-                                         verbose_name='Местное время',
-                                         default=datetime.now().replace(
-                                                                        hour=0,
-                                                                        minute=0,
-                                                                        second=0,
-                                                                        microsecond=0
-                                                                        )
+    datetime = models.DateTimeField(
+                                    auto_now=False,
+                                    auto_now_add=False,
+                                    verbose_name='Местное время',
+                                    default='2013-08-30 00:00'
                                          )
     cloud_cover = models.IntegerField(
                                       max_length=2,

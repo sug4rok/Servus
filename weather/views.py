@@ -18,7 +18,7 @@ def weather(request):
    
     def get_forecast_time():        
         forecast_times = []
-        for forecast_time in RP5RU.objects.values_list('forecast_time', flat=True):            
+        for forecast_time in RP5RU.objects.values_list('datetime', flat=True):            
             forecast_times.append((
                                    get_weekday(forecast_time.weekday()),
                                    '%s %s' % ((forecast_time.day), get_month(forecast_time.month)),
@@ -34,7 +34,7 @@ def weather(request):
         '''
         
         cloud_cover = []
-        forecast_hours = RP5RU.objects.values_list('forecast_time', flat=True)
+        forecast_hours = RP5RU.objects.values_list('datetime', flat=True)
         cloud_ranges = {
                         0:(range(0, 11), 'Ясно'),
                         1:(range(11, 21), 'Малооблачно'),
@@ -66,6 +66,7 @@ def weather(request):
         wind_data = []
         wind_velocity = RP5RU.objects.values_list('wind_velocity', flat=True)
         wind_directions = {
+                           u'ШТЛ':('w0', 'Штиль'),
                            u'С':('wd_n', 'севера'),
                            u'С-В':('wd_ne', 'северо-востока'),
                            u'С-З':('wd_nw', 'северо-запада'),
@@ -103,11 +104,11 @@ def weather(request):
     rp5ru = []
     fields = RP5RU._meta.fields
     
-    for field in fields[2:-1]:
-        if field.name == 'forecast_time':
+    for field in fields[1:-1]:
+        if field.name == 'datetime':
             rp5ru.append((field.name, field.verbose_name, '', get_forecast_time()))           
         elif field.name == 'cloud_cover':
-            rp5ru.append((field.name, field.verbose_name, '%', get_cloud_cover()))
+            rp5ru.append((field.name, field.verbose_name, '', get_cloud_cover()))
         elif field.name == 'falls':
             pass
         elif field.name == 'precipitation':
@@ -123,7 +124,6 @@ def weather(request):
         elif field.name == 'wind_velocity':
             rp5ru.append((field.name, field.verbose_name, 'м/c', get_wind()))      
       
-    
     active_app_name = os.path.dirname(os.path.relpath(__file__))
     get_tab_options(active_app_name)    
     params['rp5ru'] = rp5ru
