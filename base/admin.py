@@ -2,7 +2,7 @@
 from base.models import Tab
 from home.models import Tab_Home
 from climate.models import Tab_Climate
-from weather.models import Tab_Weather
+from weather.models import Weather
 
 
 class Tab_HomeInline(admin.StackedInline):
@@ -15,8 +15,8 @@ class Tab_ClimateInline(admin.StackedInline):
     extra = 1
     max_num = 1
     
-class Tab_WeatherInline(admin.TabularInline):
-    model = Tab_Weather
+class WeatherInline(admin.TabularInline):
+    model = Weather
     extra = 1
     max_num = 1
     
@@ -34,9 +34,10 @@ class TabAdmin(admin.ModelAdmin):
     inlines = [
         #Tab_HomeInline,
         #Tab_ClimateInline,
-        #Tab_WeatherInline
-    ]
-    list_display = ('tab_name', 'title')
+        #WeatherInline
+    ]    
 
+class Tab_WeatherAdmin(admin.ModelAdmin):
+    radio_fields = {'app_name': admin.VERTICAL}
     
 admin.site.register(Tab, TabAdmin)

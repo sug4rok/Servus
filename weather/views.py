@@ -1,130 +1,115 @@
-﻿from base.views import *
-from weather.models import RP5RU
-from datetime import datetime, timedelta
+﻿from base.views import call_template, get_weekday, get_month
+from weather.models import Weather
+from Servus.Servus import WEATHER_PROVIDERS
 
-def weather(request): 
-    
-    def get_field_data(field, measure):
+params = {}
+
+def weather(request, current_tab):
+
+    def list_field_values(wp, field):
+        return Weather.objects.filter(weather_provider=wp).values_list(field, flat=True)
+
+    def get_field_data(wp, field, measure):
         '''
         A simple function to retrieve data from a table rp5r for onward dispatch to the template
-        '''
-        
+        '''        
         return (
-                field.name,
-                field.verbose_name, 
-                measure, 
-                [values for values in RP5RU.objects.values_list(field.name, flat=True)]
-                )
-   
-    def get_forecast_time():        
+            field.name,
+            field.verbose_name,
+            measure,
+            list_field_values(wp, field.name)
+        )
+    
+    def get_forecast_time(wp):        
         forecast_times = []
-        for forecast_time in RP5RU.objects.values_list('datetime', flat=True):            
+        for forecast_time in list_field_values(wp, 'datetime'): 
             forecast_times.append((
-                                   get_weekday(forecast_time.weekday()),
-                                   '%s %s' % ((forecast_time.day), get_month(forecast_time.month)),
-                                   '%s:00' % str(forecast_time.hour)
-                                   ))
+                get_weekday(forecast_time.weekday()),
+                '%s %s' % ((forecast_time.day), get_month(forecast_time.month)),
+                '%s:00' % str(forecast_time.hour)
+            ))
         return forecast_times
-
-    def get_cloud_cover():
-        '''
-        Adding a prefixes to the filename ('cd' for day, 'cn' for night).
-        Сonversion percentage of cloud cover in the range from 1 to 7.
-        For example 35% cloud cover for time_step = 12 turn into a prefix 'cd3'
-        '''
         
-        cloud_cover = []
-        forecast_hours = RP5RU.objects.values_list('datetime', flat=True)
-        cloud_ranges = {
-                        0:(range(0, 11), 'Ясно'),
-                        1:(range(11, 21), 'Малооблачно'),
-                        2:(range(21, 31), 'Небольшая облачность'),
-                        3:(range(31, 51), 'Переменная облачность'),
-                        4:(range(51, 71), 'Облачно с прояснениями'),
-                        5:(range(71, 81), 'Облачно'),
-                        6:(range(81, 91), 'Значительная облачность'),
-                        7:(range(91, 100), 'Пасмурная погода')
-                        }
-        for num, cloud_percent in enumerate(RP5RU.objects.values_list('cloud_cover', flat=True)):
-            file_prefix = ''
-            if forecast_hours[num].hour == 4:
-                file_prefix = 'cn'
+    def get_clouds(wp):      
+        clouds_data = []
+        forecast_hours = list_field_values(wp, 'datetime')
+        clouds = list_field_values(wp, 'clouds')
+        clouds_range = {
+            '0':'Ясно',
+            '1':'Малооблачно',
+            '2':'Переменная облачность',
+            '3':'Облачно с прояснениями',
+            '4':'Облачно',
+            '5':'Пасмурная погода'
+        }
+        for num, clouds_img in enumerate(list_field_values(wp,'clouds_img')):
+            file_img = ''
+            if forecast_hours[num].hour > 9 and forecast_hours[num].hour <= 20:
+                file_img = 'cd%s.png' % clouds_img
             else:
-                file_prefix = 'cd'
-            for cloud_range in cloud_ranges:
-                rng, descr = cloud_ranges[cloud_range]
-                if cloud_percent in rng:
-                    cloud_cover.append((file_prefix + str(cloud_range), cloud_percent, descr))
-        return cloud_cover 
-
-    def get_wind():
-        '''
-        Adding a prefixes to the filename ('wd_n', 'wd_se', etc) to get the corresponding
-        GIF file for respective wind direction.        
-        '''
+                file_img = 'cn%s.png' % clouds_img
+            clouds_data.append((file_img, clouds[num], clouds_range[clouds_img]))
+        return clouds_data
         
-        wind_data = []
-        wind_velocity = RP5RU.objects.values_list('wind_velocity', flat=True)
-        wind_directions = {
-                           u'ШТЛ':('w0', 'Штиль'),
-                           u'С':('wd_n', 'севера'),
-                           u'С-В':('wd_ne', 'северо-востока'),
-                           u'С-З':('wd_nw', 'северо-запада'),
-                           u'Ю':('wd_s', 'юга'),
-                           u'Ю-В':('wd_se', 'юго-востока'),
-                           u'Ю-З':('wd_sw', 'юго-запада'),
-                           u'В':('wd_e', 'востока'),
-                           u'З':('wd_w', 'запада')
-                          }         
-        for num, wind_direction in enumerate(RP5RU.objects.values_list('wind_direction', flat=True)):
-            wind_direction, descr = wind_directions[wind_direction]
-            wind_data.append((wind_velocity[num], wind_direction, descr))
-        return wind_data
-        
-    def get_precipitation():
-        '''
-        Adding 'oXdY a prefix to the file name to get the corresponding PNG file for precipitation,
-        where X - type of precipitation, Y - the amount of precipitation.
-        '''
-        
+    def get_precipitation(wp):        
         precipitation_data = []
-        falls = RP5RU.objects.values_list('falls', flat=True)
-        drops = RP5RU.objects.values_list('drops', flat=True)
+        precipitation = list_field_values(wp, 'precipitation')
         falls_range = {
-                       0:'Без осадков',
-                       1:'Дождь',
-                       2:'Мокрый снег',
-                       3:'Снег'
-                      }        
-        for num, precipitation in enumerate(RP5RU.objects.values_list('precipitation', flat=True)):
-            precipitation_data.append(('o%sd%s' % (falls[num], drops[num]), precipitation, falls_range[falls[num]]))
+            't0d0':'Без осадков',
+            't1d0':'Кратковременный дождь',
+            't1d1':'Небольшой дождь',
+            't1d2':'Дождь',
+            't1d3':'Сильный дождь',
+            't1d4':'Ливень',
+            't1d5':'Гроза',
+            't2d0':'Кратковременный мокрый снег',
+            't2d1':'Небольшой мокрый снег',
+            't2d2':'Мокрый снег',
+            't2d3':'Сильный мокрый снег',
+            't2d4':'Метель',
+            't3d0':'Кратковременный снег',
+            't3d1':'Небольшой снег',
+            't3d2':'Снег',
+            't3d3':'Сильный снег',
+            't3d4':'Метель',
+        }        
+        for num, falls_img in enumerate(list_field_values(wp, 'falls_img')):
+            precipitation_data.append((falls_img + '.png', precipitation[num], falls_range[falls_img]))
         return precipitation_data
         
-        
-    rp5ru = []
-    fields = RP5RU._meta.fields
+    def get_wind(wp):
+        wind_data = []
+        wind_speed = list_field_values(wp, 'wind_speed')
+        for num, wind_direction in enumerate(list_field_values(wp, 'wind_direction')):
+            wind_data.append((wind_speed[num], wind_direction))
+        return wind_data
+   
+    forecast = []
+    fields = Weather._meta.fields
     
-    for field in fields[1:-1]:
-        if field.name == 'datetime':
-            rp5ru.append((field.name, field.verbose_name, '', get_forecast_time()))           
-        elif field.name == 'cloud_cover':
-            rp5ru.append((field.name, field.verbose_name, '', get_cloud_cover()))
-        elif field.name == 'falls':
-            pass
-        elif field.name == 'precipitation':
-            rp5ru.append((field.name, field.verbose_name, '', get_precipitation()))
-        elif field.name == 'drops':
-            pass
-        elif field.name == 'temperature':
-            rp5ru.append(get_field_data(field, '°C'))
-        elif field.name == 'pressure':
-            rp5ru.append(get_field_data(field, 'мм рт. ст.'))
-        elif field.name == 'humidity':
-            rp5ru.append(get_field_data(field, '%'))
-        elif field.name == 'wind_velocity':
-            rp5ru.append((field.name, field.verbose_name, 'м/c', get_wind()))      
-      
-    active_app_name = os.path.dirname(os.path.relpath(__file__))
-    get_tab_options(active_app_name)    
-    params['rp5ru'] = rp5ru
-    return render_to_response('weather/tab.html', params)
+    if WEATHER_PROVIDERS:
+        for wp in WEATHER_PROVIDERS:
+            value_set = []
+            for field in fields[2:-3]:
+                if field.name == 'datetime':
+                    value_set.append((field.name, field.verbose_name, '', get_forecast_time(wp))) 
+                elif field.name == 'clouds':
+                    value_set.append((field.name, field.verbose_name, '', get_clouds(wp))) 
+                elif field.name == 'precipitation':
+                    value_set.append((field.name, field.verbose_name, '', get_precipitation(wp)))
+                elif field.name == 'temperature':
+                    value_set.append(get_field_data(wp, field, '°C'))
+                elif field.name == 'pressure':
+                    value_set.append(get_field_data(wp, field, 'мм рт. ст.'))
+                elif field.name == 'humidity':
+                    value_set.append(get_field_data(wp, field, '%'))
+                elif field.name == 'wind_speed':
+                    value_set.append((field.name, field.verbose_name, 'м/c', get_wind(wp)))
+            forecast.append((WEATHER_PROVIDERS[wp], value_set))
+                
+    return call_template(
+        request,
+        param_name = 'forecast',
+        param_val = forecast,
+        current_tab=current_tab
+    )

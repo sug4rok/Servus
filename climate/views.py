@@ -1,6 +1,8 @@
-﻿from base.views import *
+﻿from base.views import call_template
 
-def climate(request):
-    active_app_name = os.path.dirname(os.path.relpath(__file__))
-    get_tab_options(active_app_name)
-    return render_to_response('climate/tab.html', params)
+params = {}
+def climate(request, current_tab): 
+    if not params:
+        return call_template(request, current_tab=current_tab)
+    else:
+        return call_template(request, params, current_tab=current_tab)

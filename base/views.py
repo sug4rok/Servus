@@ -1,50 +1,52 @@
 ﻿# -*- coding: utf-8 -*-
-import os
-from django.conf import settings
 from django.shortcuts import render_to_response
 from Servus.Servus import SITE_NAME
+from Servus.settings import STATIC_URL
 from base.models import Tab
 
-site_name = SITE_NAME
-static_url = settings.STATIC_URL
+params = {'site_name':SITE_NAME,'static_url':STATIC_URL, 'tabs':Tab.objects.all()}
 
 def get_weekday(weekday):
     # Getting the name of the day of the week 
     
     days = {
-            0:'Понедельник',
-            1:'Вторник',
-            2:'Среда',
-            3:'Четверг',
-            4:'Пятница',
-            5:'Суббота',
-            6:'Воскресенье'
-            }
+        0:'Понедельник',
+        1:'Вторник',
+        2:'Среда',
+        3:'Четверг',
+        4:'Пятница',
+        5:'Суббота',
+        6:'Воскресенье'
+    }
     return days[weekday]
     
 def get_month(month):
     # Getting the name of the month
     
     days = {
-            1:'Января',
-            2:'Февраля',
-            3:'Марта',
-            4:'Апреля',
-            5:'Мая',
-            6:'Июня',
-            7:'Июля',
-            8:'Августа',
-            9:'Сентября',
-            10:'Октября',
-            11:'Ноября',
-            12:'Декабря'
-            }
+        1:'Января',
+        2:'Февраля',
+        3:'Марта',
+        4:'Апреля',
+        5:'Мая',
+        6:'Июня',
+        7:'Июля',
+        8:'Августа',
+        9:'Сентября',
+        10:'Октября',
+        11:'Ноября',
+        12:'Декабря'
+    }
     return days[month]
 
-def get_tab_options(active_app_name):
-    tab_options = Tab.objects.get(app_name=active_app_name)
-    params['active_app_name'] = active_app_name
+def get_tab_options(current_tab):
+    tab_options = Tab.objects.get(app_name=current_tab)
+    params['active_app_name'] = current_tab
     params['active_title'] = tab_options.title
     params['active_sub_title'] = tab_options.sub_title    
 
-params = {'site_name':site_name,'static_url':static_url, 'tabs':Tab.objects.all()}
+def call_template(request, **kwargs):
+    current_tab = kwargs.pop('current_tab', None)
+    get_tab_options(current_tab)
+    params[kwargs.pop('param_name', None)] = kwargs.pop('param_val', None)
+    return render_to_response('%s/tab.html' % current_tab, params)

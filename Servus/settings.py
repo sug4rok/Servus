@@ -128,6 +128,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'base',
+    'home',
     'django_cron',
 ) + TAB_APPS
 

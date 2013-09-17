@@ -1,43 +1,7 @@
-﻿from xml.dom import minidom
-import urllib2
-from weather.models import RP5RU
-from django_cron import CronJobBase, Schedule
-
-def weather_getter():
-    '''
-    Get the weather forecast from rp5.ru API and 
-    put it into weather_rp5ru table of Servus's database
-    '''  
-
-    url_sock = urllib2.urlopen("http://rp5.ru/xml/7285/00000/ru")
-    parsed_xml = minidom.parse(url_sock)      
-    
-    try:
-        RP5RU.objects.all().delete()
-    except RP5RU.DoesNotExist:
-        pass
-    
-    for i in range(1,5):        
-        weather_data = {}
-        
-        for field in RP5RU._meta.fields[1:]:
-            point_names = parsed_xml.getElementsByTagName(field.name)
-            point_name = point_names[i-1].childNodes[0].nodeValue
-            weather_data[field.name] = point_name 
- 
-        obj_rp5ru, created = RP5RU.objects.get_or_create(datetime=weather_data['datetime'])
-        obj_rp5ru.pressure = int(weather_data['pressure'])
-        obj_rp5ru.temperature = int(weather_data['temperature'])
-        obj_rp5ru.humidity = int(weather_data['humidity'])
-        obj_rp5ru.wind_direction = weather_data['wind_direction']
-        obj_rp5ru.wind_velocity = int(weather_data['wind_velocity'])
-        obj_rp5ru.cloud_cover = int(weather_data['cloud_cover'])
-        obj_rp5ru.falls = int(weather_data['falls'])
-        obj_rp5ru.precipitation = float(weather_data['precipitation'])
-        obj_rp5ru.drops = int(float(weather_data['drops']))
-        obj_rp5ru.save()
-        
-    url_sock.close()
+﻿from django_cron import CronJobBase, Schedule
+from Servus.Servus import WEATHER_PROVIDERS
+from weather.weather_getter import weather_getter
+from weather.weather_setter import *
 
 class GetWeatherJob(CronJobBase):
     #RUN_EVERY_MINS = 60
@@ -45,10 +9,19 @@ class GetWeatherJob(CronJobBase):
     RUN_AT_TIMES = ['00:15', '04:15', '12:15', '16:15']
     
     schedule = Schedule(
-                        retry_after_failure_mins=RETRY_AFTER_FAILURE_MINS,
-                        run_at_times=RUN_AT_TIMES
-                        )
+        retry_after_failure_mins=RETRY_AFTER_FAILURE_MINS,
+        run_at_times=RUN_AT_TIMES
+    )
     code = 'GetWeatherJob'    # a unique code
 
     def do(self):
-        weather_getter()
+        if WEATHER_PROVIDERS:
+            weather_db_cleaner()
+            for wp in WEATHER_PROVIDERS:
+                weather_setter(weather_getter(wp), wp)
+                
+def do():
+    if WEATHER_PROVIDERS:
+        weather_db_cleaner()
+        for wp in WEATHER_PROVIDERS:
+            weather_setter(weather_getter(wp), wp)
