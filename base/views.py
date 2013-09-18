@@ -48,5 +48,7 @@ def get_tab_options(current_tab):
 def call_template(request, **kwargs):
     current_tab = kwargs.pop('current_tab', None)
     get_tab_options(current_tab)
-    params[kwargs.pop('param_name', None)] = kwargs.pop('param_val', None)
+    param_vals = kwargs.pop('param_vals', None)
+    for num, param in enumerate(kwargs.pop('param_names', None)):
+        params[param] = param_vals[num]
     return render_to_response('%s/tab.html' % current_tab, params)

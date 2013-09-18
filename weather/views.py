@@ -1,10 +1,12 @@
 ﻿from base.views import call_template, get_weekday, get_month
 from weather.models import Weather
 from Servus.Servus import WEATHER_PROVIDERS
+from datetime import datetime
 
 params = {}
 
 def weather(request, current_tab):
+    pn, pv = [], []
 
     def list_field_values(wp, field):
         return Weather.objects.filter(weather_provider=wp).values_list(field, flat=True)
@@ -32,7 +34,6 @@ def weather(request, current_tab):
         
     def get_clouds(wp):      
         clouds_data = []
-        forecast_hours = list_field_values(wp, 'datetime')
         clouds = list_field_values(wp, 'clouds')
         clouds_range = {
             '0':'Ясно',
@@ -43,12 +44,7 @@ def weather(request, current_tab):
             '5':'Пасмурная погода'
         }
         for num, clouds_img in enumerate(list_field_values(wp,'clouds_img')):
-            file_img = ''
-            if forecast_hours[num].hour > 9 and forecast_hours[num].hour <= 20:
-                file_img = 'cd%s.png' % clouds_img
-            else:
-                file_img = 'cn%s.png' % clouds_img
-            clouds_data.append((file_img, clouds[num], clouds_range[clouds_img]))
+            clouds_data.append((clouds_img + '.png', clouds[num], clouds_range[clouds_img[2]]))
         return clouds_data
         
     def get_precipitation(wp):        
@@ -83,11 +79,30 @@ def weather(request, current_tab):
         for num, wind_direction in enumerate(list_field_values(wp, 'wind_direction')):
             wind_data.append((wind_speed[num], wind_direction))
         return wind_data
+        
+    def position_nearest_forecast(wp):
+        now = datetime.now()
+        forecast_times = list_field_values(wp, 'datetime')
+        if len(forecast_times):
+            for num, forecast_time in enumerate(forecast_times):
+                if forecast_time > now:
+                    return num
+        else:
+            return -1
    
     forecast = []
+    forecast_sidebar = {
+        'clouds_img':[],
+        'falls_img':[],
+        'temperature':[],
+        'wind_speed':[],
+        'wind_direction':[]
+    }
+    
     fields = Weather._meta.fields
     
     if WEATHER_PROVIDERS:
+        # Вывод данных на страницу прогноза погоды
         for wp in WEATHER_PROVIDERS:
             value_set = []
             for field in fields[2:-3]:
@@ -105,11 +120,43 @@ def weather(request, current_tab):
                     value_set.append(get_field_data(wp, field, '%'))
                 elif field.name == 'wind_speed':
                     value_set.append((field.name, field.verbose_name, 'м/c', get_wind(wp)))
-            forecast.append((WEATHER_PROVIDERS[wp], value_set))
-                
+            forecast.append((WEATHER_PROVIDERS[wp], value_set))        
+        
+            num = position_nearest_forecast(wp)
+            if num != -1:
+                for f in forecast_sidebar:
+                    forecast_sidebar[f].append(list_field_values(wp, f)[num])
+        
+        # Вывод усредненных данных прогноза погоды на sidebar
+        len_forecast_field = len(forecast_sidebar['clouds_img'])
+        if len_forecast_field:
+            for f in forecast_sidebar:                
+                if f == 'falls_img':
+                    tmp_data1, tmp_data2 = 0, 0                    
+                    for i in range(len_forecast_field):
+                        tmp_data1 += int(forecast_sidebar[f][i][1])
+                        tmp_data2 += int(forecast_sidebar[f][i][3])
+                    forecast_sidebar[f] = 't%sd%s' % (str(tmp_data1/len_forecast_field), str(tmp_data2/len_forecast_field))
+                elif f == 'clouds_img':
+                    tmp_data1 = 0
+                    tmp_data2 = forecast_sidebar[f][i][1]
+                    for i in range(len_forecast_field):
+                        tmp_data1 += int(forecast_sidebar[f][i][2])
+                    forecast_sidebar[f] = 'c%s%s' % (tmp_data2, str(tmp_data1/len_forecast_field))
+                else:
+                    tmp_data = 0
+                    for i in range(len_forecast_field):
+                        tmp_data += int(forecast_sidebar[f][i])
+                    forecast_sidebar[f] = str(tmp_data/len_forecast_field)
+        
+        pn.append('forecast')
+        pv.append(forecast)
+        pn.append('forecast_sidebar')
+        pv.append(forecast_sidebar)   
+    
     return call_template(
         request,
-        param_name = 'forecast',
-        param_val = forecast,
+        param_names = pn,
+        param_vals = pv,
         current_tab=current_tab
     )

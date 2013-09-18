@@ -19,9 +19,3 @@ class GetWeatherJob(CronJobBase):
             weather_db_cleaner()
             for wp in WEATHER_PROVIDERS:
                 weather_setter(weather_getter(wp), wp)
-                
-def do():
-    if WEATHER_PROVIDERS:
-        weather_db_cleaner()
-        for wp in WEATHER_PROVIDERS:
-            weather_setter(weather_getter(wp), wp)

@@ -1,11 +1,53 @@
 <div class='row'>	
 	<div class='col-md-6'>	
-		<dl>
+		<dl style='text-align:center'>
 			<dt>
 				Погода
 			</dt>
 			<dd>
-				Some content
+				<table style='width: 80%; margin: 0 auto;'>					
+					<tr>
+						<td>
+							<b>{{ forecast_sidebar.temperature }} </b><small><em>°C</em></small>
+						</td>
+						<td>
+							<img src='{{ static_url }}weather/img/{{ forecast_sidebar.clouds_img }}.png' width='30' height='25'/>
+						</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>
+							<img src='{{ static_url }}weather/img/{{ forecast_sidebar.falls_img }}.png' width='30' height='25'/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<b>{{ forecast_sidebar.wind_speed }} </b><small><em>м/с</em></small>
+						</td>
+						<td>
+							<img style='
+								-moz-transform: rotate({{ forecast_sidebar.wind_direction }}deg);
+								-ms-transform: rotate({{ forecast_sidebar.wind_direction }}deg);
+								-webkit-transform:rotate({{ forecast_sidebar.wind_direction }}deg);
+								-o-transform: rotate({{ forecast_sidebar.wind_direction }}deg);
+								transform: rotate({{ forecast_sidebar.wind_direction }}deg);
+								'
+								src='{{ static_url }}weather/img/wd.png'
+								width='24'
+								height='24'
+							/>
+						</td>
+					</tr>					
+				</table>
+			</dd>
+		</dl>
+	</div>
+	<div class='col-md-6'>	
+		<dl style='text-align:center'>
+			<dt>
+				Климат
+			</dt>
+			<dd>
 			</dd>
 		</dl>
 	</div>

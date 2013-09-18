@@ -28,12 +28,13 @@ class WG_RP5(WG):
     wp_url = 'http://rp5.ru/xml/7285/00000/ru'   
     
     def parse_to_dict(self, parsed_xml):
+        weather_data = []
 
         def point_name_get(tag_name, i):
             point_names = parsed_xml.getElementsByTagName(tag_name)
             return point_names[i-1].childNodes[0].nodeValue
             
-        def get_clouds_img(clouds):
+        def get_clouds_img(clouds, datetime):
             clouds_ranges = [
                 range(0, 11),
                 range(11, 31),
@@ -44,7 +45,12 @@ class WG_RP5(WG):
             ]
             for r in range(0, 6):
                 if clouds in clouds_ranges[r]:
-                    return r
+                    hour = int(datetime[10] + datetime[11])
+                    if hour > 9 and hour <= 20:
+                        file_img = 'cd%s' % str(r)
+                    else:
+                        file_img = 'cn%s' % str(r)
+                    return file_img
             
         def get_wd(wd):
             wds = {
@@ -74,7 +80,6 @@ class WG_RP5(WG):
                 post_img = '4'
             return pref_img + post_img
         
-        weather_data = []
         for i in range(1,5):
             clouds = int(point_name_get('cloud_cover', i))
             tmp_data = {}
@@ -87,7 +92,7 @@ class WG_RP5(WG):
             tmp_data['humidity'] = point_name_get('humidity', i)
             tmp_data['wind_speed'] = point_name_get('wind_velocity', i)
             tmp_data['wind_direction'] = get_wd(point_name_get('wind_direction', i))
-            tmp_data['clouds_img'] = get_clouds_img(clouds)
+            tmp_data['clouds_img'] = get_clouds_img(clouds, tmp_data['datetime'])
             tmp_data['falls_img'] = get_falls_img(point_name_get('falls', i), point_name_get('drops', i))          
             weather_data.append(tmp_data)
             
@@ -98,22 +103,26 @@ class WG_WUA(WG):
     wp_url = 'http://xml.weather.co.ua/1.2/forecast/773?dayf=4?lang=ru'
     
     def parse_to_dict(self, i):
+        weather_data = []
+        
         return weather_data
 
         
 class WG_YA(WG):
     wp_url = 'http://export.yandex.ru/weather-ng/forecasts/26063.xml'
-    weather_data = {} 
     
     def parse_to_dict(self, i):
+        weather_data = []
+        
         return weather_data
 
         
 class WG_OWM(WG):
     wp_url = 'http://api.openweathermap.org/data/2.5/forecast/daily?q=St.Petersburg&mode=xml&units=metric&cnt=4'
-    weather_data = {} 
     
     def parse_to_dict(self, i):
+        weather_data = []
+        
         return weather_data
  
 
