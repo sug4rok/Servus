@@ -2,8 +2,9 @@
 
 {% block content %}
 	{% for weather_provider, values_set in forecast %}
-		<table class='table table-striped table-hover table-condensed'>
-			<caption><b>Прогноз погоды по данным <font color = '#2288bb'>{{ weather_provider }}</font></b></caption>
+		<br />
+		<table class='table table-hover table-condensed'>
+			<caption><b><font color = '#2288bb'>Прогноз погоды по данным <em>{{ weather_provider }}</em></font></b></caption>
 			{% for field, caption, measure, values in values_set %}
 				<tr align='center'>
 					<th style='vertical-align:middle'>{{ caption }}
@@ -18,16 +19,16 @@
 							</td>
 						{% endfor %}
 					{% elif field == 'clouds' %}
-						{% for file_img, clouds, descr in values %}
-							<td>
+						{% for file_img, clouds, descr, bg_color in values %}
+							<td class='{{ bg_color }}_c'>
 								<attr title='{{ descr }}{% if clouds %} (облачность {{ clouds }}%){% endif %}'>
 									<img src='{{ static_url }}weather/img/{{ file_img }}' width='30' height='25'/>
 								</attr>
 							</td>
 						{% endfor %}
 					{% elif field == 'precipitation' %}
-						{% for file_img, precipitation, descr in values %}
-							<td>
+						{% for file_img, precipitation, descr, bg_color in values %}
+							<td class='{{ bg_color }}_f'>
 								<attr title='{{ descr }}{% if precipitation %} ({{ precipitation }}мм воды / 6 часов{% endif %}'>
 									<img src='{{ static_url }}weather/img/{{ file_img }}' width='18' height='27'/>
 								</attr>

@@ -2,9 +2,10 @@
 	<div class='col-md-6'>	
 		<dl style='text-align:center'>
 			<dt>
-				Погода
+				Погода завтра
 			</dt>
 			<dd>
+				{% if forecast_sidebar and forecast_sidebar != 'na' %}
 				<table style='width: 80%; margin: 0 auto;'>					
 					<tr>
 						<td>
@@ -24,7 +25,7 @@
 						<td>
 							<b>{{ forecast_sidebar.wind_speed }} </b><small><em>м/с</em></small>
 						</td>
-						<td>
+						<td>							
 							<img style='
 								-moz-transform: rotate({{ forecast_sidebar.wind_direction }}deg);
 								-ms-transform: rotate({{ forecast_sidebar.wind_direction }}deg);
@@ -35,10 +36,13 @@
 								src='{{ static_url }}weather/img/wd.png'
 								width='24'
 								height='24'
-							/>
+							/>							
 						</td>
 					</tr>					
 				</table>
+				{% else %}
+					<img src='{{ static_url }}weather/img/na.png' width='30' height='25'/>
+				{% endif %}
 			</dd>
 		</dl>
 	</div>

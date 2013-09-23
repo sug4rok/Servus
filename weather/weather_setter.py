@@ -25,8 +25,10 @@ def weather_setter(weather_data, wp):
     for weather in weather_data:   
         obj_wp, created = Weather.objects.get_or_create(datetime=weather['datetime'])
         obj_wp.weather_provider = weather['weather_provider']
-        obj_wp.clouds = int(weather['clouds'])
-        obj_wp.precipitation = float(weather['precipitation'])
+        if 'clouds' in weather:
+            obj_wp.clouds = int(weather['clouds'])
+        if 'precipitation' in weather:
+            obj_wp.precipitation = float(weather['precipitation'])
         obj_wp.temperature = int(weather['temperature'])
         obj_wp.pressure = int(weather['pressure'])
         obj_wp.humidity = int(weather['humidity'])
