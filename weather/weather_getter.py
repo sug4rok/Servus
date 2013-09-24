@@ -181,8 +181,58 @@ class WG_YA(WG):
     
     def parse_to_dict(self):
         weather_data = []
+
+        def get_wd(wd):
+            wds = {
+                u'':-1,
+                u'n':0,
+                u'ne':45,
+                u'nw':315,
+                u's':180,
+                u'se':135,
+                u'sw':225,
+                u'e':90,
+                u'w':270
+            }
+            return wds[wd]
+
+        def get_file_img(weather_condition, d):
+            weather_conditions = {
+                'clear':['0', 't0d0'],
+                'mostly-clear':['1', 't0d0'],
+                'partly-cloudly':['2', 't0d0'],
+                'cloudy':['3', 't0d0'],
+                'cloudy-and-showers':['3', 't1d0'],
+                'cloudy-and-light-rain':['3', 't1d1'],
+                'overcast':['5', 't0d0'],
+                'overcast-and-showers':['5', 't1d0'],
+                'overcast-and-light-rain':['5', 't1d1'],
+            }
+            if weather_condition not in weather_conditions:
+                return [('na', 'na')]
+            return [(
+                    self.file_name_prefix(d) + weather_conditions[weather_condition][0],
+                    weather_conditions[weather_condition][1]
+                    )]
         
-        
+        times = {'morning':'07:00', 'day':'13:00', 'evening':'19:00', 'night':'01:00'}
+        for i in range(1, 3):
+            day = self.attr_value_get('day', 'date', i)
+            for i in range(1, 5):
+                weather_condition = self.attr_value_get('weather_condition', 'code', i)
+                tmp_data = {}
+                tmp_data['weather_provider'] = 'ya'
+                d = '%s %s' % (day, times[self.attr_value_get('day_part', 'type', i)])
+                tmp_data['datetime'] = datetime.datetime.strptime(d, self.format)
+                tmp_data['temperature'] = self.tag_value_get('avg', i)
+                tmp_data['pressure'] = self.tag_value_get('pressure', i)
+                tmp_data['humidity'] = self.tag_value_get('humidity', i)
+                tmp_data['wind_speed'] = round(float(self.tag_value_get('wind_speed', i)), 0)
+                tmp_data['wind_direction'] = get_wd(self.tag_value_get('wind_direction', i))
+                for clouds_img, falls_img in get_file_img(weather_condition, tmp_data['datetime']):
+                    tmp_data['clouds_img'] = clouds_img
+                    tmp_data['falls_img'] = falls_img         
+                    weather_data.append(tmp_data)
         return weather_data
 
         
@@ -224,8 +274,8 @@ class WG_OWM(WG):
                     return r
             return 't0d0'
 
-        for i in range(1,3):            
-            times = [('morn','07:00'), ('day','13:00'), ('eve','19:00'), ('night','01:00')]                       
+        times = [('morn','07:00'), ('day','13:00'), ('eve','19:00'), ('night','01:00')] 
+        for i in range(1,3):      
             for part_of_day, time in times:
                 tmp_data = {}
                 tmp_data['weather_provider'] = 'owm'

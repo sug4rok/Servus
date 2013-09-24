@@ -24,6 +24,6 @@ WEATHER_PROVIDERS = {
 	
 	'rp5':'rp5.ru',
 	'wua':'weather.ua',
-	#'ya':'yandex.ru',
+	'ya':'yandex.ru',
 	'owm':'openweathermap.org',
 	}

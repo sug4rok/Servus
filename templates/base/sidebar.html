@@ -12,31 +12,26 @@
 							<b>{{ forecast_sidebar.temperature }} </b><small><em>°C</em></small>
 						</td>
 						<td>
-							<img src='{{ static_url }}weather/img/{{ forecast_sidebar.clouds_img }}.png' width='30' height='25'/>
+							{% for file_img, descr in forecast_sidebar.clouds_img %}
+								<attr title='{{ descr }}'>
+									<img src='{{ static_url }}weather/img/{{ file_img }}.png' width='30' height='25'/>
+								</attr>
+							{% endfor %}
 						</td>
 					</tr>
 					<tr>
 						<td></td>
 						<td>
-							<img src='{{ static_url }}weather/img/{{ forecast_sidebar.falls_img }}.png' width='30' height='25'/>
+							{% for file_img, descr in forecast_sidebar.falls_img %}
+								<attr title='{{ descr }}'>
+									<img src='{{ static_url }}weather/img/{{ file_img }}.png' width='18' height='27'/>
+								</attr>
+							{% endfor %}
 						</td>
 					</tr>
 					<tr>
-						<td>
-							<b>{{ forecast_sidebar.wind_speed }} </b><small><em>м/с</em></small>
-						</td>
-						<td>							
-							<img style='
-								-moz-transform: rotate({{ forecast_sidebar.wind_direction }}deg);
-								-ms-transform: rotate({{ forecast_sidebar.wind_direction }}deg);
-								-webkit-transform:rotate({{ forecast_sidebar.wind_direction }}deg);
-								-o-transform: rotate({{ forecast_sidebar.wind_direction }}deg);
-								transform: rotate({{ forecast_sidebar.wind_direction }}deg);
-								'
-								src='{{ static_url }}weather/img/wd.png'
-								width='24'
-								height='24'
-							/>							
+						<td colspan=2>
+							<small>ветер </small><b>{{ forecast_sidebar.wind_speed }}</b><small><em> м/с</em></small>
 						</td>
 					</tr>					
 				</table>

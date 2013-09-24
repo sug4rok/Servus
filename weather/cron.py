@@ -10,7 +10,8 @@ class GetWeatherJob(CronJobBase):
     
     schedule = Schedule(
         retry_after_failure_mins=RETRY_AFTER_FAILURE_MINS,
-        run_at_times=RUN_AT_TIMES
+        #run_at_times=RUN_AT_TIMES
+        run_every_mins=RUN_EVERY_MINS
     )
     code = 'GetWeatherJob'    # a unique code
 

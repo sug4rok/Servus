@@ -22,9 +22,9 @@ def weather_setter(weather_data, wp):
         Weather.objects.filter(weather_provider=wp).delete()
     except Weather.DoesNotExist:
         pass
-    for weather in weather_data:   
-        obj_wp, created = Weather.objects.get_or_create(datetime=weather['datetime'])
-        obj_wp.weather_provider = weather['weather_provider']
+    for weather in weather_data: 
+        obj_wp = Weather.objects.create(weather_provider=weather['weather_provider'])
+        obj_wp.datetime = weather['datetime']
         if 'clouds' in weather:
             obj_wp.clouds = int(weather['clouds'])
         if 'precipitation' in weather:
