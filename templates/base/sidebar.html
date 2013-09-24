@@ -6,10 +6,10 @@
 			</dt>
 			<dd>
 				{% if forecast_sidebar and forecast_sidebar != 'na' %}
-				<table style='width: 80%; margin: 0 auto;'>					
+				<table style='width: 80%; margin: 0 auto; color: #2288bb; font-weight: bold'>					
 					<tr>
 						<td>
-							<b>{{ forecast_sidebar.temperature }} </b><small><em>°C</em></small>
+							{{ forecast_sidebar.temperature }} <small><em>°C</em></small>
 						</td>
 						<td>
 							{% for file_img, descr in forecast_sidebar.clouds_img %}
@@ -30,8 +30,11 @@
 						</td>
 					</tr>
 					<tr>
-						<td colspan=2>
-							<small>ветер </small><b>{{ forecast_sidebar.wind_speed }}</b><small><em> м/с</em></small>
+						<td>
+							<img src='{{ static_url }}weather/img/wind.png' width='30' height='30' />
+						</td>
+						<td>
+							{{ forecast_sidebar.wind_speed }}<small><em> м/с</em></small>
 						</td>
 					</tr>					
 				</table>
@@ -41,13 +44,5 @@
 			</dd>
 		</dl>
 	</div>
-	<div class='col-md-6'>	
-		<dl style='text-align:center'>
-			<dt>
-				Климат
-			</dt>
-			<dd>
-			</dd>
-		</dl>
-	</div>
+
 </div>

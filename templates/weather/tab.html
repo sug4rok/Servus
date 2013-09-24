@@ -4,7 +4,7 @@
 	{% for weather_provider, values_set in forecast %}
 		<br />
 		<table class='table table-condensed'>
-			<caption><b><font color = '#2288bb'>Прогноз погоды по данным <em>{{ weather_provider }}</em></font></b></caption>
+			<caption style='color: #2288bb; font-weight: bold'>Прогноз погоды по данным <em>{{ weather_provider }}</em></caption>
 			{% for field, caption, measure, values in values_set %}
 				<tr align='center'>
 					<th style='vertical-align:middle'>{{ caption }}
