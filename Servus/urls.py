@@ -16,7 +16,8 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
 
-    url(r'^$|^home/$', 'home.views.home', {'current_tab':'home'}),  
+    url(r'^$|^home/$', 'home.views.home', {'current_tab':'home'}), 
+    url(r'^sidebar/$', 'sidebar.views.sidebar'),    
     url(r'^admin/', include(admin.site.urls)),
 )
 

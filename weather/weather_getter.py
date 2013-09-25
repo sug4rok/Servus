@@ -30,7 +30,10 @@ class WG(object):
 
     def attr_value_get(self, tag_name, attr_name, i):
         point_names = self.parsed_xml.getElementsByTagName(tag_name)
-        return point_names[i-1].attributes[attr_name].value
+        try:
+            return point_names[i-1].attributes[attr_name].value
+        except KeyError:
+            return -1
         
     def file_name_prefix(self, d):
         format = '%H'
@@ -200,13 +203,40 @@ class WG_YA(WG):
             weather_conditions = {
                 'clear':['0', 't0d0'],
                 'mostly-clear':['1', 't0d0'],
-                'partly-cloudly':['2', 't0d0'],
+                'mostly-clear-slight-possibility-of-rain':['1', 't1d0'],
+                'partly-cloudy':['2', 't0d0'],
+                'partly-cloudy-possible-thunderstorms-with-rain':['2', 't1d0'],
+                'partly-cloudy-and-showers':['2', 't1d0'],
+                'partly-cloudy-and-light-rain':['2', 't1d1'],
+                'partly-cloudy-and-rain':['2', 't1d2'],
+                'partly-cloudy-and-wet-snow-showers':['2', 't2d0'],
+                'partly-cloudy-and-light-wet-snow':['2', 't2d1'],
+                'partly-cloudy-and-wet-snow':['2', 't2d2'],
+                'partly-cloudy-and-snow-showers':['2', 't3d0'],
+                'partly-cloudy-and-light-snow':['2', 't3d1'],
+                'partly-cloudy-and-snow':['2', 't3d2'],
                 'cloudy':['3', 't0d0'],
                 'cloudy-and-showers':['3', 't1d0'],
                 'cloudy-and-light-rain':['3', 't1d1'],
+                'cloudy-and-rain':['3', 't1d2'],
+                'cloudy-thunderstorms-with-rain':['3', 't1d5'],
+                'cloudy-and-wet-snow-showers':['3', 't2d0'],
+                'cloudy-and-light-wet-snow':['3', 't2d1'],
+                'cloudy-and-wet-snow':['3', 't2d2'],
+                'cloudy-and-snow-showers':['3', 't3d0'],
+                'cloudy-and-light-snow':['3', 't3d1'],
+                'cloudy-and-snow':['3', 't3d2'],
                 'overcast':['5', 't0d0'],
                 'overcast-and-showers':['5', 't1d0'],
                 'overcast-and-light-rain':['5', 't1d1'],
+                'overcast-and-rain':['5', 't1d2'],
+                'overcast-thunderstorms-with-rain':['5', 't1d5'],
+                'overcast-and-wet-snow-showers':['5', 't2d0'],
+                'overcast-and-light-wet-snow':['5', 't2d1'],
+                'overcast-and-wet-snow':['5', 't2d2'],
+                'overcast-and-snow-showers':['5', 't3d0'],
+                'overcast-and-light-snow':['5', 't3d1'],
+                'overcast-and-snow':['5', 't3d2'],
             }
             if weather_condition not in weather_conditions:
                 return [('na', 'na')]
@@ -218,17 +248,17 @@ class WG_YA(WG):
         times = {'morning':'07:00', 'day':'13:00', 'evening':'19:00', 'night':'01:00'}
         for i in range(1, 3):
             day = self.attr_value_get('day', 'date', i)
-            for i in range(1, 5):
-                weather_condition = self.attr_value_get('weather_condition', 'code', i)
+            for j in range(1, 5):
+                weather_condition = self.attr_value_get('weather_condition', 'code', j)
                 tmp_data = {}
                 tmp_data['weather_provider'] = 'ya'
-                d = '%s %s' % (day, times[self.attr_value_get('day_part', 'type', i)])
+                d = '%s %s' % (day, times[self.attr_value_get('day_part', 'type', j)])
                 tmp_data['datetime'] = datetime.datetime.strptime(d, self.format)
-                tmp_data['temperature'] = self.tag_value_get('avg', i)
-                tmp_data['pressure'] = self.tag_value_get('pressure', i)
-                tmp_data['humidity'] = self.tag_value_get('humidity', i)
-                tmp_data['wind_speed'] = round(float(self.tag_value_get('wind_speed', i)), 0)
-                tmp_data['wind_direction'] = get_wd(self.tag_value_get('wind_direction', i))
+                tmp_data['temperature'] = self.tag_value_get('avg', j)
+                tmp_data['pressure'] = self.tag_value_get('pressure', j)
+                tmp_data['humidity'] = self.tag_value_get('humidity', j)
+                tmp_data['wind_speed'] = round(float(self.tag_value_get('wind_speed', j)), 0)
+                tmp_data['wind_direction'] = get_wd(self.tag_value_get('wind_direction', j))
                 for clouds_img, falls_img in get_file_img(weather_condition, tmp_data['datetime']):
                     tmp_data['clouds_img'] = clouds_img
                     tmp_data['falls_img'] = falls_img         
@@ -285,8 +315,9 @@ class WG_OWM(WG):
                     d_datetime += datetime.timedelta(days=1)
                 tmp_data['datetime'] = d_datetime
                 tmp_data['clouds'] = self.attr_value_get('clouds', 'all', i)
-                if i !=1:
-                    tmp_data['precipitation'] = self.attr_value_get('precipitation', 'value', i)
+                precipitation = self.attr_value_get('precipitation', 'value', i)
+                if precipitation != -1:
+                    tmp_data['precipitation'] = precipitation
                 tmp_data['temperature'] = round(float(self.attr_value_get('temperature', part_of_day, i)), 0)
                 tmp_data['pressure'] = round(float(self.attr_value_get('pressure', 'value', i))/1.333224, 0)
                 tmp_data['humidity'] = self.attr_value_get('humidity', 'value', i)

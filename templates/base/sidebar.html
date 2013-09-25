@@ -14,7 +14,7 @@
 						<td>
 							{% for file_img, descr in forecast_sidebar.clouds_img %}
 								<attr title='{{ descr }}'>
-									<img src='{{ static_url }}weather/img/{{ file_img }}.png' width='30' height='25'/>
+									<img src='{{ static_url }}img/weather/{{ file_img }}.png' width='30' height='25'/>
 								</attr>
 							{% endfor %}
 						</td>
@@ -24,14 +24,14 @@
 						<td>
 							{% for file_img, descr in forecast_sidebar.falls_img %}
 								<attr title='{{ descr }}'>
-									<img src='{{ static_url }}weather/img/{{ file_img }}.png' width='18' height='27'/>
+									<img src='{{ static_url }}img/weather/{{ file_img }}.png' width='18' height='27'/>
 								</attr>
 							{% endfor %}
 						</td>
 					</tr>
 					<tr>
 						<td>
-							<img src='{{ static_url }}weather/img/wind.png' width='30' height='30' />
+							<img src='{{ static_url }}img/weather/wind.png' width='30' height='30' />
 						</td>
 						<td>
 							{{ forecast_sidebar.wind_speed }}<small><em> м/с</em></small>
@@ -39,7 +39,7 @@
 					</tr>					
 				</table>
 				{% else %}
-					<img src='{{ static_url }}weather/img/na.png' width='30' height='25'/>
+					<img src='{{ static_url }}img/weather/na.png' width='30' height='25'/>
 				{% endif %}
 			</dd>
 		</dl>

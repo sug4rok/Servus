@@ -1,13 +1,8 @@
 ﻿from base.views import call_template, get_weekday, get_month
 from weather.models import Weather
 from Servus.Servus import WEATHER_PROVIDERS
-from datetime import datetime, timedelta
 
-params = {}
-
-def weather(request, current_tab):
-    pn, pv = [], []
-    clouds_range = {
+CLOUDS_RANGE = {
         '0':'Ясно',
         '1':'Малооблачно',
         '2':'Переменная облачность',
@@ -16,7 +11,7 @@ def weather(request, current_tab):
         '5':'Пасмурная погода',
         'na':'Нет данных'
     }
-    falls_range = {
+FALLS_RANGE = {
         't0d0':'Без осадков',
         't1d0':'Кратковременный дождь',
         't1d1':'Небольшой дождь',
@@ -35,9 +30,12 @@ def weather(request, current_tab):
         't3d3':'Сильный снег',
         't3d4':'Метель',
         'na':'Нет данных'
-    }  
-    
-       
+    }
+
+params = {}
+
+def weather(request, current_tab):
+    pn, pv = [], []
     def list_field_values(wp, field):
         ''' 
         Функция получения данных из базы для определенного прогнозного API и указанного поля
@@ -92,9 +90,9 @@ def weather(request, current_tab):
         clouds = list_field_values(wp, 'clouds')        
         for num, clouds_img in enumerate(list_field_values(wp,'clouds_img')):
             if clouds_img != 'na':
-                clouds_data.append((clouds_img + '.png', clouds[num], clouds_range[clouds_img[2]], clouds_img[1]))
+                clouds_data.append((clouds_img + '.png', clouds[num], CLOUDS_RANGE[clouds_img[2]], clouds_img[1]))
             else:
-                clouds_data.append((clouds_img + '.png', clouds[num], clouds_range[clouds_img], 'd'))
+                clouds_data.append((clouds_img + '.png', clouds[num], CLOUDS_RANGE[clouds_img], 'd'))
         return clouds_data
         
     def get_precipitation(wp):   
@@ -111,9 +109,9 @@ def weather(request, current_tab):
         clouds_img = list_field_values(wp,'clouds_img')
         for num, falls_img in enumerate(list_field_values(wp, 'falls_img')):
             if falls_img != 'na':
-                precipitation_data.append((falls_img + '.png', precipitation[num], falls_range[falls_img], clouds_img[num][1]))
+                precipitation_data.append((falls_img + '.png', precipitation[num], FALLS_RANGE[falls_img], clouds_img[num][1]))
             else:
-                precipitation_data.append((falls_img + '.png', precipitation[num], falls_range[falls_img], 'd'))
+                precipitation_data.append((falls_img + '.png', precipitation[num], FALLS_RANGE[falls_img], 'd'))
         return precipitation_data
         
     def get_wind(wp):
@@ -126,67 +124,7 @@ def weather(request, current_tab):
         wind_speed = list_field_values(wp, 'wind_speed')
         for num, wind_direction in enumerate(list_field_values(wp, 'wind_direction')):
             wind_data.append((wind_speed[num], wind_direction))
-        return wind_data
-        
-    def position_nearest_forecast():  
-        '''
-        Функция получения некоторых усредненных данных прогноза погоды для активированных погодных API,
-        отображаемых на сайдбаре.
-        На выходе: словарь, вида с данными о температуре, скорости ветра и соответствующим облачности и
-        осадкам файлам PNG.
-        '''
-        datetimes = Weather.objects.all().values_list('datetime', flat=True)
-        value_set = {
-            'temperature':Weather.objects.all().values_list('temperature', flat=True),
-            'wind_speed':Weather.objects.all().values_list('wind_speed', flat=True),            
-            'clouds_img':Weather.objects.all().values_list('clouds_img', flat=True),
-            'falls_img':Weather.objects.all().values_list('falls_img', flat=True)
-        }
-        
-        tomorrow = (datetime.now() + timedelta(days=1)).day        
-        indexes = []
-        forecast_sidebar = {            
-            'temperature':[],
-            'wind_speed':[],
-            'clouds_img':[],
-            'falls_img':[]
-        }
-
-        # Создаем список порядковых номеров данных, всех активированных прогнозных API,
-        # приходящихся относительно текущего времени на следующий день с 12:00 до 16:00 включительно
-        #(будем считать, что день у нас с 12 до 16 часов ;)).
-        if len(datetimes):
-            for num, d in enumerate(datetimes):
-                if d.day == tomorrow and d.hour >= 12 and d.hour <=16:
-                    for f in forecast_sidebar:                    
-                        forecast_sidebar[f].append(value_set[f][num])
-        else:
-            return 'na'
-        
-        # Определяем количество данных для усреднения
-        amount_data = len(forecast_sidebar['temperature'])
-        
-        # Заполняем словарь forecast_sidebar усредненными данными (данные выбираются согласно
-        # составленному ранее списку валидных порядковых номеров данных после выборки из базы
-        for f in forecast_sidebar: 
-            if f == 'falls_img':
-                tmp_data1, tmp_data2 = 0, 0                    
-                for i in range(amount_data):
-                    # Тип float необходим для правильного последующего округления после усреднения данных
-                    tmp_data1 += float(forecast_sidebar[f][i][1])
-                    tmp_data2 += float(forecast_sidebar[f][i][3])
-                file_img = 't%sd%s' % (str(int(round(tmp_data1/amount_data, 0))), str(int(round(tmp_data2/amount_data, 0))))
-                forecast_sidebar[f] = [(file_img, falls_range[file_img])]
-            elif f == 'clouds_img':
-                tmp_data1 = 0
-                for i in range(amount_data):
-                    tmp_data1 += float(forecast_sidebar[f][i][2])                
-                file_img = 'cd%s' % str(int(round(tmp_data1/amount_data, 0)))
-                forecast_sidebar[f] = [(file_img, clouds_range[file_img[2]])]
-            else:
-                print f, forecast_sidebar[f], float(sum(forecast_sidebar[f])), amount_data, float(sum(forecast_sidebar[f]))/amount_data, round(float(sum(forecast_sidebar[f]))/amount_data, 0)
-                forecast_sidebar[f] = str(int(round(float(sum(forecast_sidebar[f]))/amount_data, 0)))
-        return forecast_sidebar
+        return wind_data  
    
     forecast = []    
     fields = Weather._meta.fields
@@ -213,9 +151,7 @@ def weather(request, current_tab):
             forecast.append((WEATHER_PROVIDERS[wp], value_set))      
         
         pn.append('forecast')
-        pv.append(forecast)
-        pn.append('forecast_sidebar')
-        pv.append(position_nearest_forecast())   
+        pv.append(forecast)  
     
     return call_template(
         request,

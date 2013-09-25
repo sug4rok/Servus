@@ -43,8 +43,8 @@ def get_tab_options(current_tab):
     tab_options = Tab.objects.get(app_name=current_tab)
     params['active_app_name'] = current_tab
     params['active_title'] = tab_options.title
-    params['active_sub_title'] = tab_options.sub_title    
-
+    params['active_sub_title'] = tab_options.sub_title 
+    
 def call_template(request, **kwargs):
     current_tab = kwargs.pop('current_tab', None)
     get_tab_options(current_tab)
