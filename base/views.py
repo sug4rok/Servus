@@ -1,10 +1,9 @@
 ﻿# -*- coding: utf-8 -*-
 from django.shortcuts import render_to_response
 from Servus.Servus import SITE_NAME
-from Servus.settings import STATIC_URL
 from base.models import Tab
 
-params = {'site_name':SITE_NAME,'static_url':STATIC_URL, 'tabs':Tab.objects.all()}
+params = {'site_name':SITE_NAME, 'tabs':Tab.objects.all()}
 
 def get_weekday(weekday):
     # Getting the name of the day of the week 
