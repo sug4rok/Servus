@@ -3,6 +3,7 @@
 
 {% block content %}
     {% for weather_provider, values_set in forecast %}
+        <div class='table-responsive'>
         <br />
         <table class='table table-condensed'>
             <caption style='color: #2288bb; font-weight: bold'>Прогноз погоды по данным <em>{{ weather_provider }}</em></caption>
@@ -60,5 +61,6 @@
                     {% endif %}
             {% endfor %}
         </table>
+        </div>
     {% endfor %}
 {% endblock %}
