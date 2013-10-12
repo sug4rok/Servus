@@ -1,0 +1,29 @@
+{% load static %}
+
+{{ album }}
+<!--<div align='center'>
+{% if slide_img == 'n/a' %}
+    <img src='{% get_static_prefix %}img/na.png' width='30' height='25'/>
+{% else %}
+    {% if slide_width > slide_height %}
+        <img id='slide_width' src='{% get_static_prefix %}img/slideshow{{ slide }}' style='height:auto;'/>
+    {% else %}
+        <img id='slide_height' src='{% get_static_prefix %}img/slideshow{{ slide }}' style='mas-height:100%; width:auto;'/>
+    {% endif %}
+{% endif %}
+</div>-->
+
+<!--<div id='test' style='border-style:solid'>
+<img id='test' src = '/static/img/slideshow/remont/карниз в ванной/IMG_20130919_214907.jpg'/>
+</div>-->
+
+<!--<div style='background-image: url(/static/img/slideshow/remont/карниз в ванной/IMG_20130919_214907.jpg); background-size: cover;'>
+<br/>
+<br />
+</div>-->
+<script>
+var w = window.innerWidth - 430;
+var h = window.innerHeight - 200;
+document.getElementById('slide_width').style.width = w + 'px';
+document.getElementById('slide_height').style.height = h + 'px';
+</script>

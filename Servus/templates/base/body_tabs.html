@@ -1,0 +1,60 @@
+{% extends 'base/index.html' %}
+
+{% block body_tabs %}
+    <style>
+        body {padding-top:65px;}
+        dt {padding-bottom:8px;}
+        td {padding:0;}
+        td.n_c {background: #f0f0f8}
+        td.n_f {
+            background: #f0f0f8;
+            background: -moz-linear-gradient(top, #f0f0f8 0%, #fff 100%);
+            background: -webkit-linear-gradient(top, #f0f0f8 0%, #fff 100%);
+            background: -o-linear-gradient(top, #f0f0f8 0%, #fff 100%);
+            background: -ms-linear-gradient(top, #f0f0f8 0%, #fff 100%);
+            background: linear-gradient(top, #f0f0f8 0%, #fff 100%);
+        }
+    </style>
+
+
+    {% include 'base/navbar.html' %}
+    
+    <div class='container'>        
+        <div class='panel panel-default'>
+            <div class='panel-body'>
+                <div class='row row-offcanvas row-offcanvas-right'>    
+                    <div class='col-md-9'>
+                        <h4>{{ active_title }} <small>{{ active_sub_title }}</small></h4>                
+                            {% block content %}{% endblock %}                
+                    </div>
+                    <div class='col-md-3'>                    
+                        <div id='sidebar'></div>
+                    </div>
+                </div>
+            </div>
+        </div>                
+    </div>
+
+
+<script>  
+    function reload_sidebar(){  
+        $.ajax({  
+            url: '/sidebar',  
+            cache: false,
+            success: function(html){  
+                $('#sidebar').html(html);  
+            }  
+        });  
+    }
+                        
+    $(document).ready(function(){
+        reload_sidebar();  
+        setInterval('reload_sidebar()', 2000);
+    });  
+    
+    setTimeout(function(){
+        window.location.href = '/';
+    }, 30000);
+</script>
+
+{% endblock %}

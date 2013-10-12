@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang='ru'>
+<head>
+    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'>
+    <title>{{ site_name }}</title>    
+    <link href='{% get_static_prefix %}css/bootstrap.min.css' rel='stylesheet' media='screen'>
+    <!--[if lt IE 9]>
+        <script src='http://html5shim.googlecode.com/svn/trunk/html5.js'></script>
+    <![endif]-->        
+    <link rel='shortcut icon' href='{% get_static_prefix %}img/favicon.ico'>  
+    <script src='{% get_static_prefix %}js/jquery.min.js' type='text/javascript'></script>
+</head>
+<body id='body'>
+    {% spaceless %}
+        {% if request.path == '/' %}            
+            {% include 'base/body_home.html' %}
+        {% else %}
+            {% block body_tabs %}{% endblock %}    
+        {% endif %}
+    {% endspaceless %}    
+    <script src='{% get_static_prefix %}js/bootstrap.min.js' type='text/javascript'></script>
+    <script>  
+        function load_fullscreen(){
+            $.ajax({  
+                url: '/',  
+                cache: false,
+                success: function(html){  
+                    $('#body').html(html);  
+                }  
+            }); 
+        }
+                            
+        //$(document).ready(function(){
+            //setInterval('load_fullscreen()', 10000);            
+        //});        
+    </script>
+</body>
+</html>
