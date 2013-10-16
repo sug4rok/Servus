@@ -43,18 +43,20 @@ def weather(request, current_tab):
             - название прогнозного api из Servus.Servus, например 'rp5'
             - поле таблицы базы данных, например 'clouds'
         На выходе: список даанных указанного поля
-        """   
+        """  
+        
         return Weather.objects.filter(weather_provider=wp).values_list(field, flat=True)
 
     def get_field_data(wp, field, measure):
-        """
+        """        
         Базовая функция, возвращающая набор данных в определенном порядке для шаблона weather/tab.html
         На входе:
             - название прогнозного api из Servus.Servus, например 'rp5'
             - поле таблицы базы данных, например 'temperature'
             - еденица измерения
         На выходе: кортеж, вида (<имя поля>, <описание>, <ед. измерения>, [(список значений поля]))
-        """        
+        """     
+        
         return (
             field.name,
             field.verbose_name,
@@ -68,6 +70,7 @@ def weather(request, current_tab):
         На входе: название прогнозного api из Servus.Servus, например 'owm'
         На выходе: кортеж, вида (<день недели>, <день> <месяц>, <час:00>)
         """
+        
         forecast_times = []
         for forecast_time in list_field_values(wp, 'datetime'): 
             forecast_times.append((
@@ -86,6 +89,7 @@ def weather(request, current_tab):
         , где <время суток> - 'd' или 'n' (соответсвенно день, или ночь), используется для
         затемнения "ночных" ячеек таблицы.
         """
+        
         clouds_data = []
         clouds = list_field_values(wp, 'clouds')        
         for num, clouds_img in enumerate(list_field_values(wp,'clouds_img')):
@@ -104,6 +108,7 @@ def weather(request, current_tab):
         , где <время суток> - 'd' или 'n' (соответсвенно день, или ночь), используется для
         затемнения "ночных" ячеек таблицы.
         """    
+        
         precipitation_data = []
         precipitation = list_field_values(wp, 'precipitation')
         clouds_img = list_field_values(wp,'clouds_img')
@@ -120,6 +125,7 @@ def weather(request, current_tab):
         На входе: название прогнозного api из Servus.Servus, например 'owm'
         На выходе: кортеж, вида (<скорость ветра>, <направление ветра в градусах>)
         """
+        
         wind_data = []
         wind_speed = list_field_values(wp, 'wind_speed')
         for num, wind_direction in enumerate(list_field_values(wp, 'wind_direction')):
@@ -130,7 +136,7 @@ def weather(request, current_tab):
     fields = Weather._meta.fields
     
     if WEATHER_PROVIDERS:
-        # Если хотябы один прогнозный API активирован, собираем список данных для передачи в шаблон.
+        # Если хотябы один прогнозный API активирован, собираем список данных для передачи в шаблон.       
         for wp in WEATHER_PROVIDERS:
             value_set = []
             for field in fields[2:-3]:

@@ -1,8 +1,17 @@
 ﻿# -*- coding: utf-8 -*-
+from os import walk
+from random import randint
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from Servus.Servus import SITE_NAME, TAB_APPS
-from base.models import Tab
+from Servus.settings import BASE_DIR, STATIC_URL
+from Servus.Servus import SITE_NAME, TAB_APPS, SLIDESHOW_FILE_TYPES
+from base.models import Tab, Slideshow, Events
+
+class NotImageError(Exception):
+    def __init__(self, file_type):
+        self.file_type = file_type
+    def __str__(self):
+        return repr('NotImageError: type of file is [%s]' % self.file_type)
 
 tabs = []
 for tab in Tab.objects.all():
@@ -12,7 +21,9 @@ for tab in Tab.objects.all():
 params = {'site_name':SITE_NAME, 'tabs':tabs}
 
 def get_weekday(weekday):
-    # Getting the name of the day of the week 
+    """
+    Getting the name of the day of the week 
+    """
     
     days = {
         0:'Понедельник',
@@ -26,7 +37,9 @@ def get_weekday(weekday):
     return days[weekday]
     
 def get_month(month):
-    # Getting the name of the month
+    """
+    Getting the name of the month
+    """
     
     days = {
         1:'Января',
@@ -43,6 +56,20 @@ def get_month(month):
         12:'Декабря'
     }
     return days[month]
+    
+def get_alert(e_imp):
+    """
+    The function to determine the status of the event by its code
+    """
+    
+    e_status = {
+        0:'default',
+        1:'success',
+        2:'info',
+        3:'warning',
+        4:'danger'
+    }
+    return e_status[e_imp]
 
 def get_tab_options(current_tab):
     tab_options = Tab.objects.get(app_name=current_tab)
@@ -65,3 +92,73 @@ def call_template(request, **kwargs):
     templ_path = kwargs.pop('templ_path', None)
     if templ_path:
         return render_to_response(templ_path, params, context_instance=RequestContext(request))
+        
+def index(request):
+    """
+    Функция отображения начальной страницы с выводом произвольной фотографии
+    """
+    
+    pn, pv = [], []
+    
+    pn.append('album')
+    pn.append('slide')
+        
+    path_to_imgs = '%s%simg/slideshow' % (BASE_DIR.replace('\\', '/'), STATIC_URL)    
+        
+    if len(Slideshow.objects.all()):
+        latest_id = Slideshow.objects.latest('id').id
+        while True:
+            try:
+                rnd_id = randint(1, latest_id)
+                rnd_album = unicode(Slideshow.objects.get(id=rnd_id).album_path)
+                for root, dirs, files in walk(rnd_album):
+                    rnd_file = randint(0, len(files) - 1)  
+                    slide = '%s/%s' % (rnd_album.replace(path_to_imgs, ''), files[rnd_file])
+                    file_type = slide.split('.')[-1].lower()
+                    if file_type not in SLIDESHOW_FILE_TYPES:
+                        raise NotImageError(file_type)
+                    pv.append(rnd_album.split('/')[-1])
+                    pv.append(slide)
+                    break
+            except NotImageError as e:
+                print e
+                continue
+            else:
+                break
+    else:
+        pv.append('Нет доступных альбомов, либо они еще не проиндексированы')
+        pv.append('')
+        
+    return call_template(
+        request,
+        param_names = pn,
+        param_vals = pv,
+        templ_path = 'base/index.html'
+    )
+      
+def events(request):
+    """
+    Функция, выводящая количество и важность событий на главную страницу
+    """
+    
+    pn, pv = [], []
+    try:
+        events = Events.objects.filter(event_viewed=0)
+        amount_events = len(events)
+        if amount_events:
+            pn.append('amount_events')
+            pv.append(amount_events)
+            pn.append('event_imp')
+            pv.append(get_alert(max(events.values_list('event_imp', flat=True))))
+        else:
+            raise Events.DoesNotExist
+    except Events.DoesNotExist:
+        pn.append('amount_events')
+        pv.append(0)
+        
+    return call_template(
+        request,
+        param_names = pn,
+        param_vals = pv,
+        templ_path = 'base/events.html'
+    )

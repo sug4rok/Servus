@@ -1,6 +1,5 @@
 ﻿from base.views import call_template
 
-params = {}
 def climate(request, current_tab): 
     pn, pv = [], []
 

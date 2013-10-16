@@ -28,3 +28,61 @@ class Tab(models.Model):
 
     def __unicode__(self):
         return self.tab_name
+
+        
+class Events(models.Model):
+    event_src = models.CharField(
+        max_length=15,
+        verbose_name='Источник события'
+    )
+    event_descr = models.CharField(
+        max_length=255,
+        verbose_name='Описание события',
+        null=True
+    )
+    event_imp = models.IntegerField(
+        max_length=1,
+        verbose_name='Критичность',
+        default=0,
+    )
+    event_datetime = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Время возникновения события'
+    )
+    event_viewed = models.BooleanField(
+        default=False,
+    )
+
+    
+class Errors(models.Model):
+    error_src = models.CharField(
+        max_length=15,
+        verbose_name='Источник ошибки'
+    )
+    error_descr = models.CharField(
+        max_length=255,
+        verbose_name='Описание ошибки',
+        null=True
+    )
+    error_datetime = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Время возникновения ошибки'
+    )
+    error_viewed = models.BooleanField(
+        default=False
+    )
+    
+    
+class MTime(models.Model):
+    mtime = models.FloatField(
+        default = 0.0
+    )
+    
+    
+class Slideshow(models.Model):
+    album_path = models.ImageField(
+        upload_to = '.'
+    )
+
+    def __unicode__(self):
+        return 'Slideshow class'

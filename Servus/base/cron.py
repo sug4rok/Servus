@@ -2,7 +2,8 @@
 from os.path import getsize
 from django_cron import CronJobBase, Schedule
 from Servus.settings import BASE_DIR, STATIC_URL
-from home.models import Slideshow, MTime
+from Servus.Servus import SLIDESHOW_EXCLUDE_DIRS
+from base.models import Slideshow, MTime
 
 
 class SlideshowJob(CronJobBase):
@@ -19,12 +20,13 @@ class SlideshowJob(CronJobBase):
 
     def do(self):    
         """
-        Очистка базы home_slideshow перед заполнением свежими данными 
+        Очистка базы base_slideshow перед заполнением свежими данными 
         """ 
+        
         from time import time
         t1 = time()
         
-        path_to_imgs = '%s%simg/slideshow' % (BASE_DIR.replace('\\', '/'), STATIC_URL)
+        path_to_imgs = '%s%simg/slideshow' % (BASE_DIR.replace('\\', '/'), STATIC_URL) 
         mtime = stat(path_to_imgs).st_mtime
         dir_changed = False
         try:                
@@ -44,9 +46,9 @@ class SlideshowJob(CronJobBase):
             for root, dirs, files in walk(unicode(path_to_imgs)):   
     
                 # Изменение списка 'dirnames' остановит обход папок os.walk().
-                # if u'Фото_Масленникова' in dirs:
-                    # # Не заходить в папки с .git
-                    # dirs.remove(u'Фото_Масленникова') 
+                for exclude_folder in SLIDESHOW_EXCLUDE_DIRS:
+                    if exclude_folder in dirs:
+                        dirs.remove(exclude_folder) 
                     
                 amount_files = len(files)
                 if amount_files:

@@ -37,20 +37,10 @@
 
 
 <script>  
-    function reload_sidebar(){  
-        $.ajax({  
-            url: '/sidebar',  
-            cache: false,
-            success: function(html){  
-                $('#sidebar').html(html);  
-            }  
-        });  
-    }
-                        
     $(document).ready(function(){
-        reload_sidebar();  
-        setInterval('reload_sidebar()', 2000);
-    });  
+        reload_div('sidebar');  
+        setInterval('reload_div("sidebar")', 3000);
+    });
     
     setTimeout(function(){
         window.location.href = '/';
