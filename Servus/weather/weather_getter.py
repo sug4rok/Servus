@@ -1,6 +1,6 @@
 ﻿from xml.dom import minidom
 import urllib2
-import datetime
+from datetime import datetime, timedelta
 
 
 class WG(object):
@@ -103,7 +103,7 @@ class WG_RP5(WG):
             clouds = int(self.tag_value_get('cloud_cover', i))
             tmp_data = {'weather_provider': 'rp5'}
             d = self.tag_value_get('datetime', i)
-            tmp_data['datetime'] = datetime.datetime.strptime(d, self.format)
+            tmp_data['datetime'] = datetime.strptime(d, self.format)
             tmp_data['clouds'] = clouds 
             tmp_data['precipitation'] = self.tag_value_get('precipitation', i)
             tmp_data['temperature'] = self.tag_value_get('temperature', i)
@@ -166,7 +166,7 @@ class WG_WUA(WG):
             clouds = int(self.tag_value_get('cloud', i))
             tmp_data = {'weather_provider': 'wua'}
             d = '%s %s:00' % (self.attr_value_get('day', 'date', i), self.attr_value_get('day', 'hour', i))
-            tmp_data['datetime'] = datetime.datetime.strptime(d, self.format)
+            tmp_data['datetime'] = datetime.strptime(d, self.format)
             tmp_data['temperature'] = int(self.tag_value_get('t', i+1, 'min')) + 1
             tmp_data['pressure'] = int(self.tag_value_get('p', i+1, 'min')) + 1
             tmp_data['humidity'] = int(self.tag_value_get('hmid', i, 'min')) + 1
@@ -253,9 +253,9 @@ class WG_YA(WG):
                 tmp_data = {'weather_provider': 'ya'}
                 part_of_day = self.attr_value_get('day_part', 'type', j)
                 d = '%s %s' % (day, times[part_of_day])
-                d_datetime = datetime.datetime.strptime(d, self.format)
+                d_datetime = datetime.strptime(d, self.format)
                 if part_of_day == 'night':
-                    d_datetime += datetime.timedelta(days=1)
+                    d_datetime += timedelta(days=1)
                 tmp_data['datetime'] = d_datetime
                 tmp_data['temperature'] = self.tag_value_get('avg', j)
                 tmp_data['pressure'] = self.tag_value_get('pressure', j)
@@ -312,9 +312,9 @@ class WG_OWM(WG):
             for part_of_day, time in times:
                 tmp_data = {'weather_provider': 'owm'}
                 d =  '%s %s' % (self.attr_value_get('time', 'day', i), time)
-                d_datetime = datetime.datetime.strptime(d, self.format)
+                d_datetime = datetime.strptime(d, self.format)
                 if part_of_day == 'night':
-                    d_datetime += datetime.timedelta(days=1)
+                    d_datetime += timedelta(days=1)
                 tmp_data['datetime'] = d_datetime
                 tmp_data['clouds'] = self.attr_value_get('clouds', 'all', i)
                 precipitation = self.attr_value_get('precipitation', 'value', i)

@@ -28,6 +28,17 @@ class Tab(models.Model):
 
     def __unicode__(self):
         return self.tab_name
+        
+        
+class RemoteIP(models.Model):
+    ip = models.IPAddressField()
+    last_access = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Время последнего подключения'
+    )
+    
+    def __unicode__(self):
+        return self.ip
 
         
 class Events(models.Model):
@@ -49,9 +60,10 @@ class Events(models.Model):
         auto_now_add=True,
         verbose_name='Время возникновения события'
     )
-    event_viewed = models.BooleanField(
-        default=False,
-    )
+    ips = models.ManyToManyField(RemoteIP)
+    
+    class Meta:
+        ordering = ('event_datetime',)
 
     
 class Errors(models.Model):
@@ -72,6 +84,8 @@ class Errors(models.Model):
         default=False
     )
     
+    class Meta:
+        ordering = ('error_datetime',)
     
 class MTime(models.Model):
     mtime = models.FloatField(

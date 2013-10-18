@@ -1,6 +1,7 @@
 import sys
 from datetime import datetime
 from optparse import make_option
+import traceback
 
 from django.core.management.base import BaseCommand
 from django.conf import settings
@@ -11,6 +12,7 @@ try:
 except ImportError:
     # timezone added in Django 1.4
     from django_cron import timezone
+from django.db import close_connection
 
 
 DEFAULT_LOCK_TIME = 24 * 60 * 60  # 24 hours
@@ -49,12 +51,14 @@ class Command(BaseCommand):
         try:
             crons_to_run = map(lambda x: get_class(x), cron_class_names)
         except:
-            print 'Make sure these are valid cron class names: %s' % cron_class_names
+            error = traceback.format_exc()
+            print 'Make sure these are valid cron class names: %s\n%s' % (cron_class_names, error)
             sys.exit()
 
         for cron_class in crons_to_run:
             run_cron_with_cache_check(cron_class, force=options['force'],
                 silent=options['silent'])
+        close_connection()
 
 
 def run_cron_with_cache_check(cron_class, force=False, silent=False):
@@ -71,7 +75,7 @@ def run_cron_with_cache_check(cron_class, force=False, silent=False):
             pass
         cache.set(cron_class.__name__, timezone.now(), timeout)
         instance = cron_class()
-        CronJobManager.run(instance, force)
+        CronJobManager.run(instance, force, silent)
         cache.delete(cron_class.__name__)
     else:
         if not silent:

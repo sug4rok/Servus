@@ -1,32 +1,37 @@
-{% extends 'base/body_tabs.html' %}
+﻿{% extends 'base/body_tabs.html' %}
 
 {% block content %}  
-    {% for event_imp, event_datetime, event_src, event_descr in events %}
-        <div class='alert alert-dismissable alert-{{ event_imp }}'>
-            <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>
-                &times;
-            </button>
-            <div style='font-size:140%; float:left; margin-right:10px;'>
-            {% if event_imp == 'default' %}          
-                <span class='glyphicon glyphicon-eye-open'></span>
-            {% elif event_imp == 'success' %}
-                <span class='glyphicon glyphicon-ok-sign'></span>
-            {% elif event_imp == 'info' %}
-                <span class='glyphicon glyphicon-info-sign'></span>
-            {% elif event_imp == 'warning' %}
-                <span class='glyphicon glyphicon-warning-sign'></span>
-            {% elif event_imp == 'danger' %}
-                <span class='glyphicon glyphicon-flash'></span>
-            {% endif %}
-            </div>
-            <div style='float:left; margin-right:10px;'>
-                <small>
-                    {{ event_datetime|date:'[Y-m-d H:m]' }}
-                </small>
-            </div>
-            <div>
-                <strong> {{ event_src }}:</strong> {{ event_descr }}
-            </div>  
-        </div>
-    {% endfor %}
+    {% for event_id, event_imp, event_datetime, event_src, event_descr in events %}
+        <form name='del_event' action='/home/' method='post'>{% csrf_token %}  
+            <input type='hidden' name='event_id' value='{{ event_id }}' />
+            <div class='alert alert-dismissable alert-{{ event_imp }}'>  
+                <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>                    
+                    <div onClick='document.forms.del_event.submit();'>&times;</div>
+                </button>            
+            
+                <div style='font-size:140%; float:left; margin-right:10px;'>
+                    {% if event_imp == 'default' %}          
+                        <span class='glyphicon glyphicon-eye-open'></span>
+                    {% elif event_imp == 'success' %}
+                        <span class='glyphicon glyphicon-ok-sign'></span>
+                    {% elif event_imp == 'info' %}
+                        <span class='glyphicon glyphicon-info-sign'></span>
+                    {% elif event_imp == 'warning' %}
+                        <span class='glyphicon glyphicon-warning-sign'></span>
+                    {% elif event_imp == 'danger' %}
+                        <span class='glyphicon glyphicon-flash'></span>
+                    {% endif %}
+                </div>
+                <div style='float:left; margin-right:10px;'>
+                    <small>
+                        {{ event_datetime|date:'[Y-m-d H:m]' }}
+                    </small>
+                </div>
+                <div>
+                    <strong> {{ event_src }}:</strong> {{ event_descr }}
+                </div>  
+             
+            </div>    
+        </form>
+    {% endfor %}    
 {% endblock %}

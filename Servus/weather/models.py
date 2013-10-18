@@ -75,3 +75,6 @@ class Weather(models.Model):
                               
     def __unicode__(self):
         return 'Forecast class for %s weather provider' % self.weather_provider
+    
+    class Meta:
+        ordering = ('weather_provider',)
