@@ -1,13 +1,15 @@
 ﻿# -*- coding: utf_8 -*-
-from base.views import call_template, get_alert, get_remote_ip, get_events
-from base.models import Events, RemoteIP
+from django.http import HttpResponseRedirect
+from base.views import call_template, get_alert, get_remote_hash, get_events
+from base.models import Events, RemoteHost
 
-def home(request, current_tab): 
+def home(request, current_tab):
+
     pn, pv = [], []
     
-    ip, last_access = get_remote_ip(request) 
+    r_hash, last_access = get_remote_hash(request)
     
-    events = get_events(ip)
+    events = get_events(r_hash)
     events_data = []
 
     if len(events):
@@ -19,18 +21,16 @@ def home(request, current_tab):
                 event.event_src,
                 event.event_descr
             ))
-        pn.append('events')
-        pv.append(events_data)
+    pn.append('events')
+    pv.append(events_data)
 
     if request.method == 'POST':
         event_id = request.POST.get('event_id', '')
         
-        print request.POST
-        print '--------', event_id
-        
         if event_id :
-            Events.objects.get(id=event_id).ips.add(RemoteIP.objects.get(ip=ip))
-    
+            Events.objects.get(id=event_id).r_hashes.add(RemoteHost.objects.get(r_hash=r_hash))
+            return HttpResponseRedirect('/%s/' % current_tab)		
+
     return call_template(
         request,
         param_names = pn,

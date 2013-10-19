@@ -1,12 +1,13 @@
 ﻿# -*- coding: utf-8 -*-
 from os import walk, path
 from random import randint
+from hashlib import md5
 from datetime import datetime, timedelta
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from Servus.settings import BASE_DIR, STATIC_URL
 from Servus.Servus import SITE_NAME, TAB_APPS, SLIDESHOW_FILE_TYPES
-from base.models import Tab, Slideshow, Events, RemoteIP
+from base.models import Tab, Slideshow, Events, RemoteHost
 
 class NotImageError(Exception):
     def __init__(self, file_type):
@@ -78,16 +79,23 @@ def get_alert(e_imp):
     }
     return e_status[e_imp]
     
-def get_remote_ip(request):
-    remote_ip, ip_is_new = RemoteIP.objects.get_or_create(ip=request.META['REMOTE_ADDR'])
-    last_access = False
-    if not ip_is_new:
-        last_access = remote_ip.last_access
-        remote_ip.last_access = datetime.now()
-        remote_ip.save()
-    return (remote_ip.ip, last_access)
+def get_remote_hash(request):
+    r_ip, r_host, user_agent = request.META['REMOTE_ADDR'], request.META['REMOTE_HOST'], request.META['HTTP_USER_AGENT']
+    r_hash = md5(r_ip + r_host + user_agent).hexdigest()
+    r_hash_obj, hash_is_new = RemoteHost.objects.get_or_create(r_hash=r_hash)  
+
+    if hash_is_new:
+        last_access = False
+        r_hash_obj.ip, r_hash_obj.host, r_hash_obj.user_agent = r_ip, r_host, user_agent
+        
+    else:
+        last_access = r_hash_obj.last_access
+        r_hash_obj.last_access = datetime.now()
     
-def get_events(ip):
+    r_hash_obj.save()
+    return (r_hash, last_access)
+    
+def get_events(r_hash):
     """
     События за последние 7 дней для ip-адресов не ассоциированных еще с данным событием.
     Ассоциация события с ip-адресом происходит после его закрытия в списке событий на странице home
@@ -96,7 +104,7 @@ def get_events(ip):
     """
     
     try:
-        events = Events.objects.filter(event_datetime__gte = datetime.now() - timedelta(days=7)).exclude(ips__ip=ip).order_by('-event_imp')
+        events = Events.objects.filter(event_datetime__gte = datetime.now() - timedelta(days=7)).exclude(r_hashes__r_hash=r_hash).order_by('-event_imp')
     except Events.DoesNotExist:
         events = []
         
@@ -180,9 +188,9 @@ def events(request):
     
     pn, pv = [], []
     
-    ip, last_access = get_remote_ip(request)
+    r_hash, last_access = get_remote_hash(request)
     
-    events = get_events(ip)
+    events = get_events(r_hash)
     amount_events = len(events)
     if amount_events:
         pn.append('amount_events')

@@ -30,8 +30,18 @@ class Tab(models.Model):
         return self.tab_name
         
         
-class RemoteIP(models.Model):
-    ip = models.IPAddressField()
+class RemoteHost(models.Model):
+    ip = models.IPAddressField(
+        default='127.0.0.1'
+    )
+    host = models.CharField(
+        max_length=15
+    )
+    user_agent = models.TextField()
+    r_hash = models.CharField(
+        max_length=32,
+        unique=True
+    )
     last_access = models.DateTimeField(
         auto_now_add=True,
         verbose_name='Время последнего подключения'
@@ -60,32 +70,11 @@ class Events(models.Model):
         auto_now_add=True,
         verbose_name='Время возникновения события'
     )
-    ips = models.ManyToManyField(RemoteIP)
+    r_hashes = models.ManyToManyField(RemoteHost)
     
     class Meta:
         ordering = ('event_datetime',)
 
-    
-class Errors(models.Model):
-    error_src = models.CharField(
-        max_length=15,
-        verbose_name='Источник ошибки'
-    )
-    error_descr = models.CharField(
-        max_length=255,
-        verbose_name='Описание ошибки',
-        null=True
-    )
-    error_datetime = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name='Время возникновения ошибки'
-    )
-    error_viewed = models.BooleanField(
-        default=False
-    )
-    
-    class Meta:
-        ordering = ('error_datetime',)
     
 class MTime(models.Model):
     mtime = models.FloatField(
@@ -94,8 +83,7 @@ class MTime(models.Model):
     
     
 class Slideshow(models.Model):
-    album_path = models.ImageField(
-        upload_to = '.'
+    album_path = models.FilePathField(
     )
 
     def __unicode__(self):
