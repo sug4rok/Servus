@@ -83,8 +83,9 @@ class MTime(models.Model):
     
     
 class Slideshow(models.Model):
-    album_path = models.FilePathField(
+    album_path = models.ImageField(
+        upload_to = '.'
     )
-
+        
     def __unicode__(self):
         return 'Slideshow class'

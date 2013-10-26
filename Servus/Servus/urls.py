@@ -1,6 +1,6 @@
 ﻿from django.conf.urls import patterns, include, url
 from Servus import TAB_APPS
-from base.views import index, events
+from base.views import main_page, events
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -16,7 +16,7 @@ urlpatterns = patterns('',
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     url(r'^sidebar/$', 'sidebar.views.sidebar'),
-    url(r'^$', index),
+    url(r'^$', main_page),
     url(r'^events/$', events),
     url(r'^admin/', include(admin.site.urls)),
 )

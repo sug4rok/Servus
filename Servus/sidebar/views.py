@@ -1,6 +1,6 @@
 ﻿# -*- coding: utf-8 -*-
 from datetime import datetime, timedelta
-from base.views import call_template
+from base.views import call_template, get_events_short
 from weather.models import Weather
 from weather.views import CLOUDS_RANGE, FALLS_RANGE
 
@@ -11,6 +11,7 @@ def position_nearest_forecast():
         На выходе: словарь, вида с данными о температуре, скорости ветра и соответствующим облачности и
         осадкам файлам PNG.
         """
+        
         datetimes = Weather.objects.all().values_list('datetime', flat=True)
         value_set = {
             'temperature':Weather.objects.all().values_list('temperature', flat=True),
@@ -69,6 +70,11 @@ def sidebar(request):
         
     pn.append('forecast_sidebar')
     pv.append(position_nearest_forecast())
+    
+    pn.append('amount_events')
+    pv.append(get_events_short(request)[0])
+    pn.append('event_imp')
+    pv.append(get_events_short(request)[1])
     
     return call_template(
         request,

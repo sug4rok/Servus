@@ -80,6 +80,13 @@ def get_alert(e_imp):
     return e_status[e_imp]
     
 def get_remote_hash(request):
+    """
+    Функция получения MD5-хеша по полученным META-данным о удаленном хосте 
+    и запись данных META и хеша в базу данных.
+    На входе: request
+    На выходе: расчитанный хеш, время последнего посещения.
+    """
+    
     r_ip, r_host, user_agent = request.META['REMOTE_ADDR'], request.META['REMOTE_HOST'], request.META['HTTP_USER_AGENT']
     r_hash = md5(r_ip + r_host + user_agent).hexdigest()
     r_hash_obj, hash_is_new = RemoteHost.objects.get_or_create(r_hash=r_hash)  
@@ -109,6 +116,23 @@ def get_events(r_hash):
         events = []
         
     return events
+    
+def get_events_short(request):
+    """
+    Функция, выводящая количесво событий и их кретичность для определенного хеша.
+    (См. описание к функции get_events).
+    На входе: request
+    На выходе: кортеж, вида (<количество сбобытий>, <кретичность>)
+    """
+    
+    r_hash, last_access = get_remote_hash(request)    
+    events = get_events(r_hash)
+    
+    amount_events = len(events)
+    if amount_events:
+        return (amount_events, get_alert(max(events.values_list('event_imp', flat=True))))
+    else:
+        return 0, 0
 
 def get_tab_options(current_tab):
     tab_options = Tab.objects.get(app_name=current_tab)
@@ -132,7 +156,7 @@ def call_template(request, **kwargs):
     if templ_path:
         return render_to_response(templ_path, params, context_instance=RequestContext(request))
         
-def index(request):
+def main_page(request):
     """
     Функция отображения начальной страницы с выводом произвольной фотографии
     """
@@ -178,7 +202,7 @@ def index(request):
         request,
         param_names = pn,
         param_vals = pv,
-        templ_path = 'base/index.html'
+        templ_path = 'base/body_main.html'
     )
       
 def events(request):
@@ -188,18 +212,11 @@ def events(request):
     
     pn, pv = [], []
     
-    r_hash, last_access = get_remote_hash(request)
-    
-    events = get_events(r_hash)
-    amount_events = len(events)
-    if amount_events:
-        pn.append('amount_events')
-        pv.append(amount_events)
-        pn.append('event_imp')
-        pv.append(get_alert(max(events.values_list('event_imp', flat=True))))
-    else:
-        pn.append('amount_events')
-        pv.append(0)
+    pn.append('amount_events')
+    pv.append(get_events_short(request)[0])
+    pn.append('event_imp')
+    pv.append(get_events_short(request)[1])
+        
     return call_template(
         request,
         param_names = pn,

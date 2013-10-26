@@ -17,7 +17,11 @@ class WG(object):
         self.wp_url = None
 
     def parse_xml(self):
-        url_sock = urllib2.urlopen(self.wp_url)
+        try:
+            url_sock = urllib2.urlopen(self.wp_url)
+        except urllib2.HTTPError, err:
+            print 'urllib2 HTTPError: ', err.code
+            return -1
         parsed_xml = minidom.parse(url_sock)                  
         url_sock.close()
         return parsed_xml
@@ -56,6 +60,9 @@ class WG_RP5(WG):
     
     def parse_to_dict(self):
         weather_data = []
+        
+        if self.parsed_xml == -1:
+            return weather_data
             
         def get_clouds_img(clouds, d):
             clouds_ranges = [
@@ -123,6 +130,9 @@ class WG_WUA(WG):
     
     def parse_to_dict(self):
         weather_data = []
+        
+        if self.parsed_xml == -1:
+            return weather_data
 
         def get_clouds_img(clouds, d):
             clouds_ranges = [
@@ -184,6 +194,9 @@ class WG_YA(WG):
     
     def parse_to_dict(self):
         weather_data = []
+        
+        if self.parsed_xml == -1:
+            return weather_data
 
         def get_wd(wd):
             wds = {
@@ -274,6 +287,9 @@ class WG_OWM(WG):
     
     def parse_to_dict(self):
         weather_data = []
+        
+        if self.parsed_xml == -1:
+            return weather_data
 
         def get_clouds_img(clouds, d):
             clouds_ranges = {
