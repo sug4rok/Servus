@@ -18,34 +18,35 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'base', ['Tab'])
 
-        # Adding model 'Events'
-        db.create_table(u'base_events', (
+        # Adding model 'RemoteHost'
+        db.create_table(u'base_remotehost', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('event_src', self.gf('django.db.models.fields.CharField')(max_length=15)),
+            ('ip', self.gf('django.db.models.fields.IPAddressField')(default='127.0.0.1', max_length=15)),
+            ('host', self.gf('django.db.models.fields.CharField')(max_length=15)),
+            ('user_agent', self.gf('django.db.models.fields.TextField')()),
+            ('r_hash', self.gf('django.db.models.fields.CharField')(unique=True, max_length=32)),
+            ('last_access', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
+        ))
+        db.send_create_signal(u'base', ['RemoteHost'])
+
+        # Adding model 'Event'
+        db.create_table(u'base_event', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('event_src', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['base.Tab'])),
             ('event_descr', self.gf('django.db.models.fields.CharField')(max_length=255, null=True)),
             ('event_imp', self.gf('django.db.models.fields.IntegerField')(default=0, max_length=1)),
             ('event_datetime', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('event_viewed', self.gf('django.db.models.fields.BooleanField')(default=False)),
         ))
-        db.send_create_signal(u'base', ['Events'])
+        db.send_create_signal(u'base', ['Event'])
 
-        # Adding model 'Errors'
-        db.create_table(u'base_errors', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('error_src', self.gf('django.db.models.fields.CharField')(max_length=15)),
-            ('error_descr', self.gf('django.db.models.fields.CharField')(max_length=255, null=True)),
-            ('error_datetime', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('error_viewed', self.gf('django.db.models.fields.BooleanField')(default=False)),
+        # Adding M2M table for field r_hashes on 'Event'
+        m2m_table_name = db.shorten_name(u'base_event_r_hashes')
+        db.create_table(m2m_table_name, (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('event', models.ForeignKey(orm[u'base.event'], null=False)),
+            ('remotehost', models.ForeignKey(orm[u'base.remotehost'], null=False))
         ))
-        db.send_create_signal(u'base', ['Errors'])
-
-        # Adding model 'RemoteIP'
-        db.create_table(u'base_remoteip', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('ip', self.gf('django.db.models.fields.IPAddressField')(max_length=15)),
-            ('last_access', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-        ))
-        db.send_create_signal(u'base', ['RemoteIP'])
+        db.create_unique(m2m_table_name, ['event_id', 'remotehost_id'])
 
         # Adding model 'MTime'
         db.create_table(u'base_mtime', (
@@ -66,14 +67,14 @@ class Migration(SchemaMigration):
         # Deleting model 'Tab'
         db.delete_table(u'base_tab')
 
-        # Deleting model 'Events'
-        db.delete_table(u'base_events')
+        # Deleting model 'RemoteHost'
+        db.delete_table(u'base_remotehost')
 
-        # Deleting model 'Errors'
-        db.delete_table(u'base_errors')
+        # Deleting model 'Event'
+        db.delete_table(u'base_event')
 
-        # Deleting model 'RemoteIP'
-        db.delete_table(u'base_remoteip')
+        # Removing M2M table for field r_hashes on 'Event'
+        db.delete_table(db.shorten_name(u'base_event_r_hashes'))
 
         # Deleting model 'MTime'
         db.delete_table(u'base_mtime')
@@ -83,33 +84,28 @@ class Migration(SchemaMigration):
 
 
     models = {
-        u'base.errors': {
-            'Meta': {'object_name': 'Errors'},
-            'error_datetime': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'error_descr': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True'}),
-            'error_src': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
-            'error_viewed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
-        },
-        u'base.events': {
-            'Meta': {'object_name': 'Events'},
+        u'base.event': {
+            'Meta': {'ordering': "('event_datetime',)", 'object_name': 'Event'},
             'event_datetime': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'event_descr': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True'}),
             'event_imp': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '1'}),
-            'event_src': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
-            'event_viewed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
+            'event_src': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['base.Tab']"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'r_hashes': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['base.RemoteHost']", 'symmetrical': 'False'})
         },
         u'base.mtime': {
             'Meta': {'object_name': 'MTime'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'mtime': ('django.db.models.fields.FloatField', [], {'default': '0.0'})
         },
-        u'base.remoteip': {
-            'Meta': {'object_name': 'RemoteIP'},
+        u'base.remotehost': {
+            'Meta': {'object_name': 'RemoteHost'},
+            'host': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'ip': ('django.db.models.fields.IPAddressField', [], {'max_length': '15'}),
-            'last_access': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'})
+            'ip': ('django.db.models.fields.IPAddressField', [], {'default': "'127.0.0.1'", 'max_length': '15'}),
+            'last_access': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'r_hash': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '32'}),
+            'user_agent': ('django.db.models.fields.TextField', [], {})
         },
         u'base.slideshow': {
             'Meta': {'object_name': 'Slideshow'},

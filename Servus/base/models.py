@@ -51,10 +51,17 @@ class RemoteHost(models.Model):
         return self.ip
 
         
-class Events(models.Model):
-    event_src = models.CharField(
-        max_length=15,
-        verbose_name='Источник события'
+class Event(models.Model):
+    importance = (
+        (0, 'Простое сообщение'),
+        (1, 'Положительное уведомление'),
+        (2, 'Информация к сведению'),
+        (3, 'Внимание!'),
+        (4, 'Опасность!!')
+    )
+    event_src = models.ForeignKey(
+        Tab,
+        verbose_name='Источник события',
     )
     event_descr = models.CharField(
         max_length=255,
@@ -64,18 +71,25 @@ class Events(models.Model):
     event_imp = models.IntegerField(
         max_length=1,
         verbose_name='Критичность',
-        default=0,
+        choices=importance,
+        default=0
     )
     event_datetime = models.DateTimeField(
         auto_now_add=True,
         verbose_name='Время возникновения события'
     )
-    r_hashes = models.ManyToManyField(RemoteHost)
-    
+    r_hashes = models.ManyToManyField(
+        RemoteHost,
+        editable=False
+    )
+
+    def __unicode__(self):
+        return self.event_descr   
+
     class Meta:
         ordering = ('event_datetime',)
 
-    
+
 class MTime(models.Model):
     mtime = models.FloatField(
         default = 0.0

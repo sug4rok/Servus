@@ -7,7 +7,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from Servus.settings import BASE_DIR, STATIC_URL
 from Servus.Servus import SITE_NAME, TAB_APPS, SLIDESHOW_FILE_TYPES
-from base.models import Tab, Slideshow, Events, RemoteHost
+from base.models import Tab, Slideshow, Event, RemoteHost
 
 class NotImageError(Exception):
     def __init__(self, file_type):
@@ -111,7 +111,7 @@ def get_events(r_hash):
     """
     
     try:
-        events = Events.objects.filter(event_datetime__gte = datetime.now() - timedelta(days=7)).exclude(r_hashes__r_hash=r_hash).order_by('-event_imp')
+        events = Event.objects.filter(event_datetime__gte = datetime.now() - timedelta(days=7)).exclude(r_hashes__r_hash=r_hash).order_by('-event_imp')
     except Events.DoesNotExist:
         events = []
         

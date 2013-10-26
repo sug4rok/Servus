@@ -1,5 +1,5 @@
 ﻿from django.contrib import admin
-from base.models import Tab
+from base.models import Tab, Event
 from weather.models import Weather
 
     
@@ -23,7 +23,6 @@ class TabAdmin(admin.ModelAdmin):
         #WeatherInline
     ]    
 
-class Tab_WeatherAdmin(admin.ModelAdmin):
-    radio_fields = {'app_name': admin.VERTICAL}
-    
+   
 admin.site.register(Tab, TabAdmin)
+#admin.site.register(Event)

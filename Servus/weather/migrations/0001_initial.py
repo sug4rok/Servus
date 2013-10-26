@@ -33,7 +33,7 @@ class Migration(SchemaMigration):
 
     models = {
         u'weather.weather': {
-            'Meta': {'object_name': 'Weather'},
+            'Meta': {'ordering': "('weather_provider',)", 'object_name': 'Weather'},
             'clouds': ('django.db.models.fields.IntegerField', [], {'default': '0', 'max_length': '2'}),
             'clouds_img': ('django.db.models.fields.CharField', [], {'default': "'na'", 'max_length': '3'}),
             'datetime': ('django.db.models.fields.DateTimeField', [], {'default': "'2013-08-30 00:00'"}),
