@@ -4,4 +4,10 @@
             <span class='badge'>{{ amount_events }}</span> 
         </a>
     </attr>
+{% else %}
+    <attr title='Перейти к меню'>
+        <a href='/home' class='btn btn-default btn-lg'>        
+            <span class='glyphicon glyphicon-align-justify'> </span> 
+        </a>
+    </attr>
 {% endif %}

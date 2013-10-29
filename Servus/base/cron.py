@@ -43,7 +43,7 @@ class SlideshowJob(CronJobBase):
         if dir_changed:
             obj_mt = MTime.objects.create(mtime = mtime)
             obj_mt.save()            
-            for root, dirs, files in walk(unicode(path_to_imgs)):   
+            for root, dirs, files in walk(unicode(path_to_imgs), followlinks=True):   
     
                 # Изменение списка 'dirnames' остановит обход папок os.walk().
                 for exclude_folder in SLIDESHOW_EXCLUDE_DIRS:

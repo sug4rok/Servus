@@ -27,7 +27,7 @@
 <body id='body'>
 
     {% spaceless %}
-        {% if request.path == '/' %}            
+        {% if request.path == '/' %}
             {% block body_main %}{% endblock %}              
         {% else %}
             {% block body_tabs %}{% endblock %}    
