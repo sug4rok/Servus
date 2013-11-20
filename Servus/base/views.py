@@ -3,6 +3,7 @@ from os import walk, path
 from random import randint
 from hashlib import md5
 from datetime import datetime, timedelta
+from django.http import Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from Servus.settings import BASE_DIR, STATIC_URL
@@ -111,11 +112,9 @@ def get_events(r_hash):
     """
     
     try:
-        events = Event.objects.filter(event_datetime__gte = datetime.now() - timedelta(days=7)).exclude(r_hashes__r_hash=r_hash).order_by('-event_imp')
+        return Event.objects.filter(event_datetime__gte = datetime.now() - timedelta(days=7)).exclude(r_hashes__r_hash=r_hash).order_by('-event_imp')
     except Events.DoesNotExist:
-        events = []
-        
-    return events
+        return []
     
 def get_events_short(request):
     """
@@ -155,6 +154,8 @@ def call_template(request, **kwargs):
     templ_path = kwargs.pop('templ_path', None)
     if templ_path:
         return render_to_response(templ_path, params, context_instance=RequestContext(request))
+        
+    raise Http404()
         
 def main_page(request):
     """

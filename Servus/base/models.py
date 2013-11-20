@@ -4,7 +4,12 @@ from Servus.Servus import TAB_APPS
 # Getting application type for a new tab
 APP_NAME_CHOICES = ((tab_app, tab_app) for tab_app in TAB_APPS) 
 
-class Tab(models.Model):                 
+class Tab(models.Model):     
+
+    class Meta:
+        verbose_name = 'Вкладку'
+        verbose_name_plural = 'Вкладки'  
+    
     app_name = models.CharField(
         max_length=20,
         choices=APP_NAME_CHOICES,

@@ -1,20 +1,5 @@
 ﻿# -*- coding: utf-8 -*-
 from django.db import models
-from base.models import Tab
-
-
-"""class Tab_Weather(models.Model):
-    app_name = models.ForeignKey(Tab)
-    weather_url = models.URLField(
-        verbose_name='url сайта rp5.ru',
-        help_text='url на XML-API сайта rp5.ru вида http://rp5.ru/xml/XXXX/00000/ru, \
-                   где XXXX - код города, для которого составляется прогноз погоды.',
-        blank=True,
-        null=True
-    )
-    
-    def __unicode__(self):
-        return self.app_name"""
         
         
 class Weather(models.Model):

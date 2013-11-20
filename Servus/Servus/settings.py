@@ -136,7 +136,6 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'south',    
     'base',
-    'home',
     'sidebar',
     'django_cron',
 ) + TAB_APPS
