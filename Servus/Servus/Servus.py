@@ -1,5 +1,5 @@
 ﻿# Django settings for Servus project.
-# -*- coding: utf_8 -*-
+# coding=utf-8
 
 SITE_NAME = 'Servus'
 SPEAKER_NAME = 'Servus'

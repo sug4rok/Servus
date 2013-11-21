@@ -1,4 +1,6 @@
-﻿from base.views import call_template, get_weekday, get_month
+﻿# coding=utf-8
+
+from base.views import call_template, get_weekday, get_month
 from weather.models import Weather
 from Servus.Servus import WEATHER_PROVIDERS
 
@@ -75,7 +77,7 @@ def weather(request, current_tab):
         for forecast_time in list_field_values(wp, 'datetime'): 
             forecast_times.append((
                 get_weekday(forecast_time.weekday()),
-                '%s %s' % ((forecast_time.day), get_month(forecast_time.month)),
+                '%s %s' % (forecast_time.day, get_month(forecast_time.month)),
                 '%s:00' % str(forecast_time.hour)
             ))
         return forecast_times

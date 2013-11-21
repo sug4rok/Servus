@@ -1,14 +1,12 @@
-﻿from django.db import models
+﻿# coding=utf-8
+
+from django.db import models
 from Servus.Servus import TAB_APPS
 
 # Getting application type for a new tab
 APP_NAME_CHOICES = ((tab_app, tab_app) for tab_app in TAB_APPS) 
 
-class Tab(models.Model):     
-
-    class Meta:
-        verbose_name = 'Вкладку'
-        verbose_name_plural = 'Вкладки'  
+class Tab(models.Model):      
     
     app_name = models.CharField(
         max_length=20,
@@ -30,12 +28,17 @@ class Tab(models.Model):
          blank=True, 
          null=True
     )
+    
+    class Meta(object):
+        verbose_name = 'Вкладку'
+        verbose_name_plural = 'Вкладки' 
 
     def __unicode__(self):
         return self.tab_name
         
         
 class RemoteHost(models.Model):
+
     ip = models.IPAddressField(
         default='127.0.0.1'
     )
@@ -57,6 +60,7 @@ class RemoteHost(models.Model):
 
         
 class Event(models.Model):
+
     importance = (
         (0, 'Простое сообщение'),
         (1, 'Положительное уведомление'),
@@ -87,21 +91,23 @@ class Event(models.Model):
         RemoteHost,
         editable=False
     )
+    
+    class Meta(object):
+        ordering = ('event_datetime',)
 
     def __unicode__(self):
-        return self.event_descr   
-
-    class Meta:
-        ordering = ('event_datetime',)
+        return self.event_descr    
 
 
 class MTime(models.Model):
+
     mtime = models.FloatField(
         default = 0.0
     )
     
     
 class Slideshow(models.Model):
+
     album_path = models.ImageField(
         upload_to = '.'
     )

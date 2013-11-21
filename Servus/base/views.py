@@ -101,7 +101,7 @@ def get_remote_hash(request):
         r_hash_obj.last_access = datetime.now()
     
     r_hash_obj.save()
-    return (r_hash, last_access)
+    return r_hash, last_access
     
 def get_events(r_hash):
     """
@@ -125,11 +125,11 @@ def get_events_short(request):
     """
     
     r_hash, last_access = get_remote_hash(request)    
-    events = get_events(r_hash)
+    events_short = get_events(r_hash)
     
-    amount_events = len(events)
+    amount_events = len(events_short)
     if amount_events:
-        return (amount_events, get_alert(max(events.values_list('event_imp', flat=True))))
+        return amount_events, get_alert(max(events_short.values_list('event_imp', flat=True)))
     else:
         return 0, 0
 

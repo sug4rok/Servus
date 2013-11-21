@@ -1,5 +1,6 @@
 ﻿# Django settings for Servus project.
-# -*- coding: utf_8 -*-
+# coding=utf-8
+
 import os
 from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
 from .Servus import TAB_APPS, CRON_CLASSES

@@ -1,8 +1,10 @@
 ﻿# -*- coding: utf-8 -*-
+
 from django.db import models
         
         
 class Weather(models.Model):
+
     weather_provider = models.CharField(
         max_length=3,
         verbose_name='Сайт, предоставляющий api прогноза',
@@ -57,9 +59,9 @@ class Weather(models.Model):
         max_length=4,
         default='na'
     )
+
+    class Meta(object):
+        ordering = ('weather_provider',)
                               
     def __unicode__(self):
-        return 'Forecast class for %s weather provider' % self.weather_provider
-    
-    class Meta:
-        ordering = ('weather_provider',)
+        return 'Forecast class for %s weather provider' % self.weather_provider 

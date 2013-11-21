@@ -1,4 +1,6 @@
-﻿from django.contrib import admin
+﻿# coding=utf-8
+
+from django.contrib import admin
 from Servus.Servus import TAB_APPS
 from base.models import Tab
 
@@ -15,6 +17,15 @@ class TabAdmin(admin.ModelAdmin):
     )   
 
     def formfield_for_choice_field(self, db_field, request, **kwargs):
+        """
+        Метод, переопределяющий типы доступных приложений. По умолчанию доступны все приложения,
+        активированные (добавлненные) в настройках, но т.к. вполне достаточно иметь на каждое
+        приложение по одной вкладке, то уже использованные типы приложений будут убираться из
+        доступных при создании новой вкладки, или при изменении уже существующей вкладки.
+        При изменении типа уже существующей вкладки, высвобожденный тип приложения становится
+        снова доступным.
+        """
+        
         if db_field.name == 'app_name':
             not_used_apps = []
             used_apps =  Tab.objects.all().values_list('app_name', flat=True)

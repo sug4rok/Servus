@@ -33,7 +33,7 @@ def position_nearest_forecast():
         #(будем считать, что день у нас с 12 до 16 часов ;)).
         if len(datetimes):
             for num, d in enumerate(datetimes):
-                if d.day == tomorrow and d.hour >= 12 and d.hour <=16:
+                if d.day == tomorrow and 12 <= d.hour <= 16:
                     for f in forecast_sidebar:  
                         forecast_sidebar[f].append(value_set[f][num])
         else:
