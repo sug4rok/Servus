@@ -1,5 +1,5 @@
 ﻿from django_cron import CronJobBase, Schedule
-from Servus.Servus import WEATHER_PROVIDERS
+from weather.models import WeatherProvider
 from weather.weather_getter import weather_getter
 from weather.weather_setter import *
 
@@ -17,7 +17,8 @@ class GetWeatherJob(CronJobBase):
 
     @staticmethod
     def do():
-        if WEATHER_PROVIDERS:
+        wps = WeatherProvider.objects.all()
+        if wps.count():
             weather_db_cleaner()
-            for wp in WEATHER_PROVIDERS:
-                weather_setter(weather_getter(wp), wp)
+            for wp in wps:
+                weather_setter(weather_getter(wp))

@@ -1,39 +1,42 @@
-﻿# coding=utf-8
-
+﻿# config=utf-8
 from base.views import call_template, get_weekday, get_month
-from weather.models import Weather
-from Servus.Servus import WEATHER_PROVIDERS
+from weather.models import Weather, WeatherProvider
 
 CLOUDS_RANGE = {
-        '0':'Ясно',
-        '1':'Малооблачно',
-        '2':'Переменная облачность',
-        '3':'Облачно с прояснениями',
-        '4':'Облачно',
-        '5':'Пасмурная погода',
-        'na':'Нет данных'
-    }
+    '0':u'Ясно',
+    '1':u'Малооблачно',
+    '2':u'Переменная облачность',
+    '3':u'Облачно с прояснениями',
+    '4':u'Облачно',
+    '5':u'Пасмурная погода',
+    'na':u'Нет данных'
+}
 FALLS_RANGE = {
-        't0d0':'Без осадков',
-        't1d0':'Кратковременный дождь',
-        't1d1':'Небольшой дождь',
-        't1d2':'Дождь',
-        't1d3':'Сильный дождь',
-        't1d4':'Ливень',
-        't1d5':'Гроза',
-        't2d0':'Кратковременный мокрый снег',
-        't2d1':'Небольшой мокрый снег',
-        't2d2':'Мокрый снег',
-        't2d3':'Сильный мокрый снег',
-        't2d4':'Метель',
-        't3d0':'Кратковременный снег',
-        't3d1':'Небольшой снег',
-        't3d2':'Снег',
-        't3d3':'Сильный снег',
-        't3d4':'Метель',
-        'na':'Нет данных'
-    }
-
+    't0d0':u'Без осадков',
+    't1d0':u'Кратковременный дождь',
+    't1d1':u'Небольшой дождь',
+    't1d2':u'Дождь',
+    't1d3':u'Сильный дождь',
+    't1d4':u'Ливень',
+    't1d5':u'Гроза',
+    't2d0':u'Кратковременный мокрый снег',
+    't2d1':u'Небольшой мокрый снег',
+    't2d2':u'Мокрый снег',
+    't2d3':u'Сильный мокрый снег',
+    't2d4':u'Метель',
+    't3d0':u'Кратковременный снег',
+    't3d1':u'Небольшой снег',
+    't3d2':u'Снег',
+    't3d3':u'Сильный снег',
+    't3d4':u'Метель',
+    'na':u'Нет данных'
+}
+WEATHER_PROVIDERS = {
+    'rp5':u'rp5.ru',
+    'wua':u'weather.ua',
+    'ya':u'Яндекс.Погода',
+    'owm':u'Open Weather Map'
+}
 
 def weather(request, current_tab):
     pn, pv = [], []
@@ -42,18 +45,18 @@ def weather(request, current_tab):
         """ 
         Функция получения данных из базы для определенного прогнозного API и указанного поля
         На входе: 
-            - название прогнозного api из Servus.Servus, например 'rp5'
+            - название прогнозного api из Servus_deploy.Servus, например 'rp5'
             - поле таблицы базы данных, например 'clouds'
         На выходе: список даанных указанного поля
         """  
         
-        return Weather.objects.filter(weather_provider=wp).values_list(field, flat=True)
+        return Weather.objects.filter(wp=wp).values_list(field, flat=True)
 
     def get_field_data(wp, field, measure):
         """        
         Базовая функция, возвращающая набор данных в определенном порядке для шаблона weather/tab.html
         На входе:
-            - название прогнозного api из Servus.Servus, например 'rp5'
+            - название прогнозного api из Servus_deploy.Servus, например 'rp5'
             - поле таблицы базы данных, например 'temperature'
             - еденица измерения
         На выходе: кортеж, вида (<имя поля>, <описание>, <ед. измерения>, [(список значений поля]))
@@ -69,15 +72,15 @@ def weather(request, current_tab):
     def get_forecast_time(wp):        
         """
         Функция, возвращающая кортеж с данными о времени для определенного погодного API.
-        На входе: название прогнозного api из Servus.Servus, например 'owm'
+        На входе: название прогнозного api из Servus_deploy.Servus, например 'owm'
         На выходе: кортеж, вида (<день недели>, <день> <месяц>, <час:00>)
         """
         
         forecast_times = []
-        for forecast_time in list_field_values(wp, 'datetime'): 
+        for forecast_time in list_field_values(wp, 'datetime'):
             forecast_times.append((
                 get_weekday(forecast_time.weekday()),
-                '%s %s' % (forecast_time.day, get_month(forecast_time.month)),
+                '%s %s' % ((forecast_time.day), get_month(forecast_time.month)),
                 '%s:00' % str(forecast_time.hour)
             ))
         return forecast_times
@@ -86,14 +89,14 @@ def weather(request, current_tab):
         """
         Функция, возвращающая кортеж с данными об обланчости, включая название соответствующего
         облачности файл PNG.
-        На входе: название прогнозного api из Servus.Servus, например 'ya'
+        На входе: название прогнозного api из Servus_deploy.Servus, например 'ya'
         На выходе: кортеж, вида (<файл png>, <облачность в %> <описание>, <время суток>)
         , где <время суток> - 'd' или 'n' (соответсвенно день, или ночь), используется для
         затемнения "ночных" ячеек таблицы.
         """
         
         clouds_data = []
-        clouds = list_field_values(wp, 'clouds')        
+        clouds = list_field_values(wp, 'clouds')
         for num, clouds_img in enumerate(list_field_values(wp,'clouds_img')):
             if clouds_img != 'na':
                 clouds_data.append((clouds_img + '.png', clouds[num], CLOUDS_RANGE[clouds_img[2]], clouds_img[1]))
@@ -105,7 +108,7 @@ def weather(request, current_tab):
         """
         Функция, возвращающая кортеж с данными об осадках, включая название соответствующего
         количеству осадков файл PNG.
-        На входе: название прогнозного api из Servus.Servus, например 'wua'
+        На входе: название прогнозного api из Servus_deploy.Servus, например 'wua'
         На выходе: кортеж, вида (<файл png>, <количество выпавших осадков в мм>, <описание>, <время суток>)
         , где <время суток> - 'd' или 'n' (соответсвенно день, или ночь), используется для
         затемнения "ночных" ячеек таблицы.
@@ -124,7 +127,7 @@ def weather(request, current_tab):
     def get_wind(wp):
         """
         Функция, возвращающая кортеж с данными о ветре для определенного погодного API.
-        На входе: название прогнозного api из Servus.Servus, например 'owm'
+        На входе: название прогнозного api из Servus_deploy.Servus, например 'owm'
         На выходе: кортеж, вида (<скорость ветра>, <направление ветра в градусах>)
         """
         
@@ -136,27 +139,28 @@ def weather(request, current_tab):
    
     forecast = []    
     fields = Weather._meta.fields
-    
-    if WEATHER_PROVIDERS:
-        # Если хотябы один прогнозный API активирован, собираем список данных для передачи в шаблон.       
-        for wp in WEATHER_PROVIDERS:
+
+    wps = ((wp.id, wp.weather_provider, wp.weather_city) for wp in WeatherProvider.objects.all())
+    if wps:
+        # Если хотябы один прогнозный API активирован, собираем список данных для передачи в шаблон.
+        for wp in wps:
             value_set = []
             for field in fields[2:-3]:
                 if field.name == 'datetime':
-                    value_set.append((field.name, field.verbose_name, '', get_forecast_time(wp))) 
+                    value_set.append((field.name, field.verbose_name, '', get_forecast_time(wp[0])))
                 elif field.name == 'clouds':
-                    value_set.append((field.name, field.verbose_name, '', get_clouds(wp))) 
+                    value_set.append((field.name, field.verbose_name, '', get_clouds(wp[0])))
                 elif field.name == 'precipitation':
-                    value_set.append((field.name, field.verbose_name, '', get_precipitation(wp)))
+                    value_set.append((field.name, field.verbose_name, '', get_precipitation(wp[0])))
                 elif field.name == 'temperature':
-                    value_set.append(get_field_data(wp, field, '°C'))
+                    value_set.append(get_field_data(wp[0], field, u'°C'))
                 elif field.name == 'pressure':
-                    value_set.append(get_field_data(wp, field, 'мм рт. ст.'))
+                    value_set.append(get_field_data(wp[0], field, u'мм рт. ст.'))
                 elif field.name == 'humidity':
-                    value_set.append(get_field_data(wp, field, '%'))
+                    value_set.append(get_field_data(wp[0], field, u'%'))
                 elif field.name == 'wind_speed':
-                    value_set.append((field.name, field.verbose_name, 'м/c', get_wind(wp)))
-            forecast.append((WEATHER_PROVIDERS[wp], value_set))      
+                    value_set.append((field.name, field.verbose_name, u'м/c', get_wind(wp[0])))
+            forecast.append((WEATHER_PROVIDERS[wp[1]], value_set, wp[2]))
         
         pn.append('forecast')
         pv.append(forecast)  

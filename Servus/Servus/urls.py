@@ -1,5 +1,5 @@
 ﻿from django.conf.urls import patterns, include, url
-from Servus import TAB_APPS
+from base.models import Tab
 from base.views import main_page, events
 
 # Uncomment the next two lines to enable the admin:
@@ -21,7 +21,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
 )
 
-for tab_app in TAB_APPS:
+for tab_app in Tab.objects.all().values_list('app_name', flat=True):
     urlpatterns += patterns(tab_app+'.views',
         url(r'^%s/$' % tab_app, tab_app, {'current_tab':'%s' % tab_app}),
     )

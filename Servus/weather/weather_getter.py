@@ -12,9 +12,10 @@ class WG(object):
     """    
     def __init__(self, wp):
         self.wp = wp
+        self.wp_url = wp.weather_url        
         self.parsed_xml = self.parse_xml()
         self.format = '%Y-%m-%d %H:%M'
-        self.wp_url = None
+
 
     def parse_xml(self):
         try:
@@ -50,13 +51,12 @@ class WG(object):
         return prefix 
     
     def __str__(self):
-        return 'Weather setter class for %s weather provider' % self.wp
+        return 'Weather setter class for %s weather provider' % self.wp.weather_provider
 
         
 # Четыре последующих класса реализую свой собственный метод parse_to_dict, т.к. у прогнозных сайтов
 # сильно разнятся API, а в базу данных weather_weather необходимо вносить данные в определенном виде
 class WG_RP5(WG):
-    wp_url = 'http://rp5.ru/xml/7285/00000/ru'   
     
     def parse_to_dict(self):
         weather_data = []
@@ -108,7 +108,7 @@ class WG_RP5(WG):
         
         for i in range(1,5):
             clouds = int(self.tag_value_get('cloud_cover', i))
-            tmp_data = {'weather_provider': 'rp5'}
+            tmp_data = {'wp': self.wp}
             d = self.tag_value_get('datetime', i)
             tmp_data['datetime'] = datetime.strptime(d, self.format)
             tmp_data['clouds'] = clouds 
@@ -126,7 +126,6 @@ class WG_RP5(WG):
 
         
 class WG_WUA(WG):
-    wp_url = 'http://xml.weather.co.ua/1.2/forecast/773?dayf=4?lang=ru'
     
     def parse_to_dict(self):
         weather_data = []
@@ -174,7 +173,7 @@ class WG_WUA(WG):
 
         for i in range(1,9):
             clouds = int(self.tag_value_get('cloud', i))
-            tmp_data = {'weather_provider': 'wua'}
+            tmp_data = {'wp': self.wp}
             d = '%s %s:00' % (self.attr_value_get('day', 'date', i), self.attr_value_get('day', 'hour', i))
             tmp_data['datetime'] = datetime.strptime(d, self.format)
             tmp_data['temperature'] = int(self.tag_value_get('t', i+1, 'min')) + 1
@@ -190,7 +189,6 @@ class WG_WUA(WG):
 
         
 class WG_YA(WG):
-    wp_url = 'http://export.yandex.ru/weather-ng/forecasts/26063.xml'
     
     def parse_to_dict(self):
         weather_data = []
@@ -263,7 +261,7 @@ class WG_YA(WG):
             day = self.attr_value_get('day', 'date', i)
             for j in range(1, 5):
                 weather_condition = self.attr_value_get('weather_condition', 'code', j)
-                tmp_data = {'weather_provider': 'ya'}
+                tmp_data = {'wp': self.wp}
                 part_of_day = self.attr_value_get('day_part', 'type', j)
                 d = '%s %s' % (day, times[part_of_day])
                 d_datetime = datetime.strptime(d, self.format)
@@ -283,7 +281,6 @@ class WG_YA(WG):
 
         
 class WG_OWM(WG):
-    wp_url = 'http://api.openweathermap.org/data/2.5/forecast/daily?q=St.Petersburg&mode=xml&units=metric&cnt=4'
     
     def parse_to_dict(self):
         weather_data = []
@@ -326,7 +323,7 @@ class WG_OWM(WG):
         times = [('morn','07:00'), ('day','13:00'), ('eve','19:00'), ('night','01:00')] 
         for i in range(1,3):      
             for part_of_day, time in times:
-                tmp_data = {'weather_provider': 'owm'}
+                tmp_data = {'wp': self.wp}
                 d =  '%s %s' % (self.attr_value_get('time', 'day', i), time)
                 d_datetime = datetime.strptime(d, self.format)
                 if part_of_day == 'night':
@@ -353,18 +350,18 @@ class WG_OWM(WG):
 def weather_getter(wp):
     """
     Выбор класса, соответствующего прогнозному сайту и запуск его метода
-    На входе: прогнозный сайт (берется из настроек Servus.Servus), например 'rp5'
-    На выходе: ничего не возвращается, пишется в базу weather_weather
-    """      
-    if wp == 'rp5':
-        wg = WG_RP5(wp)      
-    elif wp == 'wua':
-        wg = WG_WUA(wp)        
-    elif wp == 'ya':
+    На входе: прогнозный сайт (берется из настроек Servus_deploy.Servus), например 'rp5'
+    На выходе: список из словарей погодных характеристик для различных временных точек
+    """
+    if wp.weather_provider == u'rp5':
+        wg = WG_RP5(wp)
+    elif wp.weather_provider == u'wua':
+        wg = WG_WUA(wp)
+    elif wp.weather_provider == u'ya':
         wg = WG_YA(wp)
-    elif wp == 'owm':
+    elif wp.weather_provider == u'owm':
         wg = WG_OWM(wp)
-    else: 
+    else:
         return
-        
+
     return wg.parse_to_dict()

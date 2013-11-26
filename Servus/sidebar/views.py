@@ -1,4 +1,5 @@
-﻿# -*- coding: utf-8 -*-
+﻿# config=utf-8
+
 from datetime import datetime, timedelta
 from base.views import call_template, get_events_short
 from weather.models import Weather
@@ -11,13 +12,12 @@ def position_nearest_forecast():
         На выходе: словарь, вида с данными о температуре, скорости ветра и соответствующим облачности и
         осадкам файлам PNG.
         """
-        
-        datetimes = Weather.objects.all().values_list('datetime', flat=True)
+        datetimes = Weather.objects.filter(wp__on_sidebar=True).values_list('datetime', flat=True)
         value_set = {
-            'temperature':Weather.objects.all().values_list('temperature', flat=True),
-            'wind_speed':Weather.objects.all().values_list('wind_speed', flat=True),            
-            'clouds_img':Weather.objects.all().values_list('clouds_img', flat=True),
-            'falls_img':Weather.objects.all().values_list('falls_img', flat=True)
+            'temperature':Weather.objects.filter(wp__on_sidebar=True).values_list('temperature', flat=True),
+            'wind_speed':Weather.objects.filter(wp__on_sidebar=True).values_list('wind_speed', flat=True),
+            'clouds_img':Weather.objects.filter(wp__on_sidebar=True).values_list('clouds_img', flat=True),
+            'falls_img':Weather.objects.filter(wp__on_sidebar=True).values_list('falls_img', flat=True)
         }
         
         tomorrow = (datetime.now() + timedelta(days=1)).day 
@@ -33,7 +33,7 @@ def position_nearest_forecast():
         #(будем считать, что день у нас с 12 до 16 часов ;)).
         if len(datetimes):
             for num, d in enumerate(datetimes):
-                if d.day == tomorrow and 12 <= d.hour <= 16:
+                if d.day == tomorrow and d.hour >= 12 and d.hour <=16:
                     for f in forecast_sidebar:  
                         forecast_sidebar[f].append(value_set[f][num])
         else:
