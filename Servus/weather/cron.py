@@ -1,4 +1,5 @@
-﻿from django_cron import CronJobBase, Schedule
+﻿# coding=utf-8
+from django_cron import CronJobBase, Schedule
 from weather.models import WeatherProvider
 from weather.weather_getter import weather_getter
 from weather.weather_setter import *

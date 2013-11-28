@@ -1,4 +1,5 @@
-﻿from base.views import call_template
+﻿# coding=utf-8
+from base.views import call_template
 
 def climate(request, current_tab): 
     pn, pv = [], []

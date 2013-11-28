@@ -1,4 +1,5 @@
-﻿from weather.models import Weather
+﻿# coding=utf-8
+from weather.models import Weather
 
 def weather_db_cleaner():
     """

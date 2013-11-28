@@ -4,7 +4,7 @@ from django_cron.models import CronJobLog
 
 
 class CronJobLogAdmin(admin.ModelAdmin):
-    class Meta:
+    class Meta(object):
         model = CronJobLog
 
     search_fields = ('code', 'message')

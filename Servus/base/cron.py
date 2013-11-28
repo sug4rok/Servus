@@ -1,5 +1,5 @@
-﻿from os import walk, stat
-from os.path import getsize
+﻿# coding=utf-8
+from os import walk, stat
 from django_cron import CronJobBase, Schedule
 from Servus.settings import BASE_DIR, STATIC_URL
 from Servus.Servus import SLIDESHOW_EXCLUDE_DIRS
@@ -18,7 +18,8 @@ class SlideshowJob(CronJobBase):
     )
     code = 'SlideshowJob'    # a unique code
 
-    def do(self):    
+    @staticmethod
+    def do():
         """
         Очистка базы base_slideshow перед заполнением свежими данными 
         """ 

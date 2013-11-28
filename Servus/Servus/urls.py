@@ -1,4 +1,5 @@
-﻿from django.conf.urls import patterns, include, url
+﻿# coding=utf-8
+from django.conf.urls import patterns, include, url
 from base.models import Tab
 from base.views import main_page, events
 

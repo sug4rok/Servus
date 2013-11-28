@@ -63,26 +63,6 @@ class Migration(SchemaMigration):
         db.send_create_signal(u'base', ['Slideshow'])
 
 
-    def backwards(self, orm):
-        # Deleting model 'Tab'
-        db.delete_table(u'base_tab')
-
-        # Deleting model 'RemoteHost'
-        db.delete_table(u'base_remotehost')
-
-        # Deleting model 'Event'
-        db.delete_table(u'base_event')
-
-        # Removing M2M table for field r_hashes on 'Event'
-        db.delete_table(db.shorten_name(u'base_event_r_hashes'))
-
-        # Deleting model 'MTime'
-        db.delete_table(u'base_mtime')
-
-        # Deleting model 'Slideshow'
-        db.delete_table(u'base_slideshow')
-
-
     models = {
         u'base.event': {
             'Meta': {'ordering': "('event_datetime',)", 'object_name': 'Event'},
@@ -123,3 +103,23 @@ class Migration(SchemaMigration):
     }
 
     complete_apps = ['base']
+
+
+def backwards(orm):
+    # Deleting model 'Tab'
+    db.delete_table(u'base_tab')
+
+    # Deleting model 'RemoteHost'
+    db.delete_table(u'base_remotehost')
+
+    # Deleting model 'Event'
+    db.delete_table(u'base_event')
+
+    # Removing M2M table for field r_hashes on 'Event'
+    db.delete_table(db.shorten_name(u'base_event_r_hashes'))
+
+    # Deleting model 'MTime'
+    db.delete_table(u'base_mtime')
+
+    # Deleting model 'Slideshow'
+    db.delete_table(u'base_slideshow')

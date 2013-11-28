@@ -1,4 +1,5 @@
-﻿from xml.dom import minidom
+﻿# coding=utf-8
+from xml.dom import minidom
 import urllib2
 from datetime import datetime, timedelta
 
@@ -41,10 +42,11 @@ class WG(object):
         except KeyError:
             return -1
         
-    def file_name_prefix(self, d):
+    @staticmethod
+    def file_name_prefix(d):
         hours_format = '%H'
         h = int(d.strftime(hours_format))
-        if h > 8 and h <= 20:
+        if 8 < h <= 20:
             prefix = 'cd'
         else:
             prefix = 'cn'         
@@ -56,7 +58,7 @@ class WG(object):
         
 # Четыре последующих класса реализую свой собственный метод parse_to_dict, т.к. у прогнозных сайтов
 # сильно разнятся API, а в базу данных weather_weather необходимо вносить данные в определенном виде
-class WG_RP5(WG):
+class WGRP5(WG):
     
     def parse_to_dict(self):
         weather_data = []
@@ -125,7 +127,7 @@ class WG_RP5(WG):
         return weather_data
 
         
-class WG_WUA(WG):
+class WGWUA(WG):
     
     def parse_to_dict(self):
         weather_data = []
@@ -188,7 +190,7 @@ class WG_WUA(WG):
         return weather_data
 
         
-class WG_YA(WG):
+class WGYA(WG):
     
     def parse_to_dict(self):
         weather_data = []
@@ -280,7 +282,7 @@ class WG_YA(WG):
         return weather_data
 
         
-class WG_OWM(WG):
+class WGOWM(WG):
     
     def parse_to_dict(self):
         weather_data = []
@@ -354,13 +356,13 @@ def weather_getter(wp):
     На выходе: список из словарей погодных характеристик для различных временных точек
     """
     if wp.weather_provider == u'rp5':
-        wg = WG_RP5(wp)
+        wg = WGRP5(wp)
     elif wp.weather_provider == u'wua':
-        wg = WG_WUA(wp)
+        wg = WGWUA(wp)
     elif wp.weather_provider == u'ya':
-        wg = WG_YA(wp)
+        wg = WGYA(wp)
     elif wp.weather_provider == u'owm':
-        wg = WG_OWM(wp)
+        wg = WGOWM(wp)
     else:
         return
 

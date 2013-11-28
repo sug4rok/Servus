@@ -1,5 +1,4 @@
-﻿# config=utf-8
-
+﻿# coding=utf-8
 from datetime import datetime, timedelta
 from base.views import call_template, get_events_short
 from weather.models import Weather

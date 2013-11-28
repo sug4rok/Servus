@@ -1,4 +1,4 @@
-﻿# config=utf-8
+﻿# coding=utf-8
 from django.db import models
            
 class WeatherProvider(models.Model):
@@ -112,6 +112,6 @@ class Weather(models.Model):
                               
     def __unicode__(self):
         return 'Forecast class for %s weather provider' % self.wp_id
-    
-    class Meta:
+
+    class Meta(object):
         ordering = ('wp',)

@@ -1,4 +1,4 @@
-﻿# config=utf-8
+﻿# coding=utf-8
 from base.views import call_template, get_weekday, get_month
 from weather.models import Weather, WeatherProvider
 
