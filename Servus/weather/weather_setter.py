@@ -1,6 +1,7 @@
 ﻿# coding=utf-8
 from weather.models import Weather
 
+
 def weather_db_cleaner():
     """
     Очистка базы weather_weather перед заполнением свежими данными
@@ -9,6 +10,7 @@ def weather_db_cleaner():
         Weather.objects.all().delete()
     except Weather.DoesNotExist:
         pass
+
 
 def weather_setter(weather_data):
     """

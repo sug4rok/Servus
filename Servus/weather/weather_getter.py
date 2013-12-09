@@ -17,7 +17,6 @@ class WG(object):
         self.parsed_xml = self.parse_xml()
         self.format = '%Y-%m-%d %H:%M'
 
-
     def parse_xml(self):
         try:
             url_sock = urllib2.urlopen(self.wp_url)
@@ -81,15 +80,15 @@ class WGRP5(WG):
             
         def get_wd(wd):
             wds = {
-                u'ШТЛ':-1,
-                u'С':0,
-                u'С-В':45,
-                u'С-З':315,
-                u'Ю':180,
-                u'Ю-В':135,
-                u'Ю-З':225,
-                u'В':90,
-                u'З':270
+                u'ШТЛ': -1,
+                u'С': 0,
+                u'С-В': 45,
+                u'С-З': 315,
+                u'Ю': 180,
+                u'Ю-В': 135,
+                u'Ю-З': 225,
+                u'В': 90,
+                u'З': 270
             }
             return wds[wd]
             
@@ -150,24 +149,24 @@ class WGWUA(WG):
             
         def get_falls_img(clouds):
             falls_ranges = {
-                't0d0':range(0, 40),
-                't1d0':range(40, 50),
-                't1d1':range(50, 52),
-                't1d2':range(52, 55),
-                't1d3':range(55, 58),
-                't1d4':range(58, 60),
-                't1d5':range(60, 70),
-                't1d6':range(70, 80),
-                't2d0':range(80, 82),
-                't2d1':range(82, 84),
-                't2d2':range(84, 86),
-                't2d3':range(86, 88),
-                't2d4':range(88, 90),
-                't3d0':range(90, 92),
-                't3d1':range(92, 94),
-                't3d2':range(94, 96),
-                't3d3':range(96, 98),
-                't3d4':range(98, 100),
+                't0d0': range(0, 40),
+                't1d0': range(40, 50),
+                't1d1': range(50, 52),
+                't1d2': range(52, 55),
+                't1d3': range(55, 58),
+                't1d4': range(58, 60),
+                't1d5': range(60, 70),
+                't1d6': range(70, 80),
+                't2d0': range(80, 82),
+                't2d1': range(82, 84),
+                't2d2': range(84, 86),
+                't2d3': range(86, 88),
+                't2d4': range(88, 90),
+                't3d0': range(90, 92),
+                't3d1': range(92, 94),
+                't3d2': range(94, 96),
+                't3d3': range(96, 98),
+                't3d4': range(98, 100),
             }
             for r in falls_ranges:
                 if clouds in falls_ranges[r]:
@@ -200,56 +199,56 @@ class WGYA(WG):
 
         def get_wd(wd):
             wds = {
-                u'calm':-1,
-                u'n':0,
-                u'ne':45,
-                u'nw':315,
-                u's':180,
-                u'se':135,
-                u'sw':225,
-                u'e':90,
-                u'w':270,
+                u'calm': -1,
+                u'n': 0,
+                u'ne': 45,
+                u'nw': 315,
+                u's': 180,
+                u'se': 135,
+                u'sw': 225,
+                u'e': 90,
+                u'w': 270,
             }
             return wds[wd]
 
         def get_file_img(weather_condition, d):
             weather_conditions = {
-                'clear':['0', 't0d0'],
-                'mostly-clear':['1', 't0d0'],
-                'mostly-clear-slight-possibility-of-rain':['1', 't1d0'],
-                'partly-cloudy':['2', 't0d0'],
-                'partly-cloudy-possible-thunderstorms-with-rain':['2', 't1d0'],
-                'partly-cloudy-and-showers':['2', 't1d0'],
-                'partly-cloudy-and-light-rain':['2', 't1d1'],
-                'partly-cloudy-and-rain':['2', 't1d2'],
-                'partly-cloudy-and-wet-snow-showers':['2', 't2d0'],
-                'partly-cloudy-and-light-wet-snow':['2', 't2d1'],
-                'partly-cloudy-and-wet-snow':['2', 't2d2'],
-                'partly-cloudy-and-snow-showers':['2', 't3d0'],
-                'partly-cloudy-and-light-snow':['2', 't3d1'],
-                'partly-cloudy-and-snow':['2', 't3d2'],
-                'cloudy':['3', 't0d0'],
-                'cloudy-and-showers':['3', 't1d0'],
-                'cloudy-and-light-rain':['3', 't1d1'],
-                'cloudy-and-rain':['3', 't1d2'],
-                'cloudy-thunderstorms-with-rain':['3', 't1d5'],
-                'cloudy-and-wet-snow-showers':['3', 't2d0'],
-                'cloudy-and-light-wet-snow':['3', 't2d1'],
-                'cloudy-and-wet-snow':['3', 't2d2'],
-                'cloudy-and-snow-showers':['3', 't3d0'],
-                'cloudy-and-light-snow':['3', 't3d1'],
-                'cloudy-and-snow':['3', 't3d2'],
-                'overcast':['5', 't0d0'],
-                'overcast-and-showers':['5', 't1d0'],
-                'overcast-and-light-rain':['5', 't1d1'],
-                'overcast-and-rain':['5', 't1d2'],
-                'overcast-thunderstorms-with-rain':['5', 't1d5'],
-                'overcast-and-wet-snow-showers':['5', 't2d0'],
-                'overcast-and-light-wet-snow':['5', 't2d1'],
-                'overcast-and-wet-snow':['5', 't2d2'],
-                'overcast-and-snow-showers':['5', 't3d0'],
-                'overcast-and-light-snow':['5', 't3d1'],
-                'overcast-and-snow':['5', 't3d2'],
+                'clear': ['0', 't0d0'],
+                'mostly-clear': ['1', 't0d0'],
+                'mostly-clear-slight-possibility-of-rain': ['1', 't1d0'],
+                'partly-cloudy': ['2', 't0d0'],
+                'partly-cloudy-possible-thunderstorms-with-rain': ['2', 't1d0'],
+                'partly-cloudy-and-showers': ['2', 't1d0'],
+                'partly-cloudy-and-light-rain': ['2', 't1d1'],
+                'partly-cloudy-and-rain': ['2', 't1d2'],
+                'partly-cloudy-and-wet-snow-showers': ['2', 't2d0'],
+                'partly-cloudy-and-light-wet-snow': ['2', 't2d1'],
+                'partly-cloudy-and-wet-snow': ['2', 't2d2'],
+                'partly-cloudy-and-snow-showers': ['2', 't3d0'],
+                'partly-cloudy-and-light-snow': ['2', 't3d1'],
+                'partly-cloudy-and-snow': ['2', 't3d2'],
+                'cloudy': ['3', 't0d0'],
+                'cloudy-and-showers': ['3', 't1d0'],
+                'cloudy-and-light-rain': ['3', 't1d1'],
+                'cloudy-and-rain': ['3', 't1d2'],
+                'cloudy-thunderstorms-with-rain': ['3', 't1d5'],
+                'cloudy-and-wet-snow-showers': ['3', 't2d0'],
+                'cloudy-and-light-wet-snow': ['3', 't2d1'],
+                'cloudy-and-wet-snow': ['3', 't2d2'],
+                'cloudy-and-snow-showers': ['3', 't3d0'],
+                'cloudy-and-light-snow': ['3', 't3d1'],
+                'cloudy-and-snow': ['3', 't3d2'],
+                'overcast': ['5', 't0d0'],
+                'overcast-and-showers': ['5', 't1d0'],
+                'overcast-and-light-rain': ['5', 't1d1'],
+                'overcast-and-rain': ['5', 't1d2'],
+                'overcast-thunderstorms-with-rain': ['5', 't1d5'],
+                'overcast-and-wet-snow-showers': ['5', 't2d0'],
+                'overcast-and-light-wet-snow': ['5', 't2d1'],
+                'overcast-and-wet-snow': ['5', 't2d2'],
+                'overcast-and-snow-showers': ['5', 't3d0'],
+                'overcast-and-light-snow': ['5', 't3d1'],
+                'overcast-and-snow': ['5', 't3d2'],
             }
             if weather_condition not in weather_conditions:
                 return [('na', 'na')]
@@ -292,11 +291,11 @@ class WGOWM(WG):
 
         def get_clouds_img(clouds, d):
             clouds_ranges = {
-                '800':'0',
-                '801':'1',
-                '802':'2',
-                '803':'3',
-                '804':'5',
+                '800': '0',
+                '801': '1',
+                '802': '2',
+                '803': '3',
+                '804': '5',
             }
             if clouds not in clouds_ranges:
                 return self.file_name_prefix(d) + '5'
@@ -304,18 +303,18 @@ class WGOWM(WG):
             
         def get_falls_img(clouds):
             falls_ranges = {
-                't1d0':['321', '520', '521', '522'],
-                't1d1':['200', '300', '310', '500'],
-                't1d2':['201', '301', '311', '501'],
-                't1d3':['202', '302', '312', '502'],
-                't1d4':['210', '230', '503', '504'],
-                't1d5':['211', '212', '221', '231', '232'],
-                't1d6':['906'],
-                't2d2':['511', '611'],
-                't3d0':['621'],
-                't3d2':['600'],
-                't3d3':['601'],
-                't3d4':['602']
+                't1d0': ['321', '520', '521', '522'],
+                't1d1': ['200', '300', '310', '500'],
+                't1d2': ['201', '301', '311', '501'],
+                't1d3': ['202', '302', '312', '502'],
+                't1d4': ['210', '230', '503', '504'],
+                't1d5': ['211', '212', '221', '231', '232'],
+                't1d6': ['906'],
+                't2d2': ['511', '611'],
+                't3d0': ['621'],
+                't3d2': ['600'],
+                't3d3': ['601'],
+                't3d4': ['602']
             }
             for r in falls_ranges:
                 if clouds in falls_ranges[r]:
@@ -348,7 +347,6 @@ class WGOWM(WG):
         return weather_data
  
 
-         
 def weather_getter(wp):
     """
     Выбор класса, соответствующего прогнозному сайту и запуск его метода

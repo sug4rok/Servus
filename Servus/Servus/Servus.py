@@ -11,18 +11,15 @@ TAB_APPS = (
     'climate',   
     'weather',
     )
- 
- 
+
+# Запускаемые планировщиком задания (см. django-cron документацию)
 CRON_CLASSES = [
     'base.cron.SlideshowJob',
     'weather.cron.GetWeatherJob',    
 ]
 
-    
-# Подпапки, которые должны быть пропущены при индексации.
-SLIDESHOW_EXCLUDE_DIRS = (
-    'dont_index_me',
-)
+# Папка с фотоальбомами для слайдшоу
+SLIDESHOW_ROOT = 'static/img/slideshow'
 
 # Типы показываемых в слайдшоу файлов
 SLIDESHOW_FILE_TYPES = (

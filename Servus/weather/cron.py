@@ -4,6 +4,7 @@ from weather.models import WeatherProvider
 from weather.weather_getter import weather_getter
 from weather.weather_setter import *
 
+
 class GetWeatherJob(CronJobBase):
     RUN_EVERY_MINS = 60
     RETRY_AFTER_FAILURE_MINS = 5

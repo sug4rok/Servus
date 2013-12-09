@@ -1,11 +1,11 @@
 ﻿# coding=utf-8
 from django.contrib import admin
 from Servus.Servus import TAB_APPS
-from base.models import Tab
+from base.models import Tab, SlideshowExclude
 from weather.models import WeatherProvider
 
 
-class TabAdmin(admin.ModelAdmin):    
+class TabAdmin(admin.ModelAdmin):
     list_display = ('tab_name', 'title')
     ordering = ('id',)
     fieldsets = (
@@ -14,7 +14,7 @@ class TabAdmin(admin.ModelAdmin):
                                 'description':'Поля, выделенные жирным цветом, необходимо заполнить'
                                 }),
         ('Дополнительно', {'fields':('sub_title', )})
-    )   
+    )
 
     def formfield_for_choice_field(self, db_field, request, **kwargs):
         """
@@ -25,7 +25,7 @@ class TabAdmin(admin.ModelAdmin):
         При изменении типа уже существующей вкладки, высвобожденный тип приложения становится
         снова доступным.
         """
-        
+
         if db_field.name == 'app_name':
             not_used_apps = []
             used_apps =  Tab.objects.all().values_list('app_name', flat=True)
@@ -34,12 +34,18 @@ class TabAdmin(admin.ModelAdmin):
                     not_used_apps.append((tab_app, tab_app))
             kwargs['choices'] = not_used_apps
         return super(TabAdmin, self).formfield_for_choice_field(db_field, request, **kwargs)
-        
+
 
 class WeatherProviderAdmin(admin.ModelAdmin):
     list_display = ('weather_provider', 'weather_url', 'weather_city')
     ordering = ('weather_provider',)
-    
+
+
+class SlideshowExcludeAdmin(admin.ModelAdmin):
+    list_display = ('album_exclude',)
+    exclude = ('indexed',)
+
 
 admin.site.register(Tab, TabAdmin)
+admin.site.register(SlideshowExclude)
 admin.site.register(WeatherProvider, WeatherProviderAdmin)

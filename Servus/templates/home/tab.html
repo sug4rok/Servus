@@ -2,15 +2,15 @@
 
 {% block content %}
     {% for event_id, event_imp, event_datetime, event_src, event_descr in events %}
-        <form action='/home/' method='post'>{% csrf_token %}            
+        <form action='/home/' method='post'>{% csrf_token %}
             <div class='alert alert-{{ event_imp }}'>
                 <input type='hidden' name='event_id' value='{{ event_id }}' />
-                <button type='submit' class='close'>                    
+                <button type='submit' class='close'>
                     &times;
                 </button>
-            
+
                 <div style='font-size:140%; float:left; margin-right:10px;'>
-                    {% if event_imp == 'default' %}          
+                    {% if event_imp == 'default' %}
                         <span class='glyphicon glyphicon-eye-open'></span>
                     {% elif event_imp == 'success' %}
                         <span class='glyphicon glyphicon-ok-sign'></span>
@@ -29,9 +29,9 @@
                 </div>
                 <div>
                     <strong> {{ event_src }}:</strong> {{ event_descr }}
-                </div> 
-                
-            </div>    
-        </form> 
+                </div>
+
+            </div>
+        </form>
     {% endfor %}
 {% endblock %}

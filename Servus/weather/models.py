@@ -1,6 +1,7 @@
 ﻿# coding=utf-8
 from django.db import models
-           
+
+
 class WeatherProvider(models.Model):
 
     weather_provider = models.CharField(
@@ -75,7 +76,7 @@ class Weather(models.Model):
         max_length=4,
         verbose_name='Осадки',
         default=0.0
-    )    
+    )
     temperature = models.IntegerField(
         max_length=3,
         verbose_name='Температура',
@@ -85,7 +86,7 @@ class Weather(models.Model):
         max_length=3,
         verbose_name='Давление',
         default=0
-    )    
+    )
     humidity = models.IntegerField(
         max_length=2,
         verbose_name='Влажность',
@@ -109,7 +110,7 @@ class Weather(models.Model):
         max_length=4,
         default='na'
     )
-                              
+
     def __unicode__(self):
         return 'Forecast class for %s weather provider' % self.wp_id
 
