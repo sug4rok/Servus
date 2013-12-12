@@ -1,20 +1,19 @@
 ﻿# -*- coding: utf_8 -*-
 from django.http import HttpResponseRedirect
-from base.views import call_template, get_alert, get_remote_hash, get_events
-from base.models import Event, RemoteHost
+from django.contrib.sessions.models import Session
+from base.views import call_template, get_alert, get_events
+from base.models import Event
 
 
 def home(request, current_tab):
 
     pn, pv = [], []
 
-    # Расчет хеша для текущего браузера и IP-адреса.
-    # Необходимо для выведения списка событий для тех, кто еще не просмотрел их.
-    r_hash, last_access = get_remote_hash(request)
+    current_session = request.session.session_key
 
-    # Получение списка событий для расчитанного ранее хеша.
-    # Если с событием не еще не ассоциирован данный хеш, оно добавляется в список events.
-    events = get_events(r_hash)
+    # Получение списка событий для текущей сессии.
+    # Если с событием еще не ассоциирован ключ данной сессии, оно добавляется в список events.
+    events = get_events(current_session)
     events_data = []
 
     if len(events):
@@ -30,11 +29,11 @@ def home(request, current_tab):
     pv.append(events_data)
 
     # Обработка нажатия кнопки "x" на определнном событии.
-    # (Ассоциируем с данным событием определенный хеш).
+    # (Ассоциируем с данным событием определенный ключ сессии).
     if request.method == 'POST':
         event_id = request.POST.get('event_id', '')
-        if event_id :
-            Event.objects.get(id=event_id).r_hashes.add(RemoteHost.objects.get(r_hash=r_hash))
+        if event_id:
+            Event.objects.get(id=event_id).session_keys.add(Session.objects.get(pk=current_session))
             return HttpResponseRedirect('/%s/' % current_tab)
 
     return call_template(

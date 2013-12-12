@@ -1,34 +1,37 @@
 ﻿# coding=utf-8
 from os import walk, path
 from random import randint
-from hashlib import md5
 from datetime import datetime, timedelta
 from django.http import Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from Servus.Servus import SITE_NAME, TAB_APPS, SLIDESHOW_FILE_TYPES
-from base.models import Tab, Slideshow, Event, RemoteHost
+from base.models import Tab, Slideshow, Event
 
 
 class NotImageError(Exception):
+
     def __init__(self, file_type):
         self.file_type = file_type
+
     def __str__(self):
         return repr('NotImageError: type of file is [%s]' % self.file_type)
 
 
 class PathNotFound(Exception):
+
     def __init__(self, broken_path):
         self.broken_path = broken_path
+
     def __str__(self):
         return repr('PathNotFound: [%s] is not in slideshow directory.' % self.broken_path)
 
 tabs = []
 for tab in Tab.objects.all():
-    if tab.app_name in  TAB_APPS:
+    if tab.app_name in TAB_APPS:
         tabs.append(tab)
 
-params = {'site_name':SITE_NAME, 'tabs':tabs}
+params = {'site_name': SITE_NAME, 'tabs': tabs}
 
 
 def get_weekday(weekday):
@@ -85,54 +88,29 @@ def get_alert(e_imp):
     return e_status[e_imp]
 
 
-def get_remote_hash(request):
+def get_events(session_key):
     """
-    Функция получения MD5-хеша по полученным META-данным о удаленном хосте 
-    и запись данных META и хеша в базу данных.
-    На входе: request
-    На выходе: расчитанный хеш, время последнего посещения.
-    """
-
-    r_ip, r_host, user_agent = request.META['REMOTE_ADDR'], request.META['REMOTE_HOST'], request.META['HTTP_USER_AGENT']
-    r_hash = md5(r_ip + r_host + user_agent).hexdigest()
-    r_hash_obj, hash_is_new = RemoteHost.objects.get_or_create(r_hash=r_hash)
-
-    if hash_is_new:
-        last_access = False
-        r_hash_obj.ip, r_hash_obj.host, r_hash_obj.user_agent = r_ip, r_host, user_agent
-
-    else:
-        last_access = r_hash_obj.last_access
-        r_hash_obj.last_access = datetime.now()
-
-    r_hash_obj.save()
-    return r_hash, last_access
-
-
-def get_events(r_hash):
-    """
-    События за последние 7 дней для ip-адресов не ассоциированных еще с данным событием.
+    События за последние 7 дней для сессий, не ассоциированных еще с данным событием.
     Ассоциация события с ip-адресом происходит после его закрытия в списке событий на странице home
     На входе: ip-адрес пользователя, просматривающего страницу
     На выходе: список не просмотренных или не закрытых пользователем событий за последнии 7 дней
     """
 
     try:
-        return Event.objects.filter(event_datetime__gte = datetime.now() - timedelta(days=7)).exclude(r_hashes__r_hash=r_hash).order_by('-event_imp')
+        return Event.objects.filter(event_datetime__gte=datetime.now() - timedelta(days=7)).exclude(session_keys__session_key=session_key).order_by('-event_imp')
     except Event.DoesNotExist:
         return []
 
 
 def get_events_short(request):
     """
-    Функция, выводящая количесво событий и их кретичность для определенного хеша.
+    Функция, выводящая количесво событий и их кретичность для определенной сессии.
     (См. описание к функции get_events).
     На входе: request
     На выходе: кортеж, вида (<количество сбобытий>, <кретичность>)
     """
 
-    r_hash, last_access = get_remote_hash(request)
-    events_short = get_events(r_hash)
+    events_short = get_events(request.session.session_key)
 
     amount_events = len(events_short)
     if amount_events:
@@ -145,7 +123,7 @@ def get_tab_options(current_tab):
     tab_options = Tab.objects.get(app_name=current_tab)
     params['active_app_name'] = current_tab
     params['active_title'] = tab_options.title
-    params['active_sub_title'] = tab_options.sub_title 
+    params['active_sub_title'] = tab_options.sub_title
 
 
 def call_template(request, **kwargs):

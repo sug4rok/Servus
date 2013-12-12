@@ -30,14 +30,14 @@ class WG(object):
     def tag_value_get(self, tag_name, i, *args):
         point_names = self.parsed_xml.getElementsByTagName(tag_name)
         if args:
-            point_name = point_names[i-1].getElementsByTagName(args[0])
+            point_name = point_names[i - 1].getElementsByTagName(args[0])
             return point_name[0].childNodes[0].nodeValue
-        return point_names[i-1].childNodes[0].nodeValue
+        return point_names[i - 1].childNodes[0].nodeValue
 
     def attr_value_get(self, tag_name, attr_name, i):
         point_names = self.parsed_xml.getElementsByTagName(tag_name)
         try:
-            return point_names[i-1].attributes[attr_name].value
+            return point_names[i - 1].attributes[attr_name].value
         except KeyError:
             return -1
         
@@ -80,15 +80,15 @@ class WGRP5(WG):
             
         def get_wd(wd):
             wds = {
-                u'ШТЛ': -1,
-                u'С': 0,
-                u'С-В': 45,
-                u'С-З': 315,
-                u'Ю': 180,
-                u'Ю-В': 135,
-                u'Ю-З': 225,
-                u'В': 90,
-                u'З': 270
+                'ШТЛ': -1,
+                'С': 0,
+                'С-В': 45,
+                'С-З': 315,
+                'Ю': 180,
+                'Ю-В': 135,
+                'Ю-З': 225,
+                'В': 90,
+                'З': 270
             }
             return wds[wd]
             
@@ -107,7 +107,7 @@ class WGRP5(WG):
                 post_img = '4'
             return pref_img + post_img
         
-        for i in range(1,5):
+        for i in range(1, 5):
             clouds = int(self.tag_value_get('cloud_cover', i))
             tmp_data = {'wp': self.wp}
             d = self.tag_value_get('datetime', i)
@@ -172,13 +172,13 @@ class WGWUA(WG):
                 if clouds in falls_ranges[r]:
                     return r
 
-        for i in range(1,9):
+        for i in range(1, 9):
             clouds = int(self.tag_value_get('cloud', i))
             tmp_data = {'wp': self.wp}
             d = '%s %s:00' % (self.attr_value_get('day', 'date', i), self.attr_value_get('day', 'hour', i))
             tmp_data['datetime'] = datetime.strptime(d, self.format)
-            tmp_data['temperature'] = int(self.tag_value_get('t', i+1, 'min')) + 1
-            tmp_data['pressure'] = int(self.tag_value_get('p', i+1, 'min')) + 1
+            tmp_data['temperature'] = int(self.tag_value_get('t', i + 1, 'min')) + 1
+            tmp_data['pressure'] = int(self.tag_value_get('p', i + 1, 'min')) + 1
             tmp_data['humidity'] = int(self.tag_value_get('hmid', i, 'min')) + 1
             tmp_data['wind_speed'] = int(self.tag_value_get('wind', i, 'min')) + 1
             tmp_data['wind_direction'] = self.tag_value_get('rumb', i)
@@ -199,15 +199,15 @@ class WGYA(WG):
 
         def get_wd(wd):
             wds = {
-                u'calm': -1,
-                u'n': 0,
-                u'ne': 45,
-                u'nw': 315,
-                u's': 180,
-                u'se': 135,
-                u'sw': 225,
-                u'e': 90,
-                u'w': 270,
+                'calm': -1,
+                'n': 0,
+                'ne': 45,
+                'nw': 315,
+                's': 180,
+                'se': 135,
+                'sw': 225,
+                'e': 90,
+                'w': 270,
             }
             return wds[wd]
 
@@ -257,7 +257,7 @@ class WGYA(WG):
                     weather_conditions[weather_condition][1]
                     )]
         
-        times = {'morning':'07:00', 'day':'13:00', 'evening':'19:00', 'night':'01:00'}
+        times = {'morning': '07:00', 'day': '13:00', 'evening': '19:00', 'night': '01:00'}
         for i in range(1, 3):
             day = self.attr_value_get('day', 'date', i)
             for j in range(1, 5):
@@ -321,11 +321,11 @@ class WGOWM(WG):
                     return r
             return 't0d0'
 
-        times = [('morn','07:00'), ('day','13:00'), ('eve','19:00'), ('night','01:00')] 
+        times = [('morn', '07:00'), ('day', '13:00'), ('eve', '19:00'), ('night', '01:00')]
         for i in range(1,3):      
             for part_of_day, time in times:
                 tmp_data = {'wp': self.wp}
-                d =  '%s %s' % (self.attr_value_get('time', 'day', i), time)
+                d = '%s %s' % (self.attr_value_get('time', 'day', i), time)
                 d_datetime = datetime.strptime(d, self.format)
                 if part_of_day == 'night':
                     d_datetime += timedelta(days=1)
@@ -335,7 +335,7 @@ class WGOWM(WG):
                 if precipitation != -1:
                     tmp_data['precipitation'] = precipitation
                 tmp_data['temperature'] = round(float(self.attr_value_get('temperature', part_of_day, i)), 0)
-                tmp_data['pressure'] = round(float(self.attr_value_get('pressure', 'value', i))/1.333224, 0)
+                tmp_data['pressure'] = round(float(self.attr_value_get('pressure', 'value', i)) / 1.333224, 0)
                 tmp_data['humidity'] = self.attr_value_get('humidity', 'value', i)
                 tmp_data['wind_speed'] = round(float(self.attr_value_get('windSpeed', 'mps', i)), 0)
                 tmp_data['wind_direction'] = self.attr_value_get('windDirection', 'deg', i)
@@ -353,13 +353,13 @@ def weather_getter(wp):
     На входе: объект WeatherProvider, для которого будем парсить данные
     На выходе: список из словарей погодных характеристик для различных временных точек
     """
-    if wp.weather_provider == u'rp5':
+    if wp.weather_provider == 'rp5':
         wg = WGRP5(wp)
-    elif wp.weather_provider == u'wua':
+    elif wp.weather_provider == 'wua':
         wg = WGWUA(wp)
-    elif wp.weather_provider == u'ya':
+    elif wp.weather_provider == 'ya':
         wg = WGYA(wp)
-    elif wp.weather_provider == u'owm':
+    elif wp.weather_provider == 'owm':
         wg = WGOWM(wp)
     else:
         return

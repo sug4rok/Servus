@@ -3,39 +3,39 @@ from base.views import call_template, get_weekday, get_month
 from weather.models import Weather, WeatherProvider
 
 CLOUDS_RANGE = {
-    '0': u'Ясно',
-    '1': u'Малооблачно',
-    '2': u'Переменная облачность',
-    '3': u'Облачно с прояснениями',
-    '4': u'Облачно',
-    '5': u'Пасмурная погода',
-    'na': u'Нет данных'
+    '0': 'Ясно',
+    '1': 'Малооблачно',
+    '2': 'Переменная облачность',
+    '3': 'Облачно с прояснениями',
+    '4': 'Облачно',
+    '5': 'Пасмурная погода',
+    'na': 'Нет данных'
 }
 FALLS_RANGE = {
-    't0d0': u'Без осадков',
-    't1d0': u'Кратковременный дождь',
-    't1d1': u'Небольшой дождь',
-    't1d2': u'Дождь',
-    't1d3': u'Сильный дождь',
-    't1d4': u'Ливень',
-    't1d5': u'Гроза',
-    't2d0': u'Кратковременный мокрый снег',
-    't2d1': u'Небольшой мокрый снег',
-    't2d2': u'Мокрый снег',
-    't2d3': u'Сильный мокрый снег',
-    't2d4': u'Метель',
-    't3d0': u'Кратковременный снег',
-    't3d1': u'Небольшой снег',
-    't3d2': u'Снег',
-    't3d3': u'Сильный снег',
-    't3d4': u'Метель',
-    'na': u'Нет данных'
+    't0d0': 'Без осадков',
+    't1d0': 'Кратковременный дождь',
+    't1d1': 'Небольшой дождь',
+    't1d2': 'Дождь',
+    't1d3': 'Сильный дождь',
+    't1d4': 'Ливень',
+    't1d5': 'Гроза',
+    't2d0': 'Кратковременный мокрый снег',
+    't2d1': 'Небольшой мокрый снег',
+    't2d2': 'Мокрый снег',
+    't2d3': 'Сильный мокрый снег',
+    't2d4': 'Метель',
+    't3d0': 'Кратковременный снег',
+    't3d1': 'Небольшой снег',
+    't3d2': 'Снег',
+    't3d3': 'Сильный снег',
+    't3d4': 'Метель',
+    'na': 'Нет данных'
 }
 WEATHER_PROVIDERS = {
-    'rp5': u'rp5.ru',
-    'wua': u'weather.ua',
-    'ya': u'Яндекс.Погода',
-    'owm': u'Open Weather Map'
+    'rp5': 'rp5.ru',
+    'wua': 'weather.ua',
+    'ya': 'Яндекс.Погода',
+    'owm': 'Open Weather Map'
 }
 
 
@@ -154,14 +154,14 @@ def weather(request, current_tab):
                 elif field.name == 'precipitation':
                     value_set.append((field.name, field.verbose_name, '', get_precipitation(wp[0])))
                 elif field.name == 'temperature':
-                    value_set.append(get_field_data(wp[0], field, u'°C'))
+                    value_set.append(get_field_data(wp[0], field, '°C'))
                 elif field.name == 'pressure':
-                    value_set.append(get_field_data(wp[0], field, u'мм рт. ст.'))
+                    value_set.append(get_field_data(wp[0], field, 'мм рт. ст.'))
                 elif field.name == 'humidity':
-                    value_set.append(get_field_data(wp[0], field, u'%'))
+                    value_set.append(get_field_data(wp[0], field, '%'))
                 elif field.name == 'wind_speed':
-                    value_set.append((field.name, field.verbose_name, u'м/c', get_wind(wp[0])))
-            forecast.append((WEATHER_PROVIDERS[wp[1]], value_set, wp[2]))
+                    value_set.append((field.name, field.verbose_name, 'м/c', get_wind(wp[0])))
+            forecast.append((WEATHER_PROVIDERS[str([1])], value_set, wp[2]))
 
         pn.append('forecast')
         pv.append(forecast)

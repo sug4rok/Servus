@@ -52,16 +52,16 @@ def position_nearest_forecast():
                         # Тип float необходим для правильного последующего округления после усреднения данных
                         tmp_data1 += float(forecast_sidebar[f][i][1])
                         tmp_data2 += float(forecast_sidebar[f][i][3])
-                    file_img = 't%sd%s' % (str(int(round(tmp_data1/amount_data, 0))), str(int(round(tmp_data2/amount_data, 0))))
+                    file_img = 't%sd%s' % (str(int(round(tmp_data1 / amount_data, 0))), str(int(round(tmp_data2 / amount_data, 0))))
                     forecast_sidebar[f] = [(file_img, FALLS_RANGE[file_img])]
                 elif f == 'clouds_img':
                     tmp_data1 = 0
                     for i in range(amount_data):
                         tmp_data1 += float(forecast_sidebar[f][i][2])
-                    file_img = 'cd%s' % str(int(round(tmp_data1/amount_data, 0)))
+                    file_img = 'cd%s' % str(int(round(tmp_data1 / amount_data, 0)))
                     forecast_sidebar[f] = [(file_img, CLOUDS_RANGE[file_img[2]])]
                 else:
-                    forecast_sidebar[f] = str(int(round(float(sum(forecast_sidebar[f]))/amount_data, 0)))
+                    forecast_sidebar[f] = str(int(round(float(sum(forecast_sidebar[f])) / amount_data, 0)))
         return forecast_sidebar
 
 

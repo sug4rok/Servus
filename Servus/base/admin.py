@@ -1,7 +1,7 @@
 ﻿# coding=utf-8
 from django.contrib import admin
 from Servus.Servus import TAB_APPS
-from base.models import Tab, SlideshowExclude
+from base.models import Tab, EventRule, SlideshowExclude
 from weather.models import WeatherProvider
 
 
@@ -10,10 +10,10 @@ class TabAdmin(admin.ModelAdmin):
     ordering = ('id',)
     fieldsets = (
         ('Основные настройки', {
-                                'fields':('app_name', 'tab_name', 'title'),
-                                'description':'Поля, выделенные жирным цветом, необходимо заполнить'
-                                }),
-        ('Дополнительно', {'fields':('sub_title', )})
+            'fields': ('app_name', 'tab_name', 'title'),
+            'description': 'Поля, выделенные жирным цветом, необходимо заполнить'
+        }),
+        ('Дополнительно', {'fields': ('sub_title', )})
     )
 
     def formfield_for_choice_field(self, db_field, request, **kwargs):
@@ -36,6 +36,11 @@ class TabAdmin(admin.ModelAdmin):
         return super(TabAdmin, self).formfield_for_choice_field(db_field, request, **kwargs)
 
 
+class EventRuleAdmin(admin.ModelAdmin):
+    list_display = ('event_src', 'event_descr')
+    ordering = ('event_src',)
+
+
 class WeatherProviderAdmin(admin.ModelAdmin):
     list_display = ('weather_provider', 'weather_url', 'weather_city')
     ordering = ('weather_provider',)
@@ -47,5 +52,6 @@ class SlideshowExcludeAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Tab, TabAdmin)
+admin.site.register(EventRule, EventRuleAdmin)
 admin.site.register(SlideshowExclude)
 admin.site.register(WeatherProvider, WeatherProviderAdmin)
