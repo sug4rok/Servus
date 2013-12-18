@@ -1,0 +1,34 @@
+{% load static %}
+
+<style>
+    .pad5 {padding: 5px;}
+</style>
+
+<div style='
+        {% if slide %}
+            background-image: url({{ slide }});
+            background-size: contain;
+        {% else %}
+            background-image: url({% get_static_prefix %}img/na.png);
+            background-size: 10%;
+        {% endif %}
+        background-repeat: no-repeat;
+        background-color: #9a9a9a;
+        background-position: 50% 50%;
+        float:left;
+        border:0;
+        min-width: 100%;
+        min-height: 100%;
+    '>
+    <div class='pad5 pull-left'>
+        <span class="label label-default">{{ album }}</span>
+    </div>
+    <div id='events' class='pad5 pull-right'></div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        reload_div('events');
+        setInterval('reload_div("events")', 5000);
+    });
+</script>

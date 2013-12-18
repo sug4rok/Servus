@@ -1,7 +1,7 @@
 ﻿# coding=utf-8
 from django.conf.urls import patterns, include, url
 from base.models import Tab
-from base.views import main_page, events
+from base.views import main_page, slideshow, events
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -18,6 +18,7 @@ urlpatterns = patterns('',
 
     url(r'^sidebar/$', 'sidebar.views.sidebar'),
     url(r'^$', main_page),
+    url(r'^slideshow/$', slideshow),
     url(r'^events/$', events),
     url(r'^admin/', include(admin.site.urls)),
 )

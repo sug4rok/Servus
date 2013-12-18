@@ -12,11 +12,12 @@
     <script>
         function reload_div(div_id){
             $.ajax({  
-                url: '/' + div_id + '/',  
+                url: '/' + div_id + '/',
+                type: 'GET',
                 cache: false,
                 success: function(html){  
                     $('#' + div_id).html(html);  
-                }  
+                }
             }); 
         }
     </script>

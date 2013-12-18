@@ -147,7 +147,22 @@ def call_template(request, **kwargs):
 
 def main_page(request):
     """
-    Функция отображения начальной страницы с выводом произвольной фотографии
+    Функция отображения начальной страницы
+    """
+
+    pn, pv = [], []
+
+    return call_template(
+        request,
+        param_names = pn,
+        param_vals = pv,
+        templ_path = 'base/body_main.html'
+    )
+
+
+def slideshow(request):
+    """
+    Функция отображения на начальной странице произвольной фотографии
     """
 
     pn, pv = [], []
@@ -189,7 +204,7 @@ def main_page(request):
         request,
         param_names = pn,
         param_vals = pv,
-        templ_path = 'base/body_main.html'
+        templ_path = 'base/slideshow.html'
     )
 
 

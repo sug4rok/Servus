@@ -50,7 +50,6 @@ class SlideshowJob(CronJobBase):
             # Сравниваем время модификации текущей папки со временем, хранящемся
             # в таблице БД base_slideshowchanges
             curr_mtime = stat(root).st_mtime
-            print root, curr_mtime, mtime, curr_mtime > mtime
             if curr_mtime > mtime:
                 mtime = curr_mtime
                 dir_changed = True
