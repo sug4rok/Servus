@@ -7,17 +7,18 @@
             height:100%;
             margin:0;
         }
-        div{
+        div.slides{
             height:100%;
         }
+        div.pad5 {padding: 5px;}
     </style>
 
-    <div id='slideshow'></div>
+    <div id='slideshow' class='slides'></div>
 
     <script>
         $(document).ready(function(){
-            reload_div('slideshow');
-            setInterval('reload_div("slideshow")', 60000);
+            reload_div('slideshow', 120000);
+            reload_div('events', 5000);
         });
     </script>
 {% endblock %}

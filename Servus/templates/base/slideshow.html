@@ -1,9 +1,5 @@
 {% load static %}
 
-<style>
-    .pad5 {padding: 5px;}
-</style>
-
 <div style='
         {% if slide %}
             background-image: url({{ slide }});
@@ -21,14 +17,7 @@
         min-height: 100%;
     '>
     <div class='pad5 pull-left'>
-        <span class="label label-default">{{ album }}</span>
+        <span class='label label-default'>{{ album }}</span>
     </div>
     <div id='events' class='pad5 pull-right'></div>
 </div>
-
-<script>
-    $(document).ready(function(){
-        reload_div('events');
-        setInterval('reload_div("events")', 5000);
-    });
-</script>

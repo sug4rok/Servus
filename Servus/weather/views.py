@@ -161,7 +161,7 @@ def weather(request, current_tab):
                     value_set.append(get_field_data(wp[0], field, '%'))
                 elif field.name == 'wind_speed':
                     value_set.append((field.name, field.verbose_name, 'м/c', get_wind(wp[0])))
-            forecast.append((WEATHER_PROVIDERS[str([1])], value_set, wp[2]))
+            forecast.append((WEATHER_PROVIDERS[wp[1]], value_set, wp[2]))
 
         pn.append('forecast')
         pv.append(forecast)
