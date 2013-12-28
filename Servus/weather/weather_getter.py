@@ -67,14 +67,14 @@ class WGRP5(WG):
             
         def get_clouds_img(clouds, d):
             clouds_ranges = [
-                range(0, 11),
-                range(11, 31),
-                range(31, 51),
-                range(51, 71),
-                range(71, 91),
-                range(91, 101),
+                xrange(0, 11),
+                xrange(11, 31),
+                xrange(31, 51),
+                xrange(51, 71),
+                xrange(71, 91),
+                xrange(91, 101),
             ]
-            for r in range(0, 6):
+            for r in xrange(0, 6):
                 if clouds in clouds_ranges[r]:
                     return self.file_name_prefix(d) + str(r) 
             
@@ -107,7 +107,7 @@ class WGRP5(WG):
                 post_img = '4'
             return pref_img + post_img
         
-        for i in range(1, 5):
+        for i in xrange(1, 5):
             clouds = int(self.tag_value_get('cloud_cover', i))
             tmp_data = {'wp': self.wp}
             d = self.tag_value_get('datetime', i)
@@ -136,43 +136,43 @@ class WGWUA(WG):
 
         def get_clouds_img(clouds, d):
             clouds_ranges = [
-                range(0, 5),
-                range(5, 10),
-                range(10, 20),
-                range(20, 25),
-                range(25, 30),
-                range(30, 101),
+                xrange(0, 5),
+                xrange(5, 10),
+                xrange(10, 20),
+                xrange(20, 25),
+                xrange(25, 30),
+                xrange(30, 101),
             ]
-            for r in range(0, 6):
+            for r in xrange(0, 6):
                 if clouds in clouds_ranges[r]:
                     return self.file_name_prefix(d) + str(r)            
             
         def get_falls_img(clouds):
             falls_ranges = {
-                't0d0': range(0, 40),
-                't1d0': range(40, 50),
-                't1d1': range(50, 52),
-                't1d2': range(52, 55),
-                't1d3': range(55, 58),
-                't1d4': range(58, 60),
-                't1d5': range(60, 70),
-                't1d6': range(70, 80),
-                't2d0': range(80, 82),
-                't2d1': range(82, 84),
-                't2d2': range(84, 86),
-                't2d3': range(86, 88),
-                't2d4': range(88, 90),
-                't3d0': range(90, 92),
-                't3d1': range(92, 94),
-                't3d2': range(94, 96),
-                't3d3': range(96, 98),
-                't3d4': range(98, 100),
+                't0d0': xrange(0, 40),
+                't1d0': xrange(40, 50),
+                't1d1': xrange(50, 52),
+                't1d2': xrange(52, 55),
+                't1d3': xrange(55, 58),
+                't1d4': xrange(58, 60),
+                't1d5': xrange(60, 70),
+                't1d6': xrange(70, 80),
+                't2d0': xrange(80, 82),
+                't2d1': xrange(82, 84),
+                't2d2': xrange(84, 86),
+                't2d3': xrange(86, 88),
+                't2d4': xrange(88, 90),
+                't3d0': xrange(90, 92),
+                't3d1': xrange(92, 94),
+                't3d2': xrange(94, 96),
+                't3d3': xrange(96, 98),
+                't3d4': xrange(98, 100),
             }
             for r in falls_ranges:
                 if clouds in falls_ranges[r]:
                     return r
 
-        for i in range(1, 9):
+        for i in xrange(1, 9):
             clouds = int(self.tag_value_get('cloud', i))
             tmp_data = {'wp': self.wp}
             d = '%s %s:00' % (self.attr_value_get('day', 'date', i), self.attr_value_get('day', 'hour', i))
@@ -258,9 +258,9 @@ class WGYA(WG):
                     )]
         
         times = {'morning': '07:00', 'day': '13:00', 'evening': '19:00', 'night': '01:00'}
-        for i in range(1, 3):
+        for i in xrange(1, 3):
             day = self.attr_value_get('day', 'date', i)
-            for j in range(1, 5):
+            for j in xrange(1, 5):
                 weather_condition = self.attr_value_get('weather_condition', 'code', j)
                 tmp_data = {'wp': self.wp}
                 part_of_day = self.attr_value_get('day_part', 'type', j)
@@ -322,7 +322,7 @@ class WGOWM(WG):
             return 't0d0'
 
         times = [('morn', '07:00'), ('day', '13:00'), ('eve', '19:00'), ('night', '01:00')]
-        for i in range(1,3):      
+        for i in xrange(1,3):
             for part_of_day, time in times:
                 tmp_data = {'wp': self.wp}
                 d = '%s %s' % (self.attr_value_get('time', 'day', i), time)

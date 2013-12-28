@@ -2,12 +2,12 @@
 from base.views import call_template
 
 
-def climate(request, current_tab): 
-    pn, pv = [], []
+def climate(request, current_tab):
+
+    params = {}
 
     return call_template(
         request,
-        param_names = pn,
-        param_vals = pv,
+        params,
         current_tab=current_tab
     )

@@ -40,7 +40,6 @@ WEATHER_PROVIDERS = {
 
 
 def weather(request, current_tab):
-    pn, pv = [], []
 
     def list_field_values(wp, field):
         """
@@ -163,12 +162,10 @@ def weather(request, current_tab):
                     value_set.append((field.name, field.verbose_name, 'м/c', get_wind(wp[0])))
             forecast.append((WEATHER_PROVIDERS[wp[1]], value_set, wp[2]))
 
-        pn.append('forecast')
-        pv.append(forecast)
+        params = {'forecast': forecast}
 
     return call_template(
         request,
-        param_names = pn,
-        param_vals = pv,
+        params,
         current_tab=current_tab
     )

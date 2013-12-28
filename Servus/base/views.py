@@ -126,20 +126,19 @@ def get_tab_options(current_tab):
     params['active_sub_title'] = tab_options.sub_title
 
 
-def call_template(request, **kwargs):
-    param_vals = kwargs.pop('param_vals', None)
-    for num, param in enumerate(kwargs.pop('param_names', None)):
-        params[param] = param_vals[num]
+def call_template(request, *args, **kwargs):
+    if args:
+        params.update(args[0])
 
     current_tab = kwargs.pop('current_tab', None)
-    if current_tab:
+    if current_tab is not None:
         get_tab_options(current_tab)
 
         # RequestContext необходим для получения текущего URL в шаблоне
         return render_to_response('%s/tab.html' % current_tab, params, context_instance=RequestContext(request))
         
     templ_path = kwargs.pop('templ_path', None)
-    if templ_path:
+    if templ_path is not None:
         return render_to_response(templ_path, params, context_instance=RequestContext(request))
 
     raise Http404()
@@ -150,13 +149,9 @@ def main_page(request):
     Функция отображения начальной страницы
     """
 
-    pn, pv = [], []
-
     return call_template(
         request,
-        param_names = pn,
-        param_vals = pv,
-        templ_path = 'base/body_main.html'
+        templ_path='base/body_main.html'
     )
 
 
@@ -165,10 +160,7 @@ def slideshow(request):
     Функция отображения на начальной странице произвольной фотографии
     """
 
-    pn, pv = [], []
-
-    pn.append('album')
-    pn.append('slide')
+    params = {'album': '', 'slide': ''}
 
     if len(Slideshow.objects.all()):
         latest_id = Slideshow.objects.latest('id').id
@@ -183,8 +175,8 @@ def slideshow(request):
                         file_type = slide.split('.')[-1].lower()
                         if file_type not in SLIDESHOW_FILE_TYPES:
                             raise NotImageError(file_type)
-                        pv.append(rnd_album.split('/')[-1])
-                        pv.append(slide)
+                        params['album'] = rnd_album.split('/')[-1]
+                        params['slide'] = slide
                         break
                 else:
                     raise PathNotFound(rnd_album)
@@ -197,14 +189,12 @@ def slideshow(request):
             else:
                 break
     else:
-        pv.append('Нет доступных альбомов, либо они еще не проиндексированы')
-        pv.append('')
+        params['album'] = 'Нет доступных альбомов, либо они еще не проиндексированы'
 
     return call_template(
         request,
-        param_names = pn,
-        param_vals = pv,
-        templ_path = 'base/slideshow.html'
+        params,
+        templ_path='base/slideshow.html'
     )
 
 
@@ -213,16 +203,13 @@ def events(request):
     Функция, выводящая количество и важность событий на главную страницу
     """
 
-    pn, pv = [], []
-
-    pn.append('amount_events')
-    pv.append(get_events_short(request)[0])
-    pn.append('event_imp')
-    pv.append(get_events_short(request)[1])
+    params = {
+        'amount_events': get_events_short(request)[0],
+        'event_imp': get_events_short(request)[1]
+    }
 
     return call_template(
         request,
-        param_names = pn,
-        param_vals = pv,
-        templ_path = 'base/events.html'
+        params,
+        templ_path='base/events.html'
     )

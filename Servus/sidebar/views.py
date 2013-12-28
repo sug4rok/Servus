@@ -48,7 +48,7 @@ def position_nearest_forecast():
             for f in forecast_sidebar:
                 if f == 'falls_img':
                     tmp_data1, tmp_data2 = 0, 0
-                    for i in range(amount_data):
+                    for i in xrange(amount_data):
                         # Тип float необходим для правильного последующего округления после усреднения данных
                         tmp_data1 += float(forecast_sidebar[f][i][1])
                         tmp_data2 += float(forecast_sidebar[f][i][3])
@@ -56,7 +56,7 @@ def position_nearest_forecast():
                     forecast_sidebar[f] = [(file_img, FALLS_RANGE[file_img])]
                 elif f == 'clouds_img':
                     tmp_data1 = 0
-                    for i in range(amount_data):
+                    for i in xrange(amount_data):
                         tmp_data1 += float(forecast_sidebar[f][i][2])
                     file_img = 'cd%s' % str(int(round(tmp_data1 / amount_data, 0)))
                     forecast_sidebar[f] = [(file_img, CLOUDS_RANGE[file_img[2]])]
@@ -66,19 +66,14 @@ def position_nearest_forecast():
 
 
 def sidebar(request):
-    pn, pv = [], []
-
-    pn.append('forecast_sidebar')
-    pv.append(position_nearest_forecast())
-
-    pn.append('amount_events')
-    pv.append(get_events_short(request)[0])
-    pn.append('event_imp')
-    pv.append(get_events_short(request)[1])
+    params = {
+        'forecast_sidebar': position_nearest_forecast(),
+        'amount_events': get_events_short(request)[0],
+        'event_imp': get_events_short(request)[1]
+    }
 
     return call_template(
         request,
-        param_names = pn,
-        param_vals = pv,
-        templ_path = 'base/sidebar.html'
+        params,
+        templ_path='base/sidebar.html'
     )

@@ -6,9 +6,6 @@ from base.models import Event
 
 
 def home(request, current_tab):
-
-    pn, pv = [], []
-
     current_session = request.session.session_key
 
     # Получение списка событий для текущей сессии.
@@ -25,8 +22,8 @@ def home(request, current_tab):
                 event.event_src,
                 event.event_descr
             ))
-    pn.append('events')
-    pv.append(events_data)
+
+    params = {'events': events_data}
 
     # Обработка нажатия кнопки "x" на определнном событии.
     # (Ассоциируем с данным событием определенный ключ сессии).
@@ -38,7 +35,6 @@ def home(request, current_tab):
 
     return call_template(
         request,
-        param_names = pn,
-        param_vals = pv,
+        params,
         current_tab=current_tab
     )
