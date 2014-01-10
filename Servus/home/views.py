@@ -1,4 +1,4 @@
-﻿# -*- coding: utf_8 -*-
+﻿# coding=utf-8
 from django.http import HttpResponseRedirect
 from django.contrib.sessions.models import Session
 from base.views import call_template, get_alert, get_events

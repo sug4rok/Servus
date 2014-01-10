@@ -2,7 +2,7 @@
 
 <div style='
         {% if slide %}
-            background-image: url({{ slide }});
+            background-image: url("{{ slide }}");
             background-size: contain;
         {% else %}
             background-image: url({% get_static_prefix %}img/na.png);

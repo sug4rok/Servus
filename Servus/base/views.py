@@ -162,12 +162,11 @@ def slideshow(request):
 
     params = {'album': '', 'slide': ''}
 
-    if len(Slideshow.objects.all()):
-        latest_id = Slideshow.objects.latest('id').id
+    if Slideshow.objects.count():
         while True:
             try:
-                rnd_id = randint(1, latest_id)
-                rnd_album = unicode(Slideshow.objects.get(id=rnd_id).album_path)
+                # Получаем первый элемент произвольно отсортированного списка фотоальбомов
+                rnd_album = unicode(Slideshow.objects.order_by('?')[0].album_path)
                 if path.exists(rnd_album):
                     for root, dirs, files in walk(rnd_album):
                         rnd_file = randint(0, len(files) - 1)
@@ -175,7 +174,7 @@ def slideshow(request):
                         file_type = slide.split('.')[-1].lower()
                         if file_type not in SLIDESHOW_FILE_TYPES:
                             raise NotImageError(file_type)
-                        params['album'] = rnd_album.split('/')[-1]
+                        params['album'] = rnd_album.split('/')[-1].replace('_', ' ')
                         params['slide'] = slide
                         break
                 else:

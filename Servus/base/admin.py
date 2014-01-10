@@ -28,7 +28,7 @@ class TabAdmin(admin.ModelAdmin):
 
         if db_field.name == 'app_name':
             not_used_apps = []
-            used_apps =  Tab.objects.all().values_list('app_name', flat=True)
+            used_apps = Tab.objects.all().values_list('app_name', flat=True)
             for tab_app in TAB_APPS:
                 if tab_app not in used_apps:
                     not_used_apps.append((tab_app, tab_app))

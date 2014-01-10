@@ -12,6 +12,7 @@ def position_nearest_forecast():
         На выходе: словарь, вида с данными о температуре, скорости ветра и соответствующим облачности и
         осадкам файлам PNG.
         """
+
         datetimes = Weather.objects.filter(wp__on_sidebar=True).values_list('datetime', flat=True)
         value_set = {
             'temperature': Weather.objects.filter(wp__on_sidebar=True).values_list('temperature', flat=True),
@@ -34,8 +35,8 @@ def position_nearest_forecast():
         if len(datetimes):
             for num, d in enumerate(datetimes):
                 if d.day == tomorrow and 12 <= d.hour <= 16:
-                    for f in forecast_sidebar:
-                        forecast_sidebar[f].append(value_set[f][num])
+                    for f_k, f_v in forecast_sidebar.iteritems():
+                        f_v.append(value_set[f_k][num])
         else:
             return 'na'
 
@@ -45,23 +46,23 @@ def position_nearest_forecast():
         # Заполняем словарь forecast_sidebar усредненными данными (данные выбираются согласно
         # составленному ранее списку валидных порядковых номеров данных после выборки из базы
         if amount_data:
-            for f in forecast_sidebar:
-                if f == 'falls_img':
+            for f_k, f_v in forecast_sidebar.iteritems():
+                if f_k == 'falls_img':
                     tmp_data1, tmp_data2 = 0, 0
                     for i in xrange(amount_data):
                         # Тип float необходим для правильного последующего округления после усреднения данных
-                        tmp_data1 += float(forecast_sidebar[f][i][1])
-                        tmp_data2 += float(forecast_sidebar[f][i][3])
+                        tmp_data1 += float(f_v[i][1])
+                        tmp_data2 += float(f_v[i][3])
                     file_img = 't%sd%s' % (str(int(round(tmp_data1 / amount_data, 0))), str(int(round(tmp_data2 / amount_data, 0))))
-                    forecast_sidebar[f] = [(file_img, FALLS_RANGE[file_img])]
-                elif f == 'clouds_img':
+                    forecast_sidebar[f_k] = [(file_img, FALLS_RANGE[file_img])]
+                elif f_k == 'clouds_img':
                     tmp_data1 = 0
                     for i in xrange(amount_data):
-                        tmp_data1 += float(forecast_sidebar[f][i][2])
+                        tmp_data1 += float(f_v[i][2])
                     file_img = 'cd%s' % str(int(round(tmp_data1 / amount_data, 0)))
-                    forecast_sidebar[f] = [(file_img, CLOUDS_RANGE[file_img[2]])]
+                    forecast_sidebar[f_k] = [(file_img, CLOUDS_RANGE[file_img[2]])]
                 else:
-                    forecast_sidebar[f] = str(int(round(float(sum(forecast_sidebar[f])) / amount_data, 0)))
+                    forecast_sidebar[f_k] = str(int(round(float(sum(f_v)) / amount_data, 0)))
         return forecast_sidebar
 
 
