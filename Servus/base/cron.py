@@ -24,9 +24,6 @@ class SlideshowJob(CronJobBase):
         находящегося в папке SLIDESHOW_ROOT (см. настройки Servus/Servus.py).
         """
 
-        from time import time
-        t1 = time()
-
         album_paths = []
         try:
             mtime = SlideshowChanges.objects.get(id=1).mtime
@@ -65,5 +62,3 @@ class SlideshowJob(CronJobBase):
             obj_ssch.mtime = mtime
             obj_ssch.was_excluded = False
             obj_ssch.save()
-
-        print time()-t1

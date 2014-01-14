@@ -42,25 +42,37 @@ def position_nearest_forecast():
 
         # Определяем количество данных для усреднения
         amount_data = len(forecast_sidebar['temperature'])
+        temperature = int(round(float(sum(forecast_sidebar['temperature'])) / amount_data, 0))
 
         # Заполняем словарь forecast_sidebar усредненными данными (данные выбираются согласно
         # составленному ранее списку валидных порядковых номеров данных после выборки из базы
         if amount_data:
             for f_k, f_v in forecast_sidebar.iteritems():
                 if f_k == 'falls_img':
-                    tmp_data1, tmp_data2 = 0, 0
+                    tmp_data1, tmp_data2 = 0.0, 0.0
                     for i in xrange(amount_data):
                         # Тип float необходим для правильного последующего округления после усреднения данных
                         tmp_data1 += float(f_v[i][1])
                         tmp_data2 += float(f_v[i][3])
-                    file_img = 't%sd%s' % (str(int(round(tmp_data1 / amount_data, 0))), str(int(round(tmp_data2 / amount_data, 0))))
+                    if round(tmp_data1 / amount_data, 0):
+                        if temperature > 2:
+                            tmp_data1 = '1'
+                        elif temperature < 0:
+                            tmp_data1 = '3'
+                        else:
+                            tmp_data1 = '2'
+                    else:
+                        tmp_data1 = '0'
+                    file_img = 't%sd%s' % (tmp_data1, str(int(round(tmp_data2 / amount_data, 0))))
                     forecast_sidebar[f_k] = [(file_img, FALLS_RANGE[file_img])]
                 elif f_k == 'clouds_img':
-                    tmp_data1 = 0
+                    tmp_data1 = 0.0
                     for i in xrange(amount_data):
                         tmp_data1 += float(f_v[i][2])
                     file_img = 'cd%s' % str(int(round(tmp_data1 / amount_data, 0)))
                     forecast_sidebar[f_k] = [(file_img, CLOUDS_RANGE[file_img[2]])]
+                elif f_k == 'temperature':
+                    forecast_sidebar[f_k] = str(temperature)
                 else:
                     forecast_sidebar[f_k] = str(int(round(float(sum(f_v)) / amount_data, 0)))
         return forecast_sidebar

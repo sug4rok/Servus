@@ -21,25 +21,28 @@ class WG(object):
         try:
             url_sock = urllib2.urlopen(self.wp_url)
         except urllib2.HTTPError, err:
+            print 'Opening %s...' % self.wp_url
             print 'urllib2 HTTPError: ', err.code
             return -1
         parsed_xml = minidom.parse(url_sock)                  
         url_sock.close()
         return parsed_xml
-    
-    def tag_value_get(self, tag_name, i, *args):
-        point_names = self.parsed_xml.getElementsByTagName(tag_name)
-        if args:
-            point_name = point_names[i - 1].getElementsByTagName(args[0])
-            return point_name[0].childNodes[0].nodeValue
-        return point_names[i - 1].childNodes[0].nodeValue
 
-    def attr_value_get(self, tag_name, attr_name, i):
-        point_names = self.parsed_xml.getElementsByTagName(tag_name)
-        try:
-            return point_names[i - 1].attributes[attr_name].value
-        except KeyError:
-            return -1
+    def node_value_get(self, tag, node=None, subnode_num=None, attr=None):
+        if node is not None:
+            subnodes = node.getElementsByTagName(tag)
+        else:
+            subnodes = self.parsed_xml.getElementsByTagName(tag)
+        if subnode_num is not None:
+            if attr is not None:
+                try:
+                    return subnodes[subnode_num].attributes[attr].value
+                except KeyError:
+                    return -1
+            else:
+                return subnodes[subnode_num].childNodes[0].nodeValue
+        else:
+            return subnodes
         
     @staticmethod
     def file_name_prefix(d):
@@ -107,20 +110,23 @@ class WGRP5(WG):
                 post_img = '4'
             return pref_img + post_img
         
-        for i in xrange(1, 5):
-            clouds = int(self.tag_value_get('cloud_cover', i))
+        for day in self.node_value_get('timestep'):
+            clouds = int(self.node_value_get('cloud_cover', node=day, subnode_num=0))
             tmp_data = {'wp': self.wp}
-            d = self.tag_value_get('datetime', i)
+            d = self.node_value_get('datetime', node=day, subnode_num=0)
             tmp_data['datetime'] = datetime.strptime(d, self.format)
             tmp_data['clouds'] = clouds 
-            tmp_data['precipitation'] = self.tag_value_get('precipitation', i)
-            tmp_data['temperature'] = self.tag_value_get('temperature', i)
-            tmp_data['pressure'] = self.tag_value_get('pressure', i)
-            tmp_data['humidity'] = self.tag_value_get('humidity', i)
-            tmp_data['wind_speed'] = self.tag_value_get('wind_velocity', i)
-            tmp_data['wind_direction'] = get_wd(self.tag_value_get('wind_direction', i))
+            tmp_data['precipitation'] = self.node_value_get('precipitation', node=day, subnode_num=0)
+            tmp_data['temperature'] = self.node_value_get('temperature', node=day, subnode_num=0)
+            tmp_data['pressure'] = self.node_value_get('pressure', node=day, subnode_num=0)
+            tmp_data['humidity'] = self.node_value_get('humidity', node=day, subnode_num=0)
+            tmp_data['wind_speed'] = self.node_value_get('wind_velocity', node=day, subnode_num=0)
+            tmp_data['wind_direction'] = get_wd(self.node_value_get('wind_direction', node=day, subnode_num=0))
             tmp_data['clouds_img'] = get_clouds_img(clouds, tmp_data['datetime'])
-            tmp_data['falls_img'] = get_falls_img(self.tag_value_get('falls', i), self.tag_value_get('drops', i))          
+            tmp_data['falls_img'] = get_falls_img(
+                self.node_value_get('falls', node=day, subnode_num=0),
+                self.node_value_get('drops', node=day, subnode_num=0)
+            )
             weather_data.append(tmp_data)
             
         return weather_data
@@ -143,9 +149,9 @@ class WGWUA(WG):
                 xrange(25, 30),
                 xrange(30, 101),
             ]
-            for r in xrange(0, 6):
-                if clouds in clouds_ranges[r]:
-                    return self.file_name_prefix(d) + str(r)            
+            for num, clouds_range in enumerate(clouds_ranges):
+                if clouds in clouds_range:
+                    return self.file_name_prefix(d) + str(num)
             
         def get_falls_img(clouds):
             falls_ranges = {
@@ -172,18 +178,28 @@ class WGWUA(WG):
                 if clouds in falls_ranges[r]:
                     return r
 
-        for i in xrange(1, 9):
-            clouds = int(self.tag_value_get('cloud', i))
+        for day in self.node_value_get('day')[:8]:
+            clouds = int(self.node_value_get('cloud', node=day, subnode_num=0))
             tmp_data = {'wp': self.wp}
-            d = '%s %s:00' % (self.attr_value_get('day', 'date', i), self.attr_value_get('day', 'hour', i))
+            d = '%s %s:00' % (day.attributes['date'].value, day.attributes['hour'].value)
             tmp_data['datetime'] = datetime.strptime(d, self.format)
-            tmp_data['temperature'] = int(self.tag_value_get('t', i + 1, 'min')) + 1
-            tmp_data['pressure'] = int(self.tag_value_get('p', i + 1, 'min')) + 1
-            tmp_data['humidity'] = int(self.tag_value_get('hmid', i, 'min')) + 1
-            tmp_data['wind_speed'] = int(self.tag_value_get('wind', i, 'min')) + 1
-            tmp_data['wind_direction'] = self.tag_value_get('rumb', i)
+            tmp_data['temperature'] = int(
+                self.node_value_get('min', node=self.node_value_get('t', node=day)[0], subnode_num=0)
+            ) + 1
+            tmp_data['pressure'] = int(
+                self.node_value_get('min', node=self.node_value_get('p', node=day)[0], subnode_num=0)
+            ) + 1
+            tmp_data['humidity'] = int(
+                self.node_value_get('min', node=self.node_value_get('hmid', node=day)[0], subnode_num=0)
+            ) + 1
+            tmp_data['wind_speed'] = int(
+                self.node_value_get('min', node=self.node_value_get('wind', node=day)[0], subnode_num=0)
+            ) + 1
+            tmp_data['wind_direction'] = self.node_value_get(
+                'rumb', node=self.node_value_get('wind', node=day)[0], subnode_num=0
+            )
             tmp_data['clouds_img'] = get_clouds_img(clouds, tmp_data['datetime'])
-            tmp_data['falls_img'] = get_falls_img(clouds)         
+            tmp_data['falls_img'] = get_falls_img(clouds)
             weather_data.append(tmp_data)
         
         return weather_data
@@ -258,25 +274,29 @@ class WGYA(WG):
                     )]
         
         times = {'morning': '07:00', 'day': '13:00', 'evening': '19:00', 'night': '01:00'}
-        for i in xrange(1, 3):
-            day = self.attr_value_get('day', 'date', i)
-            for j in xrange(1, 5):
-                weather_condition = self.attr_value_get('weather_condition', 'code', j)
+        for day in self.node_value_get('day')[:2]:
+            date = day.attributes['date'].value
+            for j in xrange(0, 4):
+                weather_condition = self.node_value_get('weather_condition', node=day, subnode_num=j, attr='code')
                 tmp_data = {'wp': self.wp}
-                part_of_day = self.attr_value_get('day_part', 'type', j)
-                d = '%s %s' % (day, times[part_of_day])
+                day_part = self.node_value_get('day_part', node=day, subnode_num=j, attr='type')
+                d = '%s %s' % (date, times[day_part])
                 d_datetime = datetime.strptime(d, self.format)
-                if part_of_day == 'night':
+                if day_part == 'night':
                     d_datetime += timedelta(days=1)
                 tmp_data['datetime'] = d_datetime
-                tmp_data['temperature'] = self.tag_value_get('avg', j)
-                tmp_data['pressure'] = self.tag_value_get('pressure', j)
-                tmp_data['humidity'] = self.tag_value_get('humidity', j)
-                tmp_data['wind_speed'] = round(float(self.tag_value_get('wind_speed', j)), 0)
-                tmp_data['wind_direction'] = get_wd(self.tag_value_get('wind_direction', j))
+                tmp_data['temperature'] = self.node_value_get('avg', node=day, subnode_num=j)
+                tmp_data['pressure'] = self.node_value_get('pressure', node=day, subnode_num=j)
+                tmp_data['humidity'] = self.node_value_get('humidity', node=day, subnode_num=j)
+                tmp_data['wind_speed'] = round(
+                    float(self.node_value_get('wind_speed', node=day, subnode_num=j)), 0
+                )
+                tmp_data['wind_direction'] = get_wd(
+                    self.node_value_get('wind_direction', node=day, subnode_num=j)
+                )
                 for clouds_img, falls_img in get_file_img(weather_condition, tmp_data['datetime']):
                     tmp_data['clouds_img'] = clouds_img
-                    tmp_data['falls_img'] = falls_img         
+                    tmp_data['falls_img'] = falls_img
                     weather_data.append(tmp_data)
         return weather_data
 
@@ -322,24 +342,30 @@ class WGOWM(WG):
             return 't0d0'
 
         times = [('morn', '07:00'), ('day', '13:00'), ('eve', '19:00'), ('night', '01:00')]
-        for i in xrange(1,3):
-            for part_of_day, time in times:
+        for day in self.node_value_get('time')[:2]:
+            for day_part, time in times:
                 tmp_data = {'wp': self.wp}
-                d = '%s %s' % (self.attr_value_get('time', 'day', i), time)
+                d = '%s %s' % (day.attributes['day'].value, time)
                 d_datetime = datetime.strptime(d, self.format)
-                if part_of_day == 'night':
+                if day_part == 'night':
                     d_datetime += timedelta(days=1)
                 tmp_data['datetime'] = d_datetime
-                tmp_data['clouds'] = self.attr_value_get('clouds', 'all', i)
-                precipitation = self.attr_value_get('precipitation', 'value', i)
+                tmp_data['clouds'] = self.node_value_get('clouds', node=day, subnode_num=0, attr='all')
+                precipitation = self.node_value_get('precipitation', node=day, subnode_num=0, attr='value')
                 if precipitation != -1:
                     tmp_data['precipitation'] = precipitation
-                tmp_data['temperature'] = round(float(self.attr_value_get('temperature', part_of_day, i)), 0)
-                tmp_data['pressure'] = round(float(self.attr_value_get('pressure', 'value', i)) / 1.333224, 0)
-                tmp_data['humidity'] = self.attr_value_get('humidity', 'value', i)
-                tmp_data['wind_speed'] = round(float(self.attr_value_get('windSpeed', 'mps', i)), 0)
-                tmp_data['wind_direction'] = self.attr_value_get('windDirection', 'deg', i)
-                symbol_num = self.attr_value_get('symbol', 'number', i)
+                tmp_data['temperature'] = round(
+                    float(self.node_value_get('temperature', node=day, subnode_num=0, attr=day_part)), 0
+                )
+                tmp_data['pressure'] = round(
+                    float(self.node_value_get('pressure', node=day, subnode_num=0, attr='value')) / 1.333224, 0
+                )
+                tmp_data['humidity'] = self.node_value_get('humidity', node=day, subnode_num=0, attr='value')
+                tmp_data['wind_speed'] = round(
+                    float(self.node_value_get('windSpeed', node=day, subnode_num=0, attr='mps')), 0
+                )
+                tmp_data['wind_direction'] = self.node_value_get('windDirection', node=day, subnode_num=0, attr='deg')
+                symbol_num = self.node_value_get('symbol', node=day, subnode_num=0, attr='number')
                 tmp_data['clouds_img'] = get_clouds_img(symbol_num, tmp_data['datetime'])
                 tmp_data['falls_img'] = get_falls_img(symbol_num)
                 weather_data.append(tmp_data)
