@@ -1,7 +1,7 @@
 ﻿# coding=utf-8
 from django.contrib import admin
 from Servus.Servus import TAB_APPS
-from base.models import Tab, EventRule, SlideshowExclude
+from base.models import Tab, EventRule, Slideshow
 from weather.models import WeatherProvider
 
 
@@ -46,12 +46,11 @@ class WeatherProviderAdmin(admin.ModelAdmin):
     ordering = ('weather_provider',)
 
 
-class SlideshowExcludeAdmin(admin.ModelAdmin):
-    list_display = ('album_exclude',)
-    exclude = ('indexed',)
+class SlideshowAdmin(admin.ModelAdmin):
+    list_display = ('album_path', 'is_shown')
 
 
 admin.site.register(Tab, TabAdmin)
 admin.site.register(EventRule, EventRuleAdmin)
-admin.site.register(SlideshowExclude)
+admin.site.register(Slideshow, SlideshowAdmin)
 admin.site.register(WeatherProvider, WeatherProviderAdmin)

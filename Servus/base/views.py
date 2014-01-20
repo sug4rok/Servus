@@ -8,6 +8,8 @@ from django.template import RequestContext
 from Servus.Servus import SITE_NAME, TAB_APPS, SLIDESHOW_FILE_TYPES
 from base.models import Tab, Slideshow, Event
 
+# It's a dictionary of parameters for sending to render_to_response
+PARAMS = {}
 
 class NotImageError(Exception):
 
@@ -31,7 +33,8 @@ for tab in Tab.objects.all():
     if tab.app_name in TAB_APPS:
         tabs.append(tab)
 
-params = {'site_name': SITE_NAME, 'tabs': tabs}
+PARAMS['site_name'] = SITE_NAME
+PARAMS['tabs'] = tabs
 
 
 def get_weekday(weekday):

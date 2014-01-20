@@ -1,6 +1,7 @@
 ﻿# coding=utf-8
 from django.db import models
 from django.contrib.sessions.models import Session
+from Servus.Servus import SLIDESHOW_ROOT
 from Servus.Servus import TAB_APPS
 
 # Getting application type for a new tab
@@ -116,61 +117,31 @@ class SlideshowChanges(models.Model):
     mtime = models.FloatField(
         default=0.0
     )
-    # Поле для отметки факта изменений в админке в разделе "Исключаемые фотоальбомы"
-    was_excluded = models.BooleanField(
-        default=False
-    )
 
 
 # Абсолютные пути до фотоальбомов, показываемых на Главной странице
 class Slideshow(models.Model):
 
-    album_path = models.ImageField(
-        upload_to='.'
-    )
-
-    def __unicode__(self):
-        return 'Slideshow class'
-
-
-def set_was_excluded():
-    try:
-        obj_ssch = SlideshowChanges.objects.get(id=1)
-        obj_ssch.was_excluded = True
-        obj_ssch.save()
-    except SlideshowChanges.DoesNotExist:
-        pass
-
-
-# Список фотоальбомов, исключаемых из показа на главной странице
-class SlideshowExclude(models.Model):
-
-    album_exclude = models.CharField(
+    album_path = models.CharField(
         max_length=255,
         unique=True,
         verbose_name='Фотоальбом',
-        help_text='Название папки с фотографиями или подпапками, которые необходимо исключить \
-            из показа на Главной странице.',
         null=False
     )
 
+    is_shown = models.BooleanField(
+        verbose_name='Показывать',
+        help_text='Отображение/Исключение фотоальбома из показа на Главной странице',
+        default=True
+    )
+
     class Meta(object):
-        verbose_name = 'Исключения'
-        verbose_name_plural = 'Исключаемые фотоальбомы'
-
-    # Добавим к методу save() возможность менять состояние триггера was_excluded
-    # в таблице SlideshowChanges для указания, что нужно переиндексировать
-    # все фотоальбомы и добавить/исключить те из них, что были удалены/созданы
-    # при помощи данной модели.
-    def save(self):
-        set_was_excluded()
-        super(SlideshowExclude, self).save()
-
-    # Аналогично методу save(), но этот метод не работает в админке на 2013.12.09
-    # (Django 1.6)
-    def delete(self):
-        set_was_excluded()
-        super(SlideshowExclude, self).delete()
+        verbose_name = 'Фотоальбом'
+        verbose_name_plural = 'Фотоальбомы в %s' % SLIDESHOW_ROOT
 
     def __unicode__(self):
-        return self.album_exclude
+        album_path = self.album_path.replace('%s/' % SLIDESHOW_ROOT, '')
+        if album_path == SLIDESHOW_ROOT:
+            return '/'
+        else:
+            return album_path

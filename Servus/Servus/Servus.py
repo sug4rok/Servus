@@ -10,7 +10,7 @@ TAB_APPS = (
     'home',
     'climate',   
     'weather',
-    )
+)
 
 # Запускаемые планировщиком задания (см. django-cron документацию)
 CRON_CLASSES = [
