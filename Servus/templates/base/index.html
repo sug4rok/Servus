@@ -23,6 +23,20 @@
                 }
             });
         }
+        function reload_div(div_id, delay_time){
+            $.ajax({
+                url: '/' + div_id + '/',
+                type: 'GET',
+                cache: false,
+                success: function(html){
+                    $('#' + div_id).html(html);
+                    setTimeout(function(){reload_div(div_id, delay_time)}, delay_time);
+                },
+                error: function() {
+                    setTimeout(function(){reload_div(div_id, delay_time)}, delay_time);
+                }
+            });
+        }
     </script>
 </head>
 <body id='body'>
