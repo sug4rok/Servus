@@ -1,7 +1,7 @@
 ﻿# coding=utf-8
 from django.conf.urls import patterns, include, url
 from base.models import Tab
-from base.views import main_page, slideshow, events
+from base.views import main_page
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -15,11 +15,8 @@ urlpatterns = patterns('',
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-    url(r'^sidebar/$', 'sidebar.views.sidebar'),
     url(r'^$', main_page),
-    url(r'^slideshow/$', slideshow),
-    url(r'^events/$', events),
+    url(r'^/(?P<sidebar>)$', 'sidebar.views.sidebar'),
     url(r'^admin/', include(admin.site.urls)),
 )
 

@@ -124,25 +124,25 @@ def get_events_short(request):
 
 def get_tab_options(current_tab):
     tab_options = Tab.objects.get(app_name=current_tab)
-    params['active_app_name'] = current_tab
-    params['active_title'] = tab_options.title
-    params['active_sub_title'] = tab_options.sub_title
+    PARAMS['active_app_name'] = current_tab
+    PARAMS['active_title'] = tab_options.title
+    PARAMS['active_sub_title'] = tab_options.sub_title
 
 
 def call_template(request, *args, **kwargs):
     if args:
-        params.update(args[0])
+        PARAMS.update(args[0])
 
     current_tab = kwargs.pop('current_tab', None)
     if current_tab is not None:
         get_tab_options(current_tab)
 
         # RequestContext необходим для получения текущего URL в шаблоне
-        return render_to_response('%s/tab.html' % current_tab, params, context_instance=RequestContext(request))
+        return render_to_response('%s/tab.html' % current_tab, PARAMS, context_instance=RequestContext(request))
         
     templ_path = kwargs.pop('templ_path', None)
     if templ_path is not None:
-        return render_to_response(templ_path, params, context_instance=RequestContext(request))
+        return render_to_response(templ_path, PARAMS, context_instance=RequestContext(request))
 
     raise Http404()
 
@@ -152,66 +152,43 @@ def main_page(request):
     Функция отображения начальной страницы
     """
 
-    return call_template(
-        request,
-        templ_path='base/body_main.html'
-    )
-
-
-def slideshow(request):
-    """
-    Функция отображения на начальной странице произвольной фотографии
-    """
-
-    params = {'album': '', 'slide': ''}
-
-    if Slideshow.objects.count():
-        while True:
-            try:
-                # Получаем первый элемент произвольно отсортированного списка фотоальбомов
-                rnd_album = unicode(Slideshow.objects.order_by('?')[0].album_path)
-                if path.exists(rnd_album):
-                    for root, dirs, files in walk(rnd_album):
-                        rnd_file = randint(0, len(files) - 1)
-                        slide = '%s/%s' % (root, files[rnd_file])
-                        file_type = slide.split('.')[-1].lower()
-                        if file_type not in SLIDESHOW_FILE_TYPES:
-                            raise NotImageError(file_type)
-                        params['album'] = rnd_album.split('/')[-1].replace('_', ' ')
-                        params['slide'] = slide
-                        break
+    params = {}
+    if 'events' in request.GET:
+        params = {
+            'amount_events': get_events_short(request)[0],
+            'event_imp': get_events_short(request)[1]
+        }
+    if 'slideshow' in request.GET:
+        if len(Slideshow.objects.all()):
+            latest_id = Slideshow.objects.latest('id').id
+            while True:
+                try:
+                    # Получаем первый элемент произвольно отсортированного списка фотоальбомов
+                    rnd_album = unicode(Slideshow.objects.order_by('?')[0].album_path)
+                    if path.exists(rnd_album):
+                        for root, dirs, files in walk(rnd_album):
+                            rnd_file = randint(0, len(files) - 1)
+                            slide = '%s/%s' % (root, files[rnd_file])
+                            file_type = slide.split('.')[-1].lower()
+                            if file_type not in SLIDESHOW_FILE_TYPES:
+                                raise NotImageError(file_type)
+                            params['album'] = rnd_album.split('/')[-1].replace('_', ' ')
+                            params['slide'] = slide
+                            break
+                    else:
+                        raise PathNotFound(rnd_album)
+                except NotImageError as e:
+                    print e
+                    continue
+                except PathNotFound as e:
+                    print e
+                    continue
                 else:
-                    raise PathNotFound(rnd_album)
-            except NotImageError as e:
-                print e
-                continue
-            except PathNotFound as e:
-                print e
-                continue
-            else:
-                break
-    else:
-        params['album'] = 'Нет доступных альбомов, либо они еще не проиндексированы'
-
+                    break
+        else:
+            params['album'] = 'Нет доступных альбомов, либо они еще не проиндексированы'
     return call_template(
         request,
         params,
-        templ_path='base/slideshow.html'
-    )
-
-
-def events(request):
-    """
-    Функция, выводящая количество и важность событий на главную страницу
-    """
-
-    params = {
-        'amount_events': get_events_short(request)[0],
-        'event_imp': get_events_short(request)[1]
-    }
-
-    return call_template(
-        request,
-        params,
-        templ_path='base/events.html'
+        templ_path='base/body_main.html'
     )
