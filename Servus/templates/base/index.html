@@ -10,30 +10,43 @@
     <link rel='shortcut icon' href='{% get_static_prefix %}img/favicon.ico'>  
     <script src='{% get_static_prefix %}js/jquery.min.js' type='text/javascript'></script>
     <script>
-        function get_data(div_id, delay_time){
-            $.ajax({  
-                url: '/?' + div_id,
+        function get_id_data(id){
+            var result = null;
+            $.ajax({
+                url: '/?' + id,
                 type: 'GET',
                 cache: false,
-                success: function(){
-                    setTimeout(function(){get_data(div_id, delay_time)}, delay_time);
+                async: false,
+                success:function(data){
+                    result = data;
                 },
                 error: function() {
-                    setTimeout(function(){get_data(div_id, delay_time)}, delay_time);
+                    result = null;
                 }
             });
+            return result;
         }
-        function reload_div(div_id, delay_time){
+        function set_id_data(id, data, attr){
+                if (attr != null)$('#' + id).attr(attr, data);
+                else $('#' + id).html(data);
+        }
+        function repeat_get(id, delay, attr){
+            var data = get_id_data(id);
+            if (data != null) set_id_data(id, data, attr);
+            setTimeout(function(){repeat_get(id, delay, attr)}, delay);
+        }
+
+        function reload_div(id, delay){
             $.ajax({
-                url: '/' + div_id + '/',
+                url: '/' + id + '/',
                 type: 'GET',
                 cache: false,
                 success: function(html){
-                    $('#' + div_id).html(html);
-                    setTimeout(function(){reload_div(div_id, delay_time)}, delay_time);
+                    $('#' + id).html(html);
+                    setTimeout(function(){reload_div(id, delay)}, delay);
                 },
                 error: function() {
-                    setTimeout(function(){reload_div(div_id, delay_time)}, delay_time);
+                    setTimeout(function(){reload_div(id, delay)}, delay);
                 }
             });
         }

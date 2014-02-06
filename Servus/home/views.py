@@ -6,6 +6,7 @@ from base.models import Event
 
 
 def home(request, current_tab):
+    request.session.save()
     current_session = request.session.session_key
 
     # Получение списка событий для текущей сессии.

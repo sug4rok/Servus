@@ -42,11 +42,11 @@ def position_nearest_forecast():
 
         # Определяем количество данных для усреднения
         amount_data = len(forecast_sidebar['temperature'])
-        temperature = int(round(float(sum(forecast_sidebar['temperature'])) / amount_data, 0))
 
         # Заполняем словарь forecast_sidebar усредненными данными (данные выбираются согласно
         # составленному ранее списку валидных порядковых номеров данных после выборки из базы
         if amount_data:
+            temperature = int(round(float(sum(forecast_sidebar['temperature'])) / amount_data, 0))
             for f_k, f_v in forecast_sidebar.iteritems():
                 if f_k == 'falls_img':
                     tmp_data1, tmp_data2 = 0.0, 0.0

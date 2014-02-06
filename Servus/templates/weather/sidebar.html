@@ -1,22 +1,22 @@
 {% load static %}
 
-<dl style='text-align:center'>
+<dl class='sidebar'>
     <dt>
         Погода завтра
     </dt>
     <dd>
         {% if forecast_sidebar and forecast_sidebar != 'na' %}
-        <table class='sidebar'>                    
+        <table class='sidebar'>
             <tr>
-                <td>
-                    {{ forecast_sidebar.temperature }} <small><em>°C</em></small>
-                </td>
                 <td>
                     {% for file_img, descr in forecast_sidebar.clouds_img %}
                         <attr title='{{ descr }}'>
                             <img src='{% get_static_prefix %}img/weather/{{ file_img }}.png' width='30' height='25'/>
                         </attr>
                     {% endfor %}
+                </td>
+                <td>
+                    {{ forecast_sidebar.temperature }} <small><em>°C</em></small>
                 </td>
             </tr>
             <tr>

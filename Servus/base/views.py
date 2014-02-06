@@ -11,6 +11,7 @@ from base.models import Tab, Slideshow, Event
 # It's a dictionary of parameters for sending to render_to_response
 PARAMS = {}
 
+
 class NotImageError(Exception):
 
     def __init__(self, file_type):
@@ -113,6 +114,7 @@ def get_events_short(request):
     На выходе: кортеж, вида (<количество сбобытий>, <кретичность>)
     """
 
+    request.session.save()
     events_short = get_events(request.session.session_key)
 
     amount_events = len(events_short)
@@ -152,43 +154,62 @@ def main_page(request):
     Функция отображения начальной страницы
     """
 
+    return call_template(
+        request,
+        templ_path='base/body_main.html'
+    )
+
+
+def slideshow(request):
+    """
+    Функция отображения на начальной странице произвольной фотографии
+    """
+
     params = {}
-    if 'events' in request.GET:
-        params = {
-            'amount_events': get_events_short(request)[0],
-            'event_imp': get_events_short(request)[1]
-        }
-    if 'slideshow' in request.GET:
-        if len(Slideshow.objects.all()):
-            latest_id = Slideshow.objects.latest('id').id
-            while True:
-                try:
-                    # Получаем первый элемент произвольно отсортированного списка фотоальбомов
-                    rnd_album = unicode(Slideshow.objects.order_by('?')[0].album_path)
-                    if path.exists(rnd_album):
-                        for root, dirs, files in walk(rnd_album):
-                            rnd_file = randint(0, len(files) - 1)
-                            slide = '%s/%s' % (root, files[rnd_file])
-                            file_type = slide.split('.')[-1].lower()
-                            if file_type not in SLIDESHOW_FILE_TYPES:
-                                raise NotImageError(file_type)
-                            params['album'] = rnd_album.split('/')[-1].replace('_', ' ')
-                            params['slide'] = slide
-                            break
-                    else:
-                        raise PathNotFound(rnd_album)
-                except NotImageError as e:
-                    print e
-                    continue
-                except PathNotFound as e:
-                    print e
-                    continue
+
+    if len(Slideshow.objects.all()):
+        while True:
+            try:
+                # Получаем первый элемент произвольно отсортированного списка фотоальбомов
+                rnd_album = unicode(Slideshow.objects.order_by('?')[0].album_path)
+                if path.exists(rnd_album):
+                    for root, dirs, files in walk(rnd_album):
+                        rnd_file = randint(0, len(files) - 1)
+                        slide = '%s/%s' % (root, files[rnd_file])
+                        file_type = slide.split('.')[-1].lower()
+                        if file_type not in SLIDESHOW_FILE_TYPES:
+                            raise NotImageError(file_type)
+                        params['album'] = rnd_album.split('/')[-1].replace('_', ' ')
+                        params['slide'] = slide
                 else:
-                    break
-        else:
-            params['album'] = 'Нет доступных альбомов, либо они еще не проиндексированы'
+                    raise PathNotFound(rnd_album)
+            except NotImageError as e:
+                print e
+                continue
+            except PathNotFound as e:
+                print e
+                continue
+            else:
+                break
     return call_template(
         request,
         params,
-        templ_path='base/body_main.html'
+        templ_path='base/slideshow.html'
+    )
+
+
+def events(request):
+    """
+    Функция, выводящая количество и важность событий на главную страницу
+    """
+
+    params = {
+        'amount_events': get_events_short(request)[0],
+        'event_imp': get_events_short(request)[1]
+    }
+
+    return call_template(
+        request,
+        params,
+        templ_path='base/events.html'
     )

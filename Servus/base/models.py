@@ -1,11 +1,10 @@
 ﻿# coding=utf-8
 from django.db import models
 from django.contrib.sessions.models import Session
-from Servus.Servus import SLIDESHOW_ROOT
-from Servus.Servus import TAB_APPS
+from Servus.Servus import TAB_APPS, SLIDESHOW_ROOT
 
 # Getting application type for a new tab
-APP_NAME_CHOICES = ((tab_app, tab_app) for tab_app in TAB_APPS) 
+APP_NAME_CHOICES = ((tab_app, tab_app) for tab_app in TAB_APPS)
 
 IMPORTANCE = (
     (0, 'Простое сообщение'),
@@ -95,10 +94,15 @@ class EventRule(models.Model):
         null=True
     )
     event_imp = models.IntegerField(
+        default=0,
         max_length=1,
         verbose_name='Критичность',
-        choices=IMPORTANCE,
-        default=0
+        choices=IMPORTANCE
+    )
+    event_rule = models.CharField(
+        default='',
+        max_length=20,
+        verbose_name='Логическое правило для события',
     )
 
     class Meta(object):

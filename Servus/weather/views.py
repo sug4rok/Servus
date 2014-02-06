@@ -32,14 +32,16 @@ FALLS_RANGE = {
     'na': 'Нет данных'
 }
 WEATHER_PROVIDERS = {
-    'rp5': 'rp5.ru',
-    'wua': 'weather.ua',
-    'ya': 'Яндекс.Погода',
-    'owm': 'Open Weather Map'
+    u'rp5': 'rp5.ru',
+    u'wua': 'weather.ua',
+    u'ya': 'Яндекс.Погода',
+    u'owm': 'Open Weather Map'
 }
 
 
 def weather(request, current_tab):
+
+    params = {}
 
     def list_field_values(wp, field):
         """
@@ -97,7 +99,7 @@ def weather(request, current_tab):
 
         clouds_data = []
         clouds = list_field_values(wp, 'clouds')
-        for num, clouds_img in enumerate(list_field_values(wp,'clouds_img')):
+        for num, clouds_img in enumerate(list_field_values(wp, 'clouds_img')):
             if clouds_img != 'na':
                 clouds_data.append((clouds_img + '.png', clouds[num], CLOUDS_RANGE[clouds_img[2]], clouds_img[1]))
             else:
@@ -116,7 +118,7 @@ def weather(request, current_tab):
 
         precipitation_data = []
         precipitation = list_field_values(wp, 'precipitation')
-        clouds_img = list_field_values(wp,'clouds_img')
+        clouds_img = list_field_values(wp, 'clouds_img')
         for num, falls_img in enumerate(list_field_values(wp, 'falls_img')):
             if falls_img != 'na':
                 precipitation_data.append((falls_img + '.png', precipitation[num], FALLS_RANGE[falls_img], clouds_img[num][1]))
