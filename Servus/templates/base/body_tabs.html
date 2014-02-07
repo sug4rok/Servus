@@ -9,11 +9,12 @@
             text-align: center;
             font-size: 80%;
         }
-        dt {padding-bottom:8px;}
-        table.sidebar {
-            width: 100%;
-            margin: 0 auto;
+        dt {
+            padding-bottom:8px;
             color: #2288bb;
+        }
+        table.sidebar {
+            margin: 0 auto;
             font-weight: bold;
         }
     </style>
@@ -24,12 +25,9 @@
         <div class='panel panel-default'>
             <div class='panel-body'>
                 <div class='row row-offcanvas row-offcanvas-right'>
-                    <div class='col-sm-8 col-md-9 col-lg-9'>
+                    <div class='col-sm-12 col-md-12 col-lg-12'>
                         <h4>{{ active_title }} <small>{{ active_sub_title }}</small></h4>
                             {% block content %}{% endblock %}
-                    </div>
-                    <div class='col-sm-4 col-md-3 col-lg-3'>
-                        <div id='sidebar'></div>
                     </div>
                 </div>
             </div>
@@ -37,15 +35,10 @@
     </div>
 
 <script>
-    $(document).ready(function(){
-        reload_div('sidebar', 10000);
-    });
-
-/*
+ /*
     setTimeout(function(){
         window.location.href = '/';
     }, 300000);
 */
 </script>
-
 {% endblock %}

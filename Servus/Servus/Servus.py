@@ -8,7 +8,7 @@ SPEAKER_NAME = 'Servus'
 # Also it's An Application type for tabs.
 TAB_APPS = (
     'home',
-    'climate',   
+    'climate',
     'weather',
 )
 

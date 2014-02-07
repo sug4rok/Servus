@@ -16,11 +16,10 @@
                     {% endfor %}
                 </td>
                 <td>
-                    {{ forecast_sidebar.temperature }} <small><em>°C</em></small>
+
                 </td>
             </tr>
             <tr>
-                <td></td>
                 <td>
                     {% for file_img, descr in forecast_sidebar.falls_img %}
                         <attr title='{{ descr }}'>
@@ -28,13 +27,16 @@
                         </attr>
                     {% endfor %}
                 </td>
+                <td style='padding:0 15px'>
+                    {{ forecast_sidebar.temperature }} <small><em>°C</em></small><br>
+                    {{ forecast_sidebar.wind_speed }}<small><em> м/с</em></small>
+                </td>
             </tr>
             <tr>
                 <td>
                     <img src='{% get_static_prefix %}img/weather/wind.png' width='30' height='30' />
                 </td>
                 <td>
-                    {{ forecast_sidebar.wind_speed }}<small><em> м/с</em></small>
                 </td>
             </tr>                    
         </table>

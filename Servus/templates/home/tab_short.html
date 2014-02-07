@@ -1,0 +1,44 @@
+<dl class='sidebar'>
+    <dt>
+        Уведомления
+    </dt>
+    <dd>
+        {% if events %}
+            {% for event_id, event_imp, event_datetime, event_src, event_descr in events %}
+                <form action='/home/' method='post'>{% csrf_token %}
+                    <div class='alert alert-{{ event_imp }}' style='padding:5px; margin:5px;'>
+                        <input type='hidden' name='event_id' value='{{ event_id }}' />
+                        <button type='submit' class='close'>
+                            &times;
+                        </button>
+
+                        <div style='font-size:120%; float:left; margin-right:10px;'>
+                            {% if event_imp == 'default' %}
+                                <span class='glyphicon glyphicon-eye-open'></span>
+                            {% elif event_imp == 'success' %}
+                                <span class='glyphicon glyphicon-ok-sign'></span>
+                            {% elif event_imp == 'info' %}
+                                <span class='glyphicon glyphicon-info-sign'></span>
+                            {% elif event_imp == 'warning' %}
+                                <span class='glyphicon glyphicon-warning-sign'></span>
+                            {% elif event_imp == 'danger' %}
+                                <span class='glyphicon glyphicon-flash'></span>
+                            {% endif %}
+                        </div>
+                        <div style='float:left; margin-right:5px;'>
+                            <small>
+                                <em>{{ event_datetime|date:'M-d H:m' }}</em>
+                            </small>
+                        </div>
+                        <div>
+                            {{ event_descr }}
+                        </div>
+
+                    </div>
+                </form>
+            {% endfor %}
+        {%  else %}
+            <small>отсутствуют :)</small>
+        {% endif %}
+    </dd>
+</dl>

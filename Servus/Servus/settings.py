@@ -2,7 +2,7 @@
 # coding=utf-8
 import os
 from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
-from .Servus import TAB_APPS
+from .Servus import TAB_APPS, CRON_CLASSES
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -21,8 +21,8 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'), # Or path to database file if using sqlite3.
+        'ENGINE': 'django.db.backends.sqlite3',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),  # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -140,7 +140,6 @@ INSTALLED_APPS = (
     'south',
     'django_cron',
     'base',
-    'sidebar',    
 ) + TAB_APPS
 
 # A sample logging configuration. The only tangible logging
