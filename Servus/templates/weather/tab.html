@@ -26,7 +26,6 @@
 
     {% for weather_provider, values_set, weather_city in forecast %}
         <div class='table-responsive'>
-        <br />
         <table class='table table-condensed'>
             <caption>{%  if weather_city %}<em>{{ weather_city }}</em>. {% endif %}Прогноз погоды по данным <em>{{ weather_provider }}</em></caption>
             {% for field, caption, measure, values in values_set %}

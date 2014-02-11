@@ -1,10 +1,7 @@
 ﻿# coding=utf-8
 from django.db import models
 from django.contrib.sessions.models import Session
-from Servus.Servus import TAB_APPS, SLIDESHOW_ROOT
-
-# Getting application type for a new tab
-APP_NAME_CHOICES = ((tab_app, tab_app) for tab_app in TAB_APPS)
+from Servus.Servus import SLIDESHOW_ROOT
 
 IMPORTANCE = (
     (0, 'Простое сообщение'),
@@ -20,9 +17,8 @@ class Tab(models.Model):
 
     app_name = models.CharField(
         max_length=20,
-        choices=APP_NAME_CHOICES,
+        default='home',
         verbose_name='Тип приложения',
-        help_text='Тип ассоциированного с данной вкладкой приложения Django'
     )
     tab_name = models.CharField(
         max_length=20,
@@ -37,6 +33,12 @@ class Tab(models.Model):
         verbose_name='Краткое описание',
         blank=True,
         null=True
+    )
+
+    is_shown = models.BooleanField(
+        verbose_name='Включить',
+        help_text='Отображение/Скрытие вкладки (необходим перезапуск web-сервера)',
+        default=False
     )
 
     class Meta(object):

@@ -8,14 +8,8 @@ from django.contrib import admin
 admin.autodiscover()
 
 
-urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'Servus.views.home', name='home'),
-    # url(r'^Servus/', include('Servus.foo.urls')),
-
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
+urlpatterns = patterns(
+    '',
     url(r'^$', main_page),
     url(r'^slideshow/$', slideshow),
     url(r'^events/$', events),
@@ -23,7 +17,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
 )
 
-for tab_app in Tab.objects.all().values_list('app_name', flat=True):
+for tab_app in Tab.objects.filter(is_shown=1).values_list('app_name', flat=True):
     urlpatterns += patterns(tab_app+'.views',
         url(r'^%s/$' % tab_app, tab_app, {'current_tab':'%s' % tab_app}),
     )

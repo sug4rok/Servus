@@ -145,24 +145,24 @@ def weather(request, current_tab):
     wps = ((wp.id, wp.weather_provider, wp.weather_city) for wp in WeatherProvider.objects.all())
     if wps:
         # Если хотябы один прогнозный API добавлен, собираем список данных для передачи в шаблон.
-        for wp in wps:
+        for wp_i in wps:
             value_set = []
-            for field in fields[2:-3]:
-                if field.name == 'datetime':
-                    value_set.append((field.name, field.verbose_name, '', get_forecast_time(wp[0])))
-                elif field.name == 'clouds':
-                    value_set.append((field.name, field.verbose_name, '', get_clouds(wp[0])))
-                elif field.name == 'precipitation':
-                    value_set.append((field.name, field.verbose_name, '', get_precipitation(wp[0])))
-                elif field.name == 'temperature':
-                    value_set.append(get_field_data(wp[0], field, '°C'))
-                elif field.name == 'pressure':
-                    value_set.append(get_field_data(wp[0], field, 'мм рт. ст.'))
-                elif field.name == 'humidity':
-                    value_set.append(get_field_data(wp[0], field, '%'))
-                elif field.name == 'wind_speed':
-                    value_set.append((field.name, field.verbose_name, 'м/c', get_wind(wp[0])))
-            forecast.append((WEATHER_PROVIDERS[wp[1]], value_set, wp[2]))
+            for field_i in fields[2:-3]:
+                if field_i.name == 'datetime':
+                    value_set.append((field_i.name, field_i.verbose_name, '', get_forecast_time(wp_i[0])))
+                elif field_i.name == 'clouds':
+                    value_set.append((field_i.name, field_i.verbose_name, '', get_clouds(wp_i[0])))
+                elif field_i.name == 'precipitation':
+                    value_set.append((field_i.name, field_i.verbose_name, '', get_precipitation(wp_i[0])))
+                elif field_i.name == 'temperature':
+                    value_set.append(get_field_data(wp_i[0], field_i, '°C'))
+                elif field_i.name == 'pressure':
+                    value_set.append(get_field_data(wp_i[0], field_i, 'мм рт. ст.'))
+                elif field_i.name == 'humidity':
+                    value_set.append(get_field_data(wp_i[0], field_i, '%'))
+                elif field_i.name == 'wind_speed':
+                    value_set.append((field_i.name, field_i.verbose_name, 'м/c', get_wind(wp_i[0])))
+            forecast.append((WEATHER_PROVIDERS[wp_i[1]], value_set, wp_i[2]))
 
         params = {'forecast': forecast}
 

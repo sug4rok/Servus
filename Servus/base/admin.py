@@ -1,6 +1,5 @@
 ﻿# coding=utf-8
 from django.contrib import admin
-from Servus.Servus import TAB_APPS
 from base.models import Tab, EventRule, Slideshow
 from weather.models import WeatherProvider
 
@@ -10,30 +9,23 @@ class TabAdmin(admin.ModelAdmin):
     ordering = ('id',)
     fieldsets = (
         ('Основные настройки', {
-            'fields': ('app_name', 'tab_name', 'title'),
+            'fields': ('tab_name', 'title', 'is_shown'),
             'description': 'Поля, выделенные жирным цветом, необходимо заполнить'
         }),
         ('Дополнительно', {'fields': ('sub_title', )})
     )
 
-    def formfield_for_choice_field(self, db_field, request, **kwargs):
-        """
-        Метод, переопределяющий типы доступных приложений. По умолчанию доступны все приложения,
-        активированные (добавлненные) в настройках, но т.к. вполне достаточно иметь на каждое
-        приложение по одной вкладке, то уже использованные типы приложений будут убираться из
-        доступных при создании новой вкладки, или при изменении уже существующей вкладки.
-        При изменении типа уже существующей вкладки, высвобожденный тип приложения становится
-        снова доступным.
-        """
+    def has_add_permission(self, request):
+        return False
 
-        if db_field.name == 'app_name':
-            not_used_apps = []
-            used_apps = Tab.objects.all().values_list('app_name', flat=True)
-            for tab_app in TAB_APPS:
-                if tab_app not in used_apps:
-                    not_used_apps.append((tab_app, tab_app))
-            kwargs['choices'] = not_used_apps
-        return super(TabAdmin, self).formfield_for_choice_field(db_field, request, **kwargs)
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def get_actions(self, request):
+        actions = super(TabAdmin, self).get_actions(request)
+        if 'delete_selected' in actions:
+            del actions['delete_selected']
+        return actions
 
 
 class EventRuleAdmin(admin.ModelAdmin):

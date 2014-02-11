@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from django.http import Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from Servus.Servus import SITE_NAME, TAB_APPS, SLIDESHOW_FILE_TYPES
+from Servus.Servus import SITE_NAME, SLIDESHOW_FILE_TYPES
 from base.models import Tab, Slideshow, Event
 
 # It's a dictionary of parameters for sending to render_to_response
@@ -29,13 +29,8 @@ class PathNotFound(Exception):
     def __str__(self):
         return repr('PathNotFound: [%s] is not in slideshow directory.' % self.broken_path)
 
-tabs = []
-for tab in Tab.objects.all():
-    if tab.app_name in TAB_APPS:
-        tabs.append(tab)
-
 PARAMS['site_name'] = SITE_NAME
-PARAMS['tabs'] = tabs
+PARAMS['tabs'] = Tab.objects.filter(is_shown=1)
 
 
 def get_weekday(weekday):

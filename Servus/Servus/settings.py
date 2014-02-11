@@ -2,7 +2,6 @@
 # coding=utf-8
 import os
 from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
-from .Servus import TAB_APPS, CRON_CLASSES
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -12,6 +11,12 @@ TEMPLATE_DEBUG = DEBUG
 # Cookies settings
 SESSION_COOKIE_NAME = 'Servus_sessionid'
 SESSION_COOKIE_AGE = 999999999
+
+# Запускаемые планировщиком задания (см. django-cron документацию)
+CRON_CLASSES = [
+    'base.cron.SlideshowJob',
+    'weather.cron.GetWeatherJob',
+]
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -140,7 +145,9 @@ INSTALLED_APPS = (
     'south',
     'django_cron',
     'base',
-) + TAB_APPS
+    'home',
+    'weather',
+)
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
