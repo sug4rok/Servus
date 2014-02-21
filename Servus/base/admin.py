@@ -1,6 +1,6 @@
 ﻿# coding=utf-8
 from django.contrib import admin
-from base.models import Tab, EventRule, Slideshow
+from base.models import Tab, Slideshow
 from weather.models import WeatherProvider
 
 
@@ -43,6 +43,5 @@ class SlideshowAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Tab, TabAdmin)
-admin.site.register(EventRule, EventRuleAdmin)
 admin.site.register(Slideshow, SlideshowAdmin)
 admin.site.register(WeatherProvider, WeatherProviderAdmin)

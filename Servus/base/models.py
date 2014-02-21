@@ -3,14 +3,6 @@ from django.db import models
 from django.contrib.sessions.models import Session
 from Servus.Servus import SLIDESHOW_ROOT
 
-IMPORTANCE = (
-    (0, 'Простое сообщение'),
-    (1, 'Положительное уведомление'),
-    (2, 'Информация к сведению'),
-    (3, 'Внимание!'),
-    (4, 'Опасность!!')
-)
-
 
 # Вкладки и связанные с ними типы приложений
 class Tab(models.Model):
@@ -66,6 +58,7 @@ class Event(models.Model):
     event_imp = models.IntegerField(
         max_length=1,
         verbose_name='Критичность',
+        default=2,
     )
     event_datetime = models.DateTimeField(
         auto_now_add=True,
@@ -78,38 +71,6 @@ class Event(models.Model):
 
     class Meta(object):
         ordering = ('event_datetime',)
-
-    def __unicode__(self):
-        return self.event_descr
-
-
-# Модель для создания в админке триггеров возникновения событий
-class EventRule(models.Model):
-
-    event_src = models.ForeignKey(
-        Tab,
-        verbose_name='Источник события',
-    )
-    event_descr = models.CharField(
-        max_length=255,
-        verbose_name='Выводимое сообщение',
-        null=True
-    )
-    event_imp = models.IntegerField(
-        default=0,
-        max_length=1,
-        verbose_name='Критичность',
-        choices=IMPORTANCE
-    )
-    event_rule = models.CharField(
-        default='',
-        max_length=20,
-        verbose_name='Логическое правило для события',
-    )
-
-    class Meta(object):
-        verbose_name = 'Правило'
-        verbose_name_plural = 'События'
 
     def __unicode__(self):
         return self.event_descr

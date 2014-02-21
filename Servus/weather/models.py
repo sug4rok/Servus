@@ -62,8 +62,6 @@ class Weather(models.Model):
         WeatherProvider
     )
     datetime = models.DateTimeField(
-        auto_now=False,
-        auto_now_add=False,
         verbose_name='Время прогноза',
         default='2013-08-30 00:00'
     )

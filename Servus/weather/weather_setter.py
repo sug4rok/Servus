@@ -1,5 +1,8 @@
 ﻿# coding=utf-8
+from base.cron import event_setter
 from weather.models import Weather
+from weather.views import FALLS_RANGE
+from base.views import get_month
 
 
 def weather_db_cleaner():
@@ -19,16 +22,47 @@ def weather_setter(weather_data):
     """
     for weather in weather_data:
         obj_wp = Weather.objects.create(wp=weather['wp'])
-        obj_wp.datetime = weather['datetime']
+
+        datetime = weather['datetime']
+        obj_wp.datetime = datetime
+        date = '%s %s:' % (datetime.day, get_month(datetime.month))
+
         if 'clouds' in weather:
             obj_wp.clouds = int(weather['clouds'])
         if 'precipitation' in weather:
             obj_wp.precipitation = float(weather['precipitation'])
-        obj_wp.temperature = int(weather['temperature'])
+
+        temp = int(weather['temperature'])
+        obj_wp.temperature = temp
+        if 25 < temp <= 32:
+            event_setter('weather', u'%s Будет жарко' % date, 2)
+        elif temp > 32:
+            event_setter('weather', u'%s Будет очень жарко!' % date, 3)
+        elif -25 <= temp < -15:
+            event_setter('weather', u'%s Будет холодно' % date, 2)
+        elif temp < -25:
+            event_setter('weather', u'%s Будет очень холодно!' % date, 3)
+
         obj_wp.pressure = int(weather['pressure'])
         obj_wp.humidity = int(weather['humidity'])
-        obj_wp.wind_speed = int(weather['wind_speed'])
+
+        wind_speed = int(weather['wind_speed'])
+        obj_wp.wind_speed = wind_speed
+        if 11 <= wind_speed < 17:
+            event_setter('weather', u'%s Сильный ветер' % date, 2)
+        elif 17 <= wind_speed < 25:
+            event_setter('weather', u'%s Шторм!' % date, 3)
+        elif wind_speed >= 25:
+            event_setter('weather', u'%s УРАГАН!' % date, 4)
+
         obj_wp.wind_direction = int(weather['wind_direction'])
         obj_wp.clouds_img = weather['clouds_img']
-        obj_wp.falls_img = weather['falls_img']
+
+        falls_img = weather['falls_img']
+        obj_wp.falls_img = falls_img
+        if falls_img in ['t1d3', 't2d3', 't3d3']:
+            event_setter('weather', '%s %s' % (datetime, FALLS_RANGE[falls_img]), 2)
+        elif falls_img in ['t1d4', 't1d5', 't2d4', 't3d4']:
+            event_setter('weather', '%s %s' % (datetime, FALLS_RANGE[falls_img]), 3)
+
         obj_wp.save()

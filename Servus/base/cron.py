@@ -1,8 +1,9 @@
 ﻿# coding=utf-8
 from os import walk, stat
+from datetime import datetime, timedelta
 from django_cron import CronJobBase, Schedule
 from Servus.Servus import SLIDESHOW_ROOT
-from base.models import Slideshow, SlideshowChanges
+from base.models import Event, Slideshow, SlideshowChanges
 
 
 class SlideshowJob(CronJobBase):
@@ -55,3 +56,16 @@ class SlideshowJob(CronJobBase):
                 Slideshow.objects.create(album_path=album_path, is_shown=(album_path not in was_excluded))
             obj_ssch.mtime = mtime
             obj_ssch.save()
+
+
+def event_setter(event_src, event_descr, event_imp):
+    """
+    Функция записи новых сообщений в БД (таблица base_event).
+    В БД записываются только уникальные (сравнение event_descr) в пределах суток сообщения.
+    На входе: str источник события, str описание события (сообщение), int важность (от 0 до 4)
+    """
+
+    events = Event.objects.filter(event_datetime__gte=datetime.now() - timedelta(days=1))
+
+    if event_descr not in events.values_list('event_descr', flat=True):
+        Event.objects.create(event_src=event_src, event_descr=event_descr, event_imp=event_imp)

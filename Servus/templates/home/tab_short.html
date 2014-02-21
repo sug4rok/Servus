@@ -1,3 +1,5 @@
+{% load static %}
+
 <dl class='sidebar'>
     <dt>
         Уведомления
@@ -5,25 +7,15 @@
     <dd>
         {% if events %}
             {% for event_id, event_imp, event_datetime, event_src, event_descr in events %}
-                <form action='/home/' method='post'>{% csrf_token %}
+                <form action='/summary/' method='post'>{% csrf_token %}
                     <div class='alert alert-{{ event_imp }}' style='padding:5px; margin:5px;'>
                         <input type='hidden' name='event_id' value='{{ event_id }}' />
                         <button type='submit' class='close'>
                             &times;
                         </button>
 
-                        <div style='font-size:120%; float:left; margin-right:10px;'>
-                            {% if event_imp == 'default' %}
-                                <span class='glyphicon glyphicon-eye-open'></span>
-                            {% elif event_imp == 'success' %}
-                                <span class='glyphicon glyphicon-ok-sign'></span>
-                            {% elif event_imp == 'info' %}
-                                <span class='glyphicon glyphicon-info-sign'></span>
-                            {% elif event_imp == 'warning' %}
-                                <span class='glyphicon glyphicon-warning-sign'></span>
-                            {% elif event_imp == 'danger' %}
-                                <span class='glyphicon glyphicon-flash'></span>
-                            {% endif %}
+                        <div style='font-size:120%; float:left; margin-right:5px;'>
+                            <img src='{% get_static_prefix %}img/home/{{ event_src }}.png' width='24' height='24'/>
                         </div>
                         <div style='float:left; margin-right:5px;'>
                             <small>
