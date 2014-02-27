@@ -1,20 +1,66 @@
 ﻿# coding=utf-8
 from os import walk, stat
+import smtplib
 from datetime import datetime, timedelta
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
 from django_cron import CronJobBase, Schedule
-from Servus.Servus import SLIDESHOW_ROOT
+from Servus.settings import EMAIL_HOST_USER
+from Servus.Servus import SITE_NAME, SLIDESHOW_ROOT
 from base.models import Event, Slideshow, SlideshowChanges
 
 
+class EmailsSendJob(CronJobBase):
+    """
+    Class to send emails with important events
+    """
+
+    RUN_EVERY_MINS = 10
+    RETRY_AFTER_FAILURE_MINS = 5
+    # RUN_AT_TIMES = ['04:00']
+
+    schedule = Schedule(
+        retry_after_failure_mins=RETRY_AFTER_FAILURE_MINS,
+        # run_at_times=RUN_AT_TIMES
+        run_every_mins=RUN_EVERY_MINS
+    )
+    code = 'EmailsSendJob'    # a unique code
+
+    @staticmethod
+    def do():
+        """
+        Функция проверяет наличие сообщений с важностью 'warning' и 'error' и
+        формирует письмо для отправлки по расписанию на все почтовые адреса из
+        таблицы auth_user БД. Затем, меняет флаг was_sent у каждого события, которое
+        блыо отправлено.
+        """
+
+        events = Event.objects.filter(event_imp__gte=3).exclude(was_sent=True)
+        emails = User.objects.exclude(email='').values_list('email', flat=True)
+        subj = 'Предупреждение от %s' % SITE_NAME
+        txt_mes = u'\tДата\t\t\tТекст сообщения\n'
+        txt_mes += '-----------------------------------\n'
+        for e in events:
+            if e.event_imp == 4:
+                subj = 'Важное сообщение от %s' % SITE_NAME
+            txt_mes += '%s\t%s\n' % (e.event_datetime.strftime('%Y.%m.%d %H:%M'), e.event_descr)
+        if events and emails:
+            try:
+                send_mail(subj, txt_mes, EMAIL_HOST_USER, emails)
+                events.update(was_sent=True)
+            except smtplib.SMTPException as e:
+                print e
+
+
 class SlideshowJob(CronJobBase):
-    #RUN_EVERY_MINS = 60
+    # RUN_EVERY_MINS = 60
     RETRY_AFTER_FAILURE_MINS = 5
     RUN_AT_TIMES = ['04:00']
     
     schedule = Schedule(
         retry_after_failure_mins=RETRY_AFTER_FAILURE_MINS,
         run_at_times=RUN_AT_TIMES
-        #run_every_mins=RUN_EVERY_MINS
+        # run_every_mins=RUN_EVERY_MINS
     )
     code = 'SlideshowJob'    # a unique code
 
@@ -62,7 +108,10 @@ def event_setter(event_src, event_descr, event_imp):
     """
     Функция записи новых сообщений в БД (таблица base_event).
     В БД записываются только уникальные (сравнение event_descr) в пределах суток сообщения.
-    На входе: str источник события, str описание события (сообщение), int важность (от 0 до 4)
+    На входе:
+        events_src - источник события;
+        event_descr - описание события (сообщение);
+        event_imp - важность (от 0 до 4)
     """
 
     events = Event.objects.filter(event_datetime__gte=datetime.now() - timedelta(days=1))

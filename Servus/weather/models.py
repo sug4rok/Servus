@@ -3,6 +3,9 @@ from django.db import models
 
 
 class WeatherProvider(models.Model):
+    """
+    Модель для хранения данных о провайдерах прогнозов погоды и выбранных населенных пунктах
+    """
 
     weather_provider = models.CharField(
         max_length=20,
@@ -57,6 +60,9 @@ class WeatherProvider(models.Model):
 
 
 class Weather(models.Model):
+    """
+    Модель для хранения погодных данных
+    """
 
     wp = models.ForeignKey(
         WeatherProvider

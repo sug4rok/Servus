@@ -15,8 +15,19 @@ SESSION_COOKIE_AGE = 999999999
 # Запускаемые планировщиком задания (см. django-cron документацию)
 CRON_CLASSES = [
     'base.cron.SlideshowJob',
+    'base.cron.EmailsSendJob',
     'weather.cron.GetWeatherJob',
 ]
+
+# Настройки почтового аккаунта gmail для отправки писем
+# Запуск эмулятора почтового сервера: python -m smtpd -n -c DebuggingServer localhost:587
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_USE_TLS = True
+EMAIL_HOST = 'localhost' # 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'user@gmail.com'
+# EMAIL_HOST_PASSWORD = 'password'
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),

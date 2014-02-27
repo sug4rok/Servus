@@ -4,8 +4,10 @@ from django.contrib.sessions.models import Session
 from Servus.Servus import SLIDESHOW_ROOT
 
 
-# Вкладки и связанные с ними типы приложений
 class Tab(models.Model):
+    """
+    Вкладки и связанные с ними типы приложений
+    """
 
     app_name = models.CharField(
         max_length=20,
@@ -41,10 +43,12 @@ class Tab(models.Model):
         return self.tab_name
 
 
-# События, показываемые на Домашней странице (их количество и кретичность также показывается
-# на Главной странице. Связь many-to-many с классом RemoteHost необходима, чтобы отделить
-# хосты, на которых события уже были просмотрены от "новых" хостов
 class Event(models.Model):
+    """
+    События, показываемые на Домашней странице (их количество и кретичность также показывается
+    на Главной странице. Связь many-to-many с классом Session необходима, чтобы отделить
+    хосты, на которых события уже были просмотрены от "новых" хостов
+    """
 
     event_src = models.CharField(
         max_length=20,
@@ -68,6 +72,9 @@ class Event(models.Model):
         Session,
         editable=False
     )
+    was_sent = models.BooleanField(
+        default=False
+    )
 
     class Meta(object):
         ordering = ('event_datetime',)
@@ -76,18 +83,22 @@ class Event(models.Model):
         return self.event_descr
 
 
-# Время последней модификации папки, содержащей фотоальбомы (static/img/slideshow) -
-# тригер при проверке необходимости переиндексации фотоальбомов
 class SlideshowChanges(models.Model):
+    """
+    Время последней модификации папки, содержащей фотоальбомы (static/img/slideshow) -
+    тригер при проверке необходимости переиндексации фотоальбомов
+    """
 
-    # Поле для записи время последней модификации папки с фотоальбомами
+    # Поле для записи времени последней модификации папки с фотоальбомами
     mtime = models.FloatField(
         default=0.0
     )
 
 
-# Абсолютные пути до фотоальбомов, показываемых на Главной странице
 class Slideshow(models.Model):
+    """
+    Абсолютные пути до фотоальбомов, показываемых на Главной странице
+    """
 
     album_path = models.CharField(
         max_length=255,
