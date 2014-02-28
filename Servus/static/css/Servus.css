@@ -1,0 +1,73 @@
+html, body {
+    width:100%;
+    height:100%;
+    margin:0;
+}
+
+caption {
+    color: #2288bb;
+    font-weight: bold;
+    font-size: 90%;
+    padding-bottom: 5px;
+}
+
+.height100 {
+    height:100%;
+}
+.pad5 {
+    padding: 5px;
+}
+
+/*Slideshow*/
+.fullscreen_img {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    min-width: 100%;
+    min-height: 100%;
+}
+.slide {
+    border:0;
+    background-color: #9a9a9a;
+    float:left;
+}
+
+/*Home*/
+.plan {
+    margin: 0 auto;
+}
+dl.tab_short {
+    text-align: center;
+    font-size: 80%;
+}
+dt.tab_short {
+    padding-bottom:8px;
+    color: #2288bb;
+}
+table.tab_short {
+    margin: 0 auto;
+    font-weight: bold;
+}
+.event_src {
+    float:left;
+    margin-right:5px;
+}
+.event_imp {
+    padding:5px;
+    margin:5px;
+}
+
+/*Weather*/
+.weather {
+    vertical-align:middle;
+    font-size: 70%;
+}
+td.n_c {background: #f0f0f8}
+td.n_f {
+    background: #f0f0f8;
+    background: -moz-linear-gradient(top, #f0f0f8 0%, #fff 100%);
+    background: -webkit-linear-gradient(top, #f0f0f8 0%, #fff 100%);
+    background: -o-linear-gradient(top, #f0f0f8 0%, #fff 100%);
+    background: -ms-linear-gradient(top, #f0f0f8 0%, #fff 100%);
+    background: linear-gradient(top, #f0f0f8 0%, #fff 100%);
+}

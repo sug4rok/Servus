@@ -1,36 +1,33 @@
 {% load static %}
 
-<dl class='sidebar'>
-    <dt>
+<dl class='tab_short'>
+    <dt class='tab_short'>
         Уведомления
     </dt>
     <dd>
-        {% if events %}
-            {% for event_id, event_imp, event_datetime, event_src, event_descr in events %}
-                <form action='/summary/' method='post'>{% csrf_token %}
-                    <div class='alert alert-{{ event_imp }}' style='padding:5px; margin:5px;'>
-                        <input type='hidden' name='event_id' value='{{ event_id }}' />
-                        <button type='submit' class='close'>
-                            &times;
-                        </button>
+        {% for event_id, event_imp, event_datetime, event_src, event_descr in events %}
+            <form action='/summary/' method='post'>{% csrf_token %}
+                <div class='alert alert-{{ event_imp }} event_imp'>
+                    <input type='hidden' name='event_id' value='{{ event_id }}' />
+                    <button type='submit' class='close'>
+                        &times;
+                    </button>
 
-                        <div style='font-size:120%; float:left; margin-right:5px;'>
-                            <img src='{% get_static_prefix %}img/home/{{ event_src }}.png' width='24' height='24'/>
-                        </div>
-                        <div style='float:left; margin-right:5px;'>
-                            <small>
-                                <em>{{ event_datetime|date:'M-d H:m' }}</em>
-                            </small>
-                        </div>
-                        <div>
-                            {{ event_descr }}
-                        </div>
-
+                    <div class='event_src'>
+                        <img src='{% get_static_prefix %}img/home/{{ event_src }}.png' width='24' height='24'/>
                     </div>
-                </form>
-            {% endfor %}
-        {%  else %}
+                    <div class='event_src'>
+                        <small>
+                            <em>{{ event_datetime|date:'M-d H:m' }}</em>
+                        </small>
+                    </div>
+                    <div>
+                        {{ event_descr }}
+                    </div>
+                </div>
+            </form>
+        {%  empty %}
             <small>отсутствуют :)</small>
-        {% endif %}
+        {% endfor %}
     </dd>
 </dl>

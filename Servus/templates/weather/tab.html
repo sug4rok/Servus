@@ -2,28 +2,6 @@
 {% load static %}
 
 {% block content %}
-    <style>
-        caption {
-            color: #2288bb;
-            font-weight: bold;
-            font-size: 90%;
-            padding-bottom: 5px;
-        }
-        .weather {
-            vertical-align:middle;
-            font-size: 70%;
-        }
-        td.n_c {background: #f0f0f8}
-        td.n_f {
-            background: #f0f0f8;
-            background: -moz-linear-gradient(top, #f0f0f8 0%, #fff 100%);
-            background: -webkit-linear-gradient(top, #f0f0f8 0%, #fff 100%);
-            background: -o-linear-gradient(top, #f0f0f8 0%, #fff 100%);
-            background: -ms-linear-gradient(top, #f0f0f8 0%, #fff 100%);
-            background: linear-gradient(top, #f0f0f8 0%, #fff 100%);
-        }
-    </style>
-
     {% for weather_provider, values_set, weather_city in forecast %}
         <div class='table-responsive'>
         <table class='table table-condensed'>
