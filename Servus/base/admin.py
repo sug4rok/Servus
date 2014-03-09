@@ -1,11 +1,10 @@
 ﻿# coding=utf-8
 from django.contrib import admin
 from base.models import Tab, Slideshow
-from weather.models import WeatherProvider
 
 
 class TabAdmin(admin.ModelAdmin):
-    list_display = ('tab_name', 'title')
+    list_display = ('tab_name', 'title', 'is_shown')
     ordering = ('id',)
     fieldsets = (
         ('Основные настройки', {
@@ -33,15 +32,9 @@ class EventRuleAdmin(admin.ModelAdmin):
     ordering = ('event_src',)
 
 
-class WeatherProviderAdmin(admin.ModelAdmin):
-    list_display = ('weather_provider', 'weather_url', 'weather_city')
-    ordering = ('weather_provider',)
-
-
 class SlideshowAdmin(admin.ModelAdmin):
     list_display = ('album_path', 'is_shown')
 
 
 admin.site.register(Tab, TabAdmin)
 admin.site.register(Slideshow, SlideshowAdmin)
-admin.site.register(WeatherProvider, WeatherProviderAdmin)

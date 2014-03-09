@@ -31,12 +31,6 @@ FALLS_RANGE = {
     't3d4': u'Метель',
     'na': u'Нет данных'
 }
-WEATHER_PROVIDERS = {
-    u'rp5': 'rp5.ru',
-    u'wua': 'weather.ua',
-    u'ya': 'Яндекс.Погода',
-    u'owm': 'Open Weather Map'
-}
 
 
 def weather(request, current_tab):
@@ -142,14 +136,23 @@ def weather(request, current_tab):
     forecast = []
     fields = Weather._meta.fields
 
-    wps = ((wp.id, wp.weather_provider, wp.weather_city) for wp in WeatherProvider.objects.all())
+    wps = (
+        (
+            wp.id, wp.weather_provider,
+            wp.weather_city,
+            wp.get_weather_provider_display()
+        ) for wp in WeatherProvider.objects.all()
+    )
     if wps:
         # Если хотябы один прогнозный API добавлен, собираем список данных для передачи в шаблон.
         for wp_i in wps:
             value_set = []
+            forecast_times = get_forecast_time(wp_i[0])
+            if not forecast_times:
+                continue
             for field_i in fields[2:-3]:
                 if field_i.name == 'datetime':
-                    value_set.append((field_i.name, field_i.verbose_name, '', get_forecast_time(wp_i[0])))
+                    value_set.append((field_i.name, field_i.verbose_name, '', forecast_times))
                 elif field_i.name == 'clouds':
                     value_set.append((field_i.name, field_i.verbose_name, '', get_clouds(wp_i[0])))
                 elif field_i.name == 'precipitation':
@@ -162,7 +165,7 @@ def weather(request, current_tab):
                     value_set.append(get_field_data(wp_i[0], field_i, '%'))
                 elif field_i.name == 'wind_speed':
                     value_set.append((field_i.name, field_i.verbose_name, 'м/c', get_wind(wp_i[0])))
-            forecast.append((WEATHER_PROVIDERS[wp_i[1]], value_set, wp_i[2]))
+            forecast.append((wp_i[3], value_set, wp_i[2]))
 
         params = {'forecast': forecast}
 

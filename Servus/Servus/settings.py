@@ -15,7 +15,7 @@ SESSION_COOKIE_AGE = 999999999
 # Запускаемые планировщиком задания (см. django-cron документацию)
 CRON_CLASSES = [
     'base.cron.SlideshowJob',
-    'base.cron.EmailsSendJob',
+    # 'base.cron.EmailsSendJob',
     'weather.cron.GetWeatherJob',
 ]
 
@@ -157,6 +157,7 @@ INSTALLED_APPS = (
     'django_cron',
     'base',
     'home',
+    'climate',
     'weather',
 )
 

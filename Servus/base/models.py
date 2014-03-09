@@ -30,7 +30,7 @@ class Tab(models.Model):
     )
 
     is_shown = models.BooleanField(
-        verbose_name='Включить',
+        verbose_name='Включена',
         help_text='Отображение/Скрытие вкладки (необходим перезапуск web-сервера)',
         default=False
     )
