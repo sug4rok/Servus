@@ -12,6 +12,12 @@ class TempHumidSensor(models.Model):
         verbose_name='Системное имя',
         unique=True
     )
+    sensor_pin = models.PositiveSmallIntegerField(
+        max_length=2,
+        verbose_name='Вывод (pin) на Arduino',
+        help_text='Для датчиков температуры выделены выводы с 2 по 5',
+        unique=True,
+    )
     sensor_verb_name = models.CharField(
         max_length=20,
         verbose_name='Полное имя',
@@ -33,6 +39,7 @@ class TempHumidSensor(models.Model):
         super(TempHumidSensor, self).save(*args, **kwargs)
 
     class Meta(object):
+        verbose_name = 'Датчик температуры'
         verbose_name_plural = 'Датчики температуры'
 
     def __unicode__(self):
@@ -54,5 +61,9 @@ class TempHumidValue(models.Model):
         max_length=2,
         verbose_name='Влажность',
         default=0
+    )
+    sensor_datetime = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Время замера температуры/влажности'
     )
 

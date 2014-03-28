@@ -17,5 +17,7 @@ SLIDESHOW_FILE_TYPES = (
 # (should be placed in a "static/img/home" directory).
 HOUSE_PLANS = (
     ('Вид с севера', 'plan1.png'),
-    ('Вид с востока', 'plan2.png'),
 )
+
+# Arduino COM port number
+PORT = 7

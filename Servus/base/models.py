@@ -59,7 +59,7 @@ class Event(models.Model):
         verbose_name='Описание события',
         null=True
     )
-    event_imp = models.IntegerField(
+    event_imp = models.PositiveSmallIntegerField(
         max_length=1,
         verbose_name='Критичность',
         default=2,

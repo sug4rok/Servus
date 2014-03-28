@@ -1,13 +1,16 @@
 ﻿# coding=utf-8
 from os import walk, stat
 import smtplib
+import time
 from datetime import datetime, timedelta
+import serial
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django_cron import CronJobBase, Schedule
 from Servus.settings import EMAIL_HOST_USER
-from Servus.Servus import SITE_NAME, SLIDESHOW_ROOT
+from Servus.Servus import SITE_NAME, SLIDESHOW_ROOT, PORT
 from base.models import Event, Slideshow, SlideshowChanges
+from climate.models import TempHumidSensor, TempHumidValue
 
 
 class EmailsSendJob(CronJobBase):
@@ -102,6 +105,51 @@ class SlideshowJob(CronJobBase):
                 Slideshow.objects.create(album_path=album_path, is_shown=(album_path not in was_excluded))
             obj_ssch.mtime = mtime
             obj_ssch.save()
+
+
+class GetSensorsValues(CronJobBase):
+    """
+    This class for obtaining the temperature and humidy values
+    """
+
+    RUN_EVERY_MINS = 15
+    RETRY_AFTER_FAILURE_MINS = 5
+    # RUN_AT_TIMES = ['04:00']
+
+    schedule = Schedule(
+        retry_after_failure_mins=RETRY_AFTER_FAILURE_MINS,
+        # run_at_times=RUN_AT_TIMES
+        run_every_mins=RUN_EVERY_MINS
+    )
+    code = 'GetSensorsValues'    # a unique code
+
+    @staticmethod
+    def do():
+        sensors = TempHumidSensor.objects.filter(is_used=True)
+        if sensors:
+            try:
+                ser = serial.Serial(PORT)
+                if ser.isOpen:
+                    for s in sensors:
+                        ser.flushInput()  # flush input buffer, discarding all its contents
+                        ser.flushOutput()  # flush output buffer, aborting current output
+
+                        ser.write('t%s\n' % s.sensor_pin)
+                        time.sleep(1)
+                        ser_out = ser.readline()[:-2].split(':')
+
+                        if ser_out[0] != 'e' and ser_out[1] != 'e':
+                            TempHumidValue.objects.create(
+                                sensor_name=s,
+                                temperature=ser_out[1],
+                                humidity=ser_out[0]
+                            )
+                        else:
+                            event_setter('climate', u'Ошибка получения данных с %s' % s.sensor_name, 0)
+
+                    ser.close()
+            except serial.serialutil.SerialException:
+                event_setter('climate', u'Не могу открыть порт COM%s' % PORT, 3)
 
 
 def event_setter(event_src, event_descr, event_imp):

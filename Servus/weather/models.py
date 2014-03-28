@@ -71,7 +71,7 @@ class Weather(models.Model):
         verbose_name='Время прогноза',
         default='2013-08-30 00:00'
     )
-    clouds = models.IntegerField(
+    clouds = models.PositiveSmallIntegerField(
         max_length=2,
         verbose_name='Облачность',
         default=0
@@ -81,27 +81,27 @@ class Weather(models.Model):
         verbose_name='Осадки',
         default=0.0
     )
-    temperature = models.IntegerField(
+    temperature = models.SmallIntegerField(
         max_length=3,
         verbose_name='Температура',
         default=0
     )
-    pressure = models.IntegerField(
+    pressure = models.PositiveSmallIntegerField(
         max_length=3,
         verbose_name='Давление',
         default=0
     )
-    humidity = models.IntegerField(
+    humidity = models.PositiveSmallIntegerField(
         max_length=2,
         verbose_name='Влажность',
         default=0
     )
-    wind_speed = models.IntegerField(
+    wind_speed = models.PositiveSmallIntegerField(
         max_length=2,
         verbose_name='Ветер',
         default=0
     )
-    wind_direction = models.IntegerField(
+    wind_direction = models.SmallIntegerField(
         max_length=3,
         verbose_name='Направление ветра',
         default=0
