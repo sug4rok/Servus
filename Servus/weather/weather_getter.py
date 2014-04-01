@@ -232,6 +232,7 @@ class WGYA(WG):
                 'clear': ['0', 't0d0'],
                 'mostly-clear': ['1', 't0d0'],
                 'mostly-clear-slight-possibility-of-rain': ['1', 't1d0'],
+                'mostly-clear-slight-possibility-of-snow': ['1', 't3d0'],
                 'partly-cloudy': ['2', 't0d0'],
                 'partly-cloudy-possible-thunderstorms-with-rain': ['2', 't1d0'],
                 'partly-cloudy-and-showers': ['2', 't1d0'],
@@ -267,6 +268,7 @@ class WGYA(WG):
                 'overcast-and-snow': ['5', 't3d2'],
             }
             if weather_condition not in weather_conditions:
+                print 'Unknown weather condition: ', weather_condition
                 return [('na', 'na')]
             return [(
                     self.file_name_prefix(d) + weather_conditions[weather_condition][0],

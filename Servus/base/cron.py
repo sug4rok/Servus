@@ -149,7 +149,7 @@ class GetSensorsValues(CronJobBase):
 
                     ser.close()
             except serial.serialutil.SerialException:
-                event_setter('climate', u'Не могу открыть порт COM%s' % PORT, 3)
+                event_setter('climate', u'Не могу открыть порт %s' % ser.portstr, 3)
 
 
 def event_setter(event_src, event_descr, event_imp):

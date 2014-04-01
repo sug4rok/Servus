@@ -22,8 +22,8 @@ def position_nearest_forecast(day):
         value_set = {
             'temperature': Weather.objects.filter(wp__on_sidebar=True).values_list('temperature', flat=True),
             'wind_speed': Weather.objects.filter(wp__on_sidebar=True).values_list('wind_speed', flat=True),
-            'clouds_img': Weather.objects.filter(wp__on_sidebar=True).values_list('clouds_img', flat=True),
-            'falls_img': Weather.objects.filter(wp__on_sidebar=True).values_list('falls_img', flat=True)
+            'clouds_img': Weather.objects.filter(wp__on_sidebar=True).exclude(clouds_img='na').values_list('clouds_img', flat=True),
+            'falls_img': Weather.objects.filter(wp__on_sidebar=True).exclude(falls_img='na').values_list('falls_img', flat=True)
         }
 
         forecast = {
