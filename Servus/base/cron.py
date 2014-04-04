@@ -2,32 +2,23 @@
 from os import walk, stat
 import smtplib
 import time
-from datetime import datetime, timedelta
 import serial
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
-from django_cron import CronJobBase, Schedule
 from Servus.settings import EMAIL_HOST_USER
 from Servus.Servus import SITE_NAME, SLIDESHOW_ROOT, PORT
+from base.utils import event_setter, CJB
 from base.models import Event, Slideshow, SlideshowChanges
-from climate.models import TempHumidSensor, TempHumidValue
+from climate.models import TempHumidSensor
 
 
-class EmailsSendJob(CronJobBase):
+class EmailsSendJob(CJB):
     """
-    Class to send emails with important events
+    CronJobBase класс для отправки писем с наиболее важными событиями.
+    Для отправки используются почтовые настройки, указанные в файле settings.py.
     """
 
     RUN_EVERY_MINS = 10
-    RETRY_AFTER_FAILURE_MINS = 5
-    # RUN_AT_TIMES = ['04:00']
-
-    schedule = Schedule(
-        retry_after_failure_mins=RETRY_AFTER_FAILURE_MINS,
-        # run_at_times=RUN_AT_TIMES
-        run_every_mins=RUN_EVERY_MINS
-    )
-    code = 'EmailsSendJob'    # a unique code
 
     @staticmethod
     def do():
@@ -55,17 +46,13 @@ class EmailsSendJob(CronJobBase):
                 print e
 
 
-class SlideshowJob(CronJobBase):
-    # RUN_EVERY_MINS = 60
-    RETRY_AFTER_FAILURE_MINS = 5
-    RUN_AT_TIMES = ['04:00']
-    
-    schedule = Schedule(
-        retry_after_failure_mins=RETRY_AFTER_FAILURE_MINS,
-        run_at_times=RUN_AT_TIMES
-        # run_every_mins=RUN_EVERY_MINS
-    )
-    code = 'SlideshowJob'    # a unique code
+class SlideshowJob(CJB):
+    """
+    CronJobBase класс для проверки изменений в папке static/img/slideshow
+    и добавление/удаление альбомов с изображениями в таблицу БД slideshow.
+    """
+
+    RUN_AT_TIMES = ['04:00', ]
 
     @staticmethod
     def do():
@@ -107,21 +94,12 @@ class SlideshowJob(CronJobBase):
             obj_ssch.save()
 
 
-class GetSensorsValues(CronJobBase):
+class GetSensorsValues(CJB):
     """
-    This class for obtaining the temperature and humidy values
+    CronJobBase класс для опроса датчиков температуры/влажности, подключенных к контроллеру arduino.
     """
 
     RUN_EVERY_MINS = 15
-    RETRY_AFTER_FAILURE_MINS = 5
-    # RUN_AT_TIMES = ['04:00']
-
-    schedule = Schedule(
-        retry_after_failure_mins=RETRY_AFTER_FAILURE_MINS,
-        # run_at_times=RUN_AT_TIMES
-        run_every_mins=RUN_EVERY_MINS
-    )
-    code = 'GetSensorsValues'    # a unique code
 
     @staticmethod
     def do():
@@ -136,33 +114,20 @@ class GetSensorsValues(CronJobBase):
 
                         ser.write('t%s\n' % s.sensor_pin)
                         time.sleep(1)
-                        ser_out = ser.readline()[:-2].split(':')
+                        #ser_out = ''
+                        # while ser.inWaiting() > 0:
+                        #     ser_out += ser.read(1)
+                        #ser_out = ser_out[:-2].split(':')
 
-                        if ser_out[0] != 'e' and ser_out[1] != 'e':
-                            TempHumidValue.objects.create(
-                                sensor_name=s,
-                                temperature=ser_out[1],
-                                humidity=ser_out[0]
-                            )
-                        else:
-                            event_setter('climate', u'Ошибка получения данных с %s' % s.sensor_name, 0)
+                        # if ser_out[0] != 'e' and ser_out[1] != 'e':
+                        #     TempHumidValue.objects.create(
+                        #         sensor_name=s,
+                        #         temperature=ser_out[1],
+                        #         humidity=ser_out[0]
+                        #     )
+                        # else:
+                        #     event_setter('climate', u'Ошибка получения данных с %s' % s.sensor_name, 0)
 
                     ser.close()
-            except serial.serialutil.SerialException:
-                event_setter('climate', u'Не могу открыть порт %s' % ser.portstr, 3)
-
-
-def event_setter(event_src, event_descr, event_imp):
-    """
-    Функция записи новых сообщений в БД (таблица base_event).
-    В БД записываются только уникальные (сравнение event_descr) в пределах суток сообщения.
-    На входе:
-        events_src - источник события;
-        event_descr - описание события (сообщение);
-        event_imp - важность (от 0 до 4)
-    """
-
-    events = Event.objects.filter(event_datetime__gte=datetime.now() - timedelta(days=1))
-
-    if event_descr not in events.values_list('event_descr', flat=True):
-        Event.objects.create(event_src=event_src, event_descr=event_descr, event_imp=event_imp)
+            except serial.SerialException:
+                event_setter('climate', u'Не могу открыть порт COM%s' % PORT, 3)

@@ -1,5 +1,5 @@
 ﻿# coding=utf-8
-from base.cron import event_setter
+from base.utils import event_setter
 from weather.models import Weather
 from weather.views import FALLS_RANGE
 from base.views import get_month

@@ -16,7 +16,7 @@ SESSION_COOKIE_AGE = 999999999
 CRON_CLASSES = [
     'base.cron.SlideshowJob',
     # 'base.cron.EmailsSendJob',
-    #'base.cron.GetSensorsValues',
+    # 'base.cron.GetSensorsValues',
     'weather.cron.GetWeatherJob',
 ]
 

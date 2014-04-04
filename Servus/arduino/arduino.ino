@@ -1,7 +1,7 @@
 #include "DHT.h"
 
 boolean stringComplete = false;
-char sensor_type;   // Тип выполняемой операции
+char operation_type;   // Тип выполняемой операции
 String sensor_pin;  // Номер ввода/вывода Arduino
 
 void send_data(String data) {
@@ -15,9 +15,10 @@ void setup() {
 
 void loop() {
   if (stringComplete) {
-    if (sensor_type == 't') {
+    if (operation_type == 't') {
       get_temp(sensor_pin.toInt());
     }
+    else send_data("Wrong data receive!");
     sensor_pin = "";
     stringComplete = false;
   }
@@ -36,7 +37,7 @@ void serialEvent() {
 
     if (inChar == '\n') stringComplete = true;
     else if (isDigit(inChar)) sensor_pin += inChar;
-    else sensor_type = inChar;
+    else operation_type = inChar;
   }
 }
 

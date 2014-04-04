@@ -11,7 +11,7 @@
                     </dt>
                     <dd>
                         {% for house_plan_descr, house_plan_img in house_plans %}
-                            <div style='float:right; width:{{ width_plans }}%'>
+                            <div style='float:right; width:{{ width_plans }}%;'>
                                 <img src='{% get_static_prefix %}img/home/{{ house_plan_img }}' class='img-responsive plan'>
                                 <br /><strong><small><em>Рис.</em></small> {{ house_plan_descr }}</strong>
                             </div>
