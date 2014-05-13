@@ -14,7 +14,14 @@ def event_setter(event_src, event_descr, event_imp):
     :param event_imp: важность (от 0 до 4)
     """
 
-    events = Event.objects.filter(event_datetime__gte=datetime.now() - timedelta(days=7))
+    if event_imp == 4:
+        td = timedelta(hours=1)
+    elif event_imp ==3:
+        td = timedelta(hours=3)
+    else:
+        td = timedelta(days=1)
+
+    events = Event.objects.filter(event_datetime__gte=datetime.now() - td)
 
     if event_descr not in events.values_list('event_descr', flat=True):
         Event.objects.create(event_src=event_src, event_descr=event_descr, event_imp=event_imp)
