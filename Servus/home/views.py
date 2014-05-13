@@ -80,6 +80,8 @@ def position_nearest_forecast(day):
                     forecast[f_k] = str(temperature)
                 else:
                     forecast[f_k] = str(int(round(float(sum(f_v)) / amount_data, 0)))
+        else:
+            return 'na'
         return forecast
 
 
