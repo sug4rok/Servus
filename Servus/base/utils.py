@@ -7,14 +7,14 @@ from base.models import Event
 def event_setter(event_src, event_descr, event_imp):
     """
     Функция записи новых сообщений в БД (таблица base_event).
-    В БД записываются только уникальные (сравнение event_descr) в пределах суток сообщения.
-    На входе:
-        events_src - источник события;
-        event_descr - описание события (сообщение);
-        event_imp - важность (от 0 до 4)
+    В БД записываются только уникальные (сравнение event_descr) в пределах семи дней сообщения.
+
+    :param event_src: источник события
+    :param event_descr: описание события (сообщение)
+    :param event_imp: важность (от 0 до 4)
     """
 
-    events = Event.objects.filter(event_datetime__gte=datetime.now() - timedelta(days=1))
+    events = Event.objects.filter(event_datetime__gte=datetime.now() - timedelta(days=7))
 
     if event_descr not in events.values_list('event_descr', flat=True):
         Event.objects.create(event_src=event_src, event_descr=event_descr, event_imp=event_imp)

@@ -5,8 +5,8 @@ from datetime import datetime, timedelta
 from django.http import Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from Servus.Servus import SITE_NAME, SLIDESHOW_FILE_TYPES
-from base.models import Tab, Slideshow, Event
+from Servus.Servus import SITE_NAME
+from base.models import Tab, Slideshow, Slidetype, Event
 
 # It's a dictionary of parameters for sending to render_to_response
 PARAMS = {}
@@ -35,7 +35,9 @@ PARAMS['tabs'] = Tab.objects.filter(is_shown=1)
 
 def get_weekday(weekday):
     """
-    Getting the name of the day of the week 
+    Функция получения названия дня недели
+
+    :param weekday: порядковый номер дня недели
     """
 
     days = {
@@ -52,7 +54,9 @@ def get_weekday(weekday):
 
 def get_month(month):
     """
-    Getting the name of the month
+    Функция получения названия месяца в родительном падеже
+
+    :param month: порядковый номер месяца
     """
 
     days = {
@@ -74,7 +78,9 @@ def get_month(month):
 
 def get_alert(e_imp):
     """
-    The function to determine the status of the event by its code
+    Функция получения степени кретичности системного события
+
+    :param e_imp: integer степень кретичности
     """
 
     e_status = {
@@ -90,9 +96,10 @@ def get_alert(e_imp):
 def get_events(session_key):
     """
     События за последние 7 дней для сессий, не ассоциированных еще с данным событием.
-    Ассоциация события с ip-адресом происходит после его закрытия в списке событий на странице home
-    На входе: ip-адрес пользователя, просматривающего страницу
-    На выходе: список не просмотренных или не закрытых пользователем событий за последнии 7 дней
+    Ассоциация события с session_key происходит после его закрытия в списке событий на странице home
+
+    :param session_key: ключ конкретной сессии для браузера пользоватея, зарегистрированной django
+    :returns: список не просмотренных или не закрытых пользователем событий за последнии 7 дней
     """
 
     try:
@@ -105,8 +112,9 @@ def get_events_short(request):
     """
     Функция, выводящая количесво событий и их кретичность для определенной сессии.
     (См. описание к функции get_events).
-    На входе: request
-    На выходе: кортеж, вида (<количество сбобытий>, <кретичность>)
+
+    :param request: django request
+    :returns: кортеж, вида (<количество сбобытий>, <кретичность>)
     """
 
     request.session.save()
@@ -120,6 +128,13 @@ def get_events_short(request):
 
 
 def get_tab_options(current_tab):
+    """
+    Функция получения названия вкладки, заголовка и краткого описания страницы для
+    конкретной вкладки.
+
+    :param current_tab: имя вкладки (в базе таблица base_tab)
+    """
+
     tab_options = Tab.objects.get(app_name=current_tab)
     PARAMS['active_app_name'] = current_tab
     PARAMS['active_title'] = tab_options.title
@@ -127,6 +142,15 @@ def get_tab_options(current_tab):
 
 
 def call_template(request, *args, **kwargs):
+    """
+    Универсальная функция-обработчик запросов для всех вьюшек
+
+    :param request: django request
+    :param args: словарь с дополнительными параметрами для render_to_response
+    :param kwargs: на данный момент только current_tab - запрашиваемая вкладка,
+                   или templ_path - запрашиваемый шаблон
+    """
+
     if args:
         PARAMS.update(args[0])
 
@@ -147,6 +171,8 @@ def call_template(request, *args, **kwargs):
 def main_page(request):
     """
     Функция отображения начальной страницы
+
+    :param request: django request
     """
 
     return call_template(
@@ -158,24 +184,30 @@ def main_page(request):
 def slideshow(request):
     """
     Функция отображения на начальной странице произвольной фотографии
+
+    :param request: django request
     """
 
     params = {}
+    slide_types = Slidetype.objects.all().values_list('type', flat=True)
 
-    if len(Slideshow.objects.all()):
+    if len(Slideshow.objects.all()) and slide_types:
         while True:
             try:
-                # Получаем первый элемент произвольно отсортированного списка фотоальбомов
-                rnd_album = unicode(Slideshow.objects.order_by('?')[0].album_path)
+                # Получаем первый элемент произвольно отсортированного списка фотоальбомов,
+                # исключая альбомы с пометкой is_shown = False
+                rnd_album = unicode(Slideshow.objects.exclude(is_shown=False).order_by('?')[0].album_path)
                 if path.exists(rnd_album):
                     for root, dirs, files in walk(rnd_album):
                         rnd_file = randint(0, len(files) - 1)
                         slide = '%s/%s' % (root, files[rnd_file])
                         file_type = slide.split('.')[-1].lower()
-                        if file_type not in SLIDESHOW_FILE_TYPES:
+                        if file_type not in slide_types:
                             raise NotImageError(file_type)
-                        params['album'] = rnd_album.split('/')[-1].replace('_', ' ')
-                        params['slide'] = slide
+                        else:
+                            params['album'] = rnd_album.split('/')[-1].replace('_', ' ')
+                            params['slide'] = slide
+                            break
                 else:
                     raise PathNotFound(rnd_album)
             except NotImageError as e:
@@ -196,6 +228,8 @@ def slideshow(request):
 def events(request):
     """
     Функция, выводящая количество и важность событий на главную страницу
+
+    :param request: django request
     """
 
     params = {
