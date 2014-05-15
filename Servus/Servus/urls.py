@@ -1,5 +1,6 @@
 ﻿# coding=utf-8
 from django.conf.urls import patterns, include, url
+from settings import MEDIA_ROOT
 from base.models import Tab
 from base.views import main_page, slideshow, events
 
@@ -7,10 +8,10 @@ from base.views import main_page, slideshow, events
 from django.contrib import admin
 admin.autodiscover()
 
-
 urlpatterns = patterns(
     '',
     url(r'^$', main_page),
+    url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': MEDIA_ROOT}),
     url(r'^slideshow/$', slideshow),
     url(r'^events/$', events),
     url(r'^summary/$', 'home.views.summary'),

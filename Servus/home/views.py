@@ -2,9 +2,9 @@
 from datetime import datetime, timedelta
 from django.http import HttpResponseRedirect
 from django.contrib.sessions.models import Session
-from Servus.Servus import HOUSE_PLANS
 from base.views import call_template, get_alert, get_events
 from base.models import Event
+from home.models import Plan
 from weather.models import Weather
 from weather.views import CLOUDS_RANGE, FALLS_RANGE
 
@@ -86,9 +86,8 @@ def position_nearest_forecast(day):
 
 
 def summary(request):
+
     params = {
-        'house_plans': HOUSE_PLANS,
-        'width_plans': 100 / len(HOUSE_PLANS),
         'forecast_today': position_nearest_forecast(datetime.now().day),
         'forecast_tomorrow': position_nearest_forecast((datetime.now() + timedelta(days=1)).day)
     }
@@ -130,7 +129,10 @@ def summary(request):
 
 def home(request, current_tab):
 
-    params = {}
+    plans = [(p.plan_name, p.plan_file) for p in Plan.objects.filter(is_shown=True)]
+    params = {'house_plans': plans, }
+    if len(plans):
+        params['width_plans'] = 100 / len(plans)
 
     return call_template(
         request,
