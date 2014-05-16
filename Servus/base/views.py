@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from django.http import Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from Servus.settings import MEDIA_ROOT
 from Servus.Servus import SITE_NAME
 from base.models import Tab, Slideshow, Slidetype, Event
 
@@ -196,11 +197,13 @@ def slideshow(request):
             try:
                 # Получаем первый элемент произвольно отсортированного списка фотоальбомов,
                 # исключая альбомы с пометкой is_shown = False
-                rnd_album = unicode(Slideshow.objects.exclude(is_shown=False).order_by('?')[0].album_path)
+                rnd_album = unicode(
+                    MEDIA_ROOT + Slideshow.objects.exclude(is_shown=False).order_by('?')[0].album_path
+                )
                 if path.exists(rnd_album):
                     for root, dirs, files in walk(rnd_album):
                         rnd_file = randint(0, len(files) - 1)
-                        slide = '%s/%s' % (root, files[rnd_file])
+                        slide = '%s/%s' % (root.replace(MEDIA_ROOT, ''), files[rnd_file])
                         file_type = slide.split('.')[-1].lower()
                         if file_type not in slide_types:
                             raise NotImageError(file_type)

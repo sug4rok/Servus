@@ -5,8 +5,8 @@ import time
 import serial
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
-from Servus.settings import EMAIL_HOST_USER
-from Servus.Servus import SITE_NAME, SLIDESHOW_ROOT, PORT
+from Servus.settings import EMAIL_HOST_USER, MEDIA_ROOT
+from Servus.Servus import SITE_NAME, PORT
 from base.utils import event_setter, CJB
 from base.models import Event, Slideshow, SlideshowChanges
 from climate.models import TempHumidSensor
@@ -58,7 +58,7 @@ class SlideshowJob(CJB):
     def do():
         """
         Функция записи в таблицу БД base_slideshow абсолютных путей до каждого альбома,
-        находящегося в папке SLIDESHOW_ROOT (см. настройки Servus/Servus.py).
+        находящегося в папке files/slideshow.
         """
 
         album_paths = []
@@ -70,12 +70,12 @@ class SlideshowJob(CJB):
         mtime = obj_ssch.mtime
         dir_changed = False
 
-        for root, dirs, files in walk(unicode(SLIDESHOW_ROOT), followlinks=True):
+        for root, dirs, files in walk(unicode(MEDIA_ROOT + '/slideshow'), followlinks=True):
 
             # Не вносим в список album_paths пустые папки
-            amount_files = len(files)
-            if amount_files:
-                album_paths.append(root.replace('\\', '/'))
+            #amount_files = len(files)
+            if len(files):
+                album_paths.append(root.replace('\\', '/').replace(MEDIA_ROOT, ''))
 
             # Сравниваем время модификации текущей папки со временем, хранящемся
             # в таблице БД base_slideshowchanges
