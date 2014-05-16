@@ -1,7 +1,7 @@
 ﻿# coding=utf-8
 from django.db import models
 from django.contrib.sessions.models import Session
-from Servus.Servus import SLIDESHOW_ROOT
+from Servus.settings import MEDIA_ROOT
 
 
 class Tab(models.Model):
@@ -115,14 +115,10 @@ class Slideshow(models.Model):
 
     class Meta(object):
         verbose_name = 'Фотоальбом'
-        verbose_name_plural = 'Фотоальбомы в %s' % SLIDESHOW_ROOT
+        verbose_name_plural = 'Фотоальбомы в папке slideshow'
 
     def __unicode__(self):
-        album_path = self.album_path.replace('%s/' % SLIDESHOW_ROOT, '')
-        if album_path == SLIDESHOW_ROOT:
-            return '/'
-        else:
-            return album_path
+        return self.album_path
 
 
 class Slidetype(models.Model):
