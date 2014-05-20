@@ -59,7 +59,7 @@ def position_nearest_forecast(day):
                         # Тип float необходим для правильного последующего округления после усреднения данных
                         tmp_data1 += float(f_v[i][1])
                         tmp_data2 += float(f_v[i][3])
-                    if round(tmp_data1 / amount_data, 0):
+                    if tmp_data1:
                         if temperature > 2:
                             tmp_data1 = '1'
                         elif temperature < 0:

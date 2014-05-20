@@ -17,7 +17,7 @@ def event_setter(event_src, event_descr, event_imp):
     if event_imp == 4:
         td = timedelta(hours=1)
     elif event_imp ==3:
-        td = timedelta(hours=3)
+        td = timedelta(hours=6)
     else:
         td = timedelta(days=1)
 

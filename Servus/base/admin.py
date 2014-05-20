@@ -1,6 +1,6 @@
 ﻿# coding=utf-8
 from django.contrib import admin
-from base.models import Tab, Slideshow, Slidetype
+from base.models import Tab, Slideshow
 
 
 class TabAdmin(admin.ModelAdmin):
@@ -50,4 +50,3 @@ class SlideshowAdmin(admin.ModelAdmin):
 
 admin.site.register(Tab, TabAdmin)
 admin.site.register(Slideshow, SlideshowAdmin)
-admin.site.register(Slidetype)

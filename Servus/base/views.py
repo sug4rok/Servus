@@ -2,12 +2,13 @@
 from os import walk, path
 from random import randint
 from datetime import datetime, timedelta
+from PIL import Image
 from django.http import Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from Servus.settings import MEDIA_ROOT
 from Servus.Servus import SITE_NAME
-from base.models import Tab, Slideshow, Slidetype, Event
+from base.models import Tab, Slideshow, Event
 
 # It's a dictionary of parameters for sending to render_to_response
 PARAMS = {}
@@ -190,9 +191,8 @@ def slideshow(request):
     """
 
     params = {}
-    slide_types = Slidetype.objects.all().values_list('type', flat=True)
 
-    if len(Slideshow.objects.all()) and slide_types:
+    if len(Slideshow.objects.all()):
         while True:
             try:
                 # Получаем первый элемент произвольно отсортированного списка фотоальбомов,
@@ -203,14 +203,15 @@ def slideshow(request):
                 if path.exists(rnd_album):
                     for root, dirs, files in walk(rnd_album):
                         rnd_file = randint(0, len(files) - 1)
-                        slide = '%s/%s' % (root.replace(MEDIA_ROOT, ''), files[rnd_file])
+                        slide = '%s/%s' % (root, files[rnd_file])
                         file_type = slide.split('.')[-1].lower()
-                        if file_type not in slide_types:
-                            raise NotImageError(file_type)
-                        else:
+                        try:
+                            Image.open(slide)
                             params['album'] = rnd_album.split('/')[-1].replace('_', ' ')
-                            params['slide'] = slide
+                            params['slide'] = slide.replace(MEDIA_ROOT, '')
                             break
+                        except:
+                            raise NotImageError(file_type)
                 else:
                     raise PathNotFound(rnd_album)
             except NotImageError as e:

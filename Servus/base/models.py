@@ -119,23 +119,3 @@ class Slideshow(models.Model):
 
     def __unicode__(self):
         return self.album_path
-
-
-class Slidetype(models.Model):
-    """
-    Типы файлов для отображения в слайдшоу
-    """
-
-    type = models.CharField(
-        max_length=4,
-        unique=True,
-        verbose_name='Тип файла',
-        null=False
-    )
-
-    class Meta(object):
-        verbose_name = 'Тип'
-        verbose_name_plural = 'Типы файлов слайдшоу'
-
-    def __unicode__(self):
-        return self.type

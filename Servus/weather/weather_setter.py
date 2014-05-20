@@ -29,26 +29,26 @@ def set_weather_events(dt, temp, wind_speed, falls_img):
 
     event_day = '%s %s' % (dt.day, get_month(dt.month))
 
-    if 25 < temp <= 32:
-        event_setter('weather', u'%s: Будет жарко (%s C)' % (event_day, temp), 2)
-    elif temp > 32:
-        event_setter('weather', u'%s: Будет очень жарко! (%s C)' % (event_day, temp), 3)
+    if 30 <= temp <= 35:
+        event_setter('weather', u'%s: Будет жарко (выше 30 C)' % event_day, 2)
+    elif temp > 35:
+        event_setter('weather', u'%s: Будет очень жарко! (выше 35 C)' % event_day, 2)
     elif -25 <= temp < -15:
-        event_setter('weather', u'%s: Будет холодно (%s C)' % (event_day, temp), 2)
+        event_setter('weather', u'%s: Будет холодно (ниже -15 C)' % event_day, 2)
     elif temp < -25:
-        event_setter('weather', u'%s: Будет очень холодно! (%s C)' % (event_day, temp), 3)
+        event_setter('weather', u'%s: Будет очень холодно! (ниже -25 C)' % event_day, 2)
 
     if 11 <= wind_speed < 17:
-        event_setter('weather', u'%s: Сильный ветер (%s м/с)' % (event_day, wind_speed), 2)
+        event_setter('weather', u'%s: Сильный ветер (более 11 м/с)' % event_day, 2)
     elif 17 <= wind_speed < 25:
-        event_setter('weather', u'%s: Шторм! (%s м/с)' % (event_day, wind_speed), 3)
+        event_setter('weather', u'%s: Шторм! (скорость ветра более 17 м/с)' % event_day, 2)
     elif wind_speed >= 25:
-        event_setter('weather', u'%s: УРАГАН! (%s м/с)' % (event_day, wind_speed), 4)
+        event_setter('weather', u'%s: УРАГАН! (скорость ветра более 25 м/с)' % event_day, 3)
 
     if falls_img in ['t1d3', 't2d3', 't3d3']:
         event_setter('weather', u'%s: %s' % (event_day, FALLS_RANGE[falls_img]), 2)
     elif falls_img in ['t1d4', 't1d5', 't2d4', 't3d4']:
-        event_setter('weather', u'%s: %s' % (event_day, FALLS_RANGE[falls_img]), 3)
+        event_setter('weather', u'%s: %s' % (event_day, FALLS_RANGE[falls_img]), 2)
 
 
 def weather_setter(weather_data):
