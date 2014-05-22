@@ -9,23 +9,22 @@ from weather.models import Weather
 from weather.views import CLOUDS_RANGE, FALLS_RANGE
 
 
-def position_nearest_forecast(day):
+def position_nearest_forecast(d):
         """
         Функция получения некоторых усредненных данных прогноза погоды для активированных погодных API,
         отображаемых на Главной странице.
 
-        :param day: день (число), для которого будем усреднять прогноз.
-        :returns: словарь, вида с данными о температуре, скорости ветра и соответствующим облачности и
+        :param d: день в формате datetime, для которого будем усреднять прогноз.
+        :returns: словарь, с данными о температуре, скорости ветра и соответствующим облачности и
         осадкам файлам PNG.
         """
 
-        datetimes = Weather.objects.filter(wp__on_sidebar=True).values_list('datetime', flat=True)
-        value_set = {
-            'temperature': Weather.objects.filter(wp__on_sidebar=True).values_list('temperature', flat=True),
-            'wind_speed': Weather.objects.filter(wp__on_sidebar=True).values_list('wind_speed', flat=True),
-            'clouds_img': Weather.objects.filter(wp__on_sidebar=True).exclude(clouds_img='na').values_list('clouds_img', flat=True),
-            'falls_img': Weather.objects.filter(wp__on_sidebar=True).exclude(falls_img='na').values_list('falls_img', flat=True)
-        }
+        # Создаем список объектов Weather, всех активированных прогнозных API,
+        # приходящихся на переданный в функциию день с 12:00 до 16:00 включительно
+        #(будем считать, что день у нас с 12 до 16 часов ;)).
+        dt1 = datetime(d.year, d.month, d.day, 12)
+        dt2 = datetime(d.year, d.month, d.day, 16)
+        w_objs = Weather.objects.filter(wp__on_sidebar=True, datetime__range=[dt1, dt2])
 
         forecast = {
             'temperature': [],
@@ -33,63 +32,51 @@ def position_nearest_forecast(day):
             'clouds_img': [],
             'falls_img': []
         }
-
-        # Создаем список порядковых номеров данных, всех активированных прогнозных API,
-        # приходящихся на переданный в функциию день с 12:00 до 16:00 включительно
-        #(будем считать, что день у нас с 12 до 16 часов ;)).
-        if len(datetimes):
-            for num, d in enumerate(datetimes):
-                if d.day == day and 12 <= d.hour <= 16:
-                    for f_k, f_v in forecast.iteritems():
-                        f_v.append(value_set[f_k][num])
-        else:
-            return 'na'
-
-        # Определяем количество данных для усреднения
-        amount_data = len(forecast['temperature'])
-
-        # Заполняем словарь forecast усредненными данными (данные выбираются согласно
-        # составленному ранее списку валидных порядковых номеров данных после выборки из базы
+        amount_data = len(w_objs)
         if amount_data:
-            temperature = int(round(float(sum(forecast['temperature'])) / amount_data, 0))
-            for f_k, f_v in forecast.iteritems():
-                if f_k == 'falls_img':
-                    tmp_data1, tmp_data2 = 0.0, 0.0
-                    for i in xrange(amount_data):
-                        # Тип float необходим для правильного последующего округления после усреднения данных
-                        tmp_data1 += float(f_v[i][1])
-                        tmp_data2 += float(f_v[i][3])
-                    if tmp_data1:
-                        if temperature > 2:
-                            tmp_data1 = '1'
-                        elif temperature < 0:
-                            tmp_data1 = '3'
-                        else:
-                            tmp_data1 = '2'
-                    else:
-                        tmp_data1 = '0'
-                    file_img = 't%sd%s' % (tmp_data1, str(int(round(tmp_data2 / amount_data, 0))))
-                    forecast[f_k] = [(file_img, FALLS_RANGE[file_img])]
-                elif f_k == 'clouds_img':
-                    tmp_data1 = 0.0
-                    for i in xrange(amount_data):
-                        tmp_data1 += float(f_v[i][2])
-                    file_img = 'cd%s' % str(int(round(tmp_data1 / amount_data, 0)))
-                    forecast[f_k] = [(file_img, CLOUDS_RANGE[file_img[2]])]
-                elif f_k == 'temperature':
-                    forecast[f_k] = str(temperature)
-                else:
-                    forecast[f_k] = str(int(round(float(sum(f_v)) / amount_data, 0)))
+            for w_obj in w_objs:
+                forecast['temperature'].append(w_obj.temperature)
+                forecast['wind_speed'].append(w_obj.wind_speed)
+                forecast['clouds_img'].append(w_obj.clouds_img)
+                forecast['falls_img'].append(w_obj.falls_img)
         else:
             return 'na'
+
+        # Заполняем словарь forecast снова, теперь уже усредненными данными
+        temperature = round(float(sum(forecast['temperature'])) / amount_data, 0)
+        for f_k, f_v in forecast.iteritems():
+            if f_k == 'falls_img':
+                tmp_data1 = sum([float(f[1]) for f in f_v]) / amount_data
+                tmp_data2 = sum([float(f[3]) for f in f_v]) / amount_data
+
+                if tmp_data1 > 0.5:
+                    if temperature > 2:
+                        tmp_data1 = '1'
+                    elif temperature < 0:
+                        tmp_data1 = '3'
+                    else:
+                        tmp_data1 = '2'
+                else:
+                    tmp_data1 = '0'
+
+                file_img = 't%sd%.0f' % (tmp_data1, tmp_data2)
+                forecast[f_k] = [(file_img, FALLS_RANGE[file_img])]
+            elif f_k == 'clouds_img':
+                tmp_data1 = sum([float(f[2]) for f in f_v]) / amount_data
+                file_img = 'cd%.0f' % tmp_data1
+                forecast[f_k] = [(file_img, CLOUDS_RANGE[file_img[2]])]
+            elif f_k == 'temperature':
+                forecast[f_k] = '%d' % temperature
+            else:
+                forecast[f_k] = '%d' % round(float(sum(f_v)) / amount_data, 0)
         return forecast
 
 
 def summary(request):
 
     params = {
-        'forecast_today': position_nearest_forecast(datetime.now().day),
-        'forecast_tomorrow': position_nearest_forecast((datetime.now() + timedelta(days=1)).day)
+        'forecast_today': position_nearest_forecast(datetime.today()),
+        'forecast_tomorrow': position_nearest_forecast(datetime.today() + timedelta(days=1))
     }
 
     request.session.save()
