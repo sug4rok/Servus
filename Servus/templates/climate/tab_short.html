@@ -1,0 +1,23 @@
+{% load static %}
+
+<dl class='tab_short'>
+    <dt class='tab_short'>
+        {{ sensor }}
+    </dt>
+    <dd>
+        <table class='tab_short' border='0'>
+            <tr>
+                <td>
+                    <img src='{% get_static_prefix %}img/climate/temp.png' width='24' height='24'/>
+                    {{ temp }}<small><em> °C</em></small>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <img src='{% get_static_prefix %}img/climate/humid.png' width='24' height='24'/>
+                    {{ humid }}<small><em> %</em></small>
+                </td>
+            </tr>
+        </table>
+    </dd>
+</dl>

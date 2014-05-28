@@ -1,11 +1,21 @@
 <div class='row placeholders'>
-    <div class='col-xs-6 col-sm-6 col-md-8 col-lg-8 placeholder'>
-        {% include 'home/tab_short.html' %}
-    </div>
+    {%  if sensors %}
+        {%  for sensor, humid, temp in sensors %}
+            <div class='col-xs-3 col-sm-3 col-md-2 col-lg-2 placeholder'>
+                {% include 'climate/tab_short.html' %}
+            </div>
+        {%  endfor %}
+    {% endif %}
     <div class='col-xs-3 col-sm-3 col-md-2 col-lg-2 placeholder'>
         {% include 'weather/tab_short_0.html' %}
     </div>
     <div class='col-xs-3 col-sm-3 col-md-2 col-lg-2 placeholder'>
         {% include 'weather/tab_short_1.html' %}
+    </div>
+</div>
+
+<div class='row placeholders'>
+    <div class='col-xs-12 col-sm-12 col-md-12 col-lg-12 placeholder'>
+        {% include 'home/tab_short.html' %}
     </div>
 </div>

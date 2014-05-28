@@ -7,6 +7,7 @@ from base.models import Event
 from home.models import Plan
 from weather.models import Weather
 from weather.views import CLOUDS_RANGE, FALLS_RANGE
+from climate.models import TempHumidValue
 
 
 def position_nearest_forecast(d):
@@ -72,18 +73,33 @@ def position_nearest_forecast(d):
         return forecast
 
 
+def get_sensors_values():
+    """
+    Получение данных о текущей температуре и влажности из таблицы climate_temphumidvalue БД
+    :returns: кортеж кортежей вида ((<полное имя датчика>, влажность, тепмпература), ...)
+    """
+
+    return ('test', 35, 45), ('пыщ', 11, 55)
+
+
 def summary(request):
+    """
+    Контроллер для ajax-запроса обновления информации на Главной странице.
+    :param request: django request
+    """
 
-    params = {
-        'forecast_today': position_nearest_forecast(datetime.today()),
-        'forecast_tomorrow': position_nearest_forecast(datetime.today() + timedelta(days=1))
-    }
+    # Отображение краткой сводки прогноза погоды на сегодня и завтра
+    params = dict(forecast_today=position_nearest_forecast(datetime.today()),
+                  forecast_tomorrow=position_nearest_forecast(datetime.today() + timedelta(days=1)))
 
-    request.session.save()
-    current_session = request.session.session_key
+    # Отображение текущего значения температуры и влажности в помещениях
+    params['sensors'] = get_sensors_values()
 
     # Получение списка событий для текущей сессии.
     # Если с событием еще не ассоциирован ключ данной сессии, оно добавляется в список events.
+    request.session.save()
+    current_session = request.session.session_key
+
     events = get_events(current_session)
     events_data = []
 
