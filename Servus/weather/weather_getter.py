@@ -24,9 +24,14 @@ class WG(object):
             print 'Opening %s...' % self.wp_url
             print 'urllib2 HTTPError: ', err.code
             return -1
-        parsed_xml = minidom.parse(url_sock)                  
-        url_sock.close()
-        return parsed_xml
+        try:
+            parsed_xml = minidom.parse(url_sock)
+            return parsed_xml
+        except:
+            return -1
+        finally:
+            url_sock.close()
+
 
     def node_value_get(self, tag, node=None, subnode_num=None, attr=None):
         if node is not None:

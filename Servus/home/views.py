@@ -7,18 +7,23 @@ from base.models import Event
 from home.models import Plan
 from weather.models import Weather
 from weather.views import CLOUDS_RANGE, FALLS_RANGE
-from climate.models import TempHumidValue
+from climate.models import TempHumidValueShort
 
 
-def position_nearest_forecast(d):
+def position_nearest_forecast(day):
         """
         Функция получения некоторых усредненных данных прогноза погоды для активированных погодных API,
         отображаемых на Главной странице.
 
-        :param d: день в формате datetime, для которого будем усреднять прогноз.
+        :param day: день ('сегодня' | 'завтра'), для которого будем усреднять прогноз.
         :returns: словарь, с данными о температуре, скорости ветра и соответствующим облачности и
         осадкам файлам PNG.
         """
+
+        if day == 'сегодня':
+            d = datetime.today()
+        else:
+            d = datetime.today() + timedelta(days=1)
 
         # Создаем список объектов Weather, всех активированных прогнозных API,
         # приходящихся на переданный в функциию день с 12:00 до 16:00 включительно
@@ -27,21 +32,16 @@ def position_nearest_forecast(d):
         dt2 = datetime(d.year, d.month, d.day, 16)
         w_objs = Weather.objects.filter(wp__on_sidebar=True, datetime__range=[dt1, dt2])
 
-        forecast = {
-            'temperature': [],
-            'wind_speed': [],
-            'clouds_img': [],
-            'falls_img': []
-        }
         amount_data = len(w_objs)
         if amount_data:
-            for w_obj in w_objs:
-                forecast['temperature'].append(w_obj.temperature)
-                forecast['wind_speed'].append(w_obj.wind_speed)
-                forecast['clouds_img'].append(w_obj.clouds_img)
-                forecast['falls_img'].append(w_obj.falls_img)
+            forecast = {
+                'temperature': w_objs.values_list('temperature', flat=True),
+                'wind_speed': w_objs.values_list('wind_speed', flat=True),
+                'clouds_img': w_objs.values_list('clouds_img', flat=True),
+                'falls_img': w_objs.values_list('falls_img', flat=True)
+            }
         else:
-            return 'na'
+            return None
 
         # Заполняем словарь forecast снова, теперь уже усредненными данными
         temperature = round(float(sum(forecast['temperature'])) / amount_data, 0)
@@ -70,16 +70,19 @@ def position_nearest_forecast(d):
                 forecast[f_k] = '%d' % temperature
             else:
                 forecast[f_k] = '%d' % round(float(sum(f_v)) / amount_data, 0)
+        forecast['day'] = day
         return forecast
 
 
 def get_sensors_values():
     """
     Получение данных о текущей температуре и влажности из таблицы climate_temphumidvalue БД
-    :returns: кортеж кортежей вида ((<полное имя датчика>, влажность, тепмпература), ...)
+    :returns: список кортежей вида [(<полное имя датчика>, влажность, тепмпература), ...]
     """
 
-    return ('test', 35, 45), ('пыщ', 11, 55)
+    th_objs = TempHumidValueShort.objects.all()
+
+    return [(th_obj.sensor_name.sensor_verb_name, th_obj.humidity, th_obj.temperature) for th_obj in th_objs]
 
 
 def summary(request):
@@ -89,11 +92,12 @@ def summary(request):
     """
 
     # Отображение краткой сводки прогноза погоды на сегодня и завтра
-    params = dict(forecast_today=position_nearest_forecast(datetime.today()),
-                  forecast_tomorrow=position_nearest_forecast(datetime.today() + timedelta(days=1)))
+    params = {
+        'forecasts': (position_nearest_forecast('сегодня'), position_nearest_forecast('завтра')),
+        'sensors': get_sensors_values()
+    }
 
     # Отображение текущего значения температуры и влажности в помещениях
-    params['sensors'] = get_sensors_values()
 
     # Получение списка событий для текущей сессии.
     # Если с событием еще не ассоциирован ключ данной сессии, оно добавляется в список events.

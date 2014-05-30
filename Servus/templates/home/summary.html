@@ -1,4 +1,5 @@
 <div class='row placeholders'>
+
     {%  if sensors %}
         {%  for sensor, humid, temp in sensors %}
             <div class='col-xs-3 col-sm-3 col-md-2 col-lg-2 placeholder'>
@@ -6,12 +7,15 @@
             </div>
         {%  endfor %}
     {% endif %}
-    <div class='col-xs-3 col-sm-3 col-md-2 col-lg-2 placeholder'>
-        {% include 'weather/tab_short_0.html' %}
-    </div>
-    <div class='col-xs-3 col-sm-3 col-md-2 col-lg-2 placeholder'>
-        {% include 'weather/tab_short_1.html' %}
-    </div>
+
+    {% for forecast in forecasts %}
+        {%  if forecast %}
+            <div class='col-xs-3 col-sm-3 col-md-2 col-lg-2 placeholder'>
+                {% include 'weather/tab_short.html' %}
+            </div>
+        {% endif %}
+    {% endfor %}
+
 </div>
 
 <div class='row placeholders'>
