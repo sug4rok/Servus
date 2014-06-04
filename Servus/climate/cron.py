@@ -60,9 +60,13 @@ class GetTempHumid(CJB):
                                     temperature=t,
                                     humidity=h
                                 )
+                                # Проверяем полученные данные на возможные ошибки показаний.
+                                # Делаем тртиизмерения подряд с 5 секундной паузой, чтобы удостоверится, что
+                                # "запредельные" значения - это не ошибка датчика
                                 if check_bad_conditions(t, h) and self.counter:
                                     self.counter -= 1
                                     ser.close()
+                                    time.sleep(5)
                                     self.do()
                                 else:
                                     try:
@@ -81,19 +85,19 @@ class GetTempHumid(CJB):
                                         humidity=h
                                     )
                                     if 28 < t <= 35 or 15 <= t < 19:
-                                        event_setter('climate', u'%s: Температура вне нормы 19-28 С' % s.sensor_verb_name, 2)
+                                        event_setter('climate', u'%s: Температура вне нормы 19-28 С' % s.sensor_verb_name, 2, 24)
                                     elif t > 35 or t < 15:
-                                        event_setter('climate', u'%s: Температура за границами 15-35 С' % s.sensor_verb_name, 3)
+                                        event_setter('climate', u'%s: Температура за границами 15-35 С' % s.sensor_verb_name, 3, 1)
                                     if h < 30:
-                                        event_setter('climate', u'%s: Воздух слишком сухой' % s.sensor_verb_name, 2)
+                                        event_setter('climate', u'%s: Воздух слишком сухой (%d%)' % (s.sensor_verb_name, h), 2)
                                     elif 60 > h:
-                                        event_setter('climate', u'%s: Воздух слишком влажный' % s.sensor_verb_name, 2)
+                                        event_setter('climate', u'%s: Воздух слишком влажный (%d%)' % (s.sensor_verb_name, h), 3, 1)
 
                             else:
-                                event_setter('climate', u'Датчик %s вернул неверные данные' % s.sensor_name, 0)
+                                event_setter('climate', u'Датчик %s вернул неверные данные' % s.sensor_name, 0, 6)
                         else:
-                            event_setter('climate', u'Ошибка получения данных с %s' % s.sensor_name, 0)
+                            event_setter('climate', u'Ошибка получения данных с %s' % s.sensor_name, 0, 1)
 
                     ser.close()
             except serial.SerialException:
-                event_setter('climate', u'Не могу открыть порт COM%s' % PORT, 3)
+                event_setter('climate', u'Не могу открыть порт COM%s' % PORT, 3, 1)

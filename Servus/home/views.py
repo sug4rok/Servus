@@ -48,7 +48,6 @@ def position_nearest_forecast(day):
         for f_k, f_v in forecast.iteritems():
             if f_k == 'falls_img':
                 tmp_data1 = sum([float(f[1]) for f in f_v]) / amount_data
-                tmp_data2 = sum([float(f[3]) for f in f_v]) / amount_data
 
                 if tmp_data1 > 0.5:
                     if temperature > 2:
@@ -57,8 +56,9 @@ def position_nearest_forecast(day):
                         tmp_data1 = '3'
                     else:
                         tmp_data1 = '2'
+                    tmp_data2 = sum([float(f[3]) for f in f_v]) / amount_data
                 else:
-                    tmp_data1 = '0'
+                    tmp_data1, tmp_data2 = '0', 0.0
 
                 file_img = 't%sd%.0f' % (tmp_data1, tmp_data2)
                 forecast[f_k] = [(file_img, FALLS_RANGE[file_img])]
