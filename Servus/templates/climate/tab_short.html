@@ -1,23 +1,23 @@
 {% load static %}
 
-<dl class='tab_short'>
-    <dt class='tab_short'>
+<div class='panel panel-default'>
+    <div class='panel-heading'>
         {{ sensor }}
-    </dt>
-    <dd>
+    </div>
+    <div class='panel-body'>
         <table class='tab_short' border='0'>
             <tr>
                 <td>
                     <img src='{% get_static_prefix %}img/climate/temp.png' width='24' height='24'/>
-                    {{ temp }}<small><em> °C</em></small>
+                    {{ temp }}<small><small><em> °C</em></small></small>
                 </td>
             </tr>
             <tr>
                 <td>
                     <img src='{% get_static_prefix %}img/climate/humid.png' width='24' height='24'/>
-                    {{ humid }}<small><em> %</em></small>
+                    {{ humid }}<small><small><em> %</em></small></small>
                 </td>
             </tr>
         </table>
-    </dd>
-</dl>
+    </div>
+</div>
