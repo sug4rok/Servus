@@ -1,10 +1,10 @@
 {% load static %}
 
-<div class='panel panel-default'>
-    <div class='panel-heading'>
+<div class='panel panel-default widget'>
+    <div class='panel-heading widget-padding'>
         Уведомления
     </div>
-    <div class='panel-body'>
+    <div class='panel-body widget-padding'>
         {% for event_id, event_imp, event_datetime, event_src, event_descr in events %}
             <form action='/summary/' method='post'>{% csrf_token %}
                 <div class='alert alert-{{ event_imp }} event_imp'>
