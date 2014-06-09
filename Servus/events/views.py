@@ -1,6 +1,6 @@
 # coding=utf-8
 from base.views import call_template
-from events.utils import get_alert, get_amount_events, get_events
+from events.utils import get_amount_events, get_events
 
 
 def events(request, current_tab):
@@ -11,19 +11,7 @@ def events(request, current_tab):
     :param current_tab: название текущей вкладки (передается в Servus.urls)
     """
 
-    es = get_events()
-    events_data = []
-
-    if len(es):
-        for e in es:
-            events_data.append((
-                get_alert(e.event_imp),
-                e.event_datetime,
-                e.event_src,
-                e.event_descr
-            ))
-
-    params = dict(events=events_data)
+    params = dict(events=get_events())
 
     return call_template(
         request,

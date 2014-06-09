@@ -30,9 +30,25 @@ def get_events(session_key=None):
     """
 
     try:
+        events_data = []
         if session_key:
-            return Event.objects.filter(event_datetime__gte=datetime.now() - timedelta(days=2)).exclude(session_keys__session_key=session_key).order_by('-event_imp')
-        return Event.objects.filter(event_datetime__gte=datetime.now() - timedelta(days=14)).order_by('-event_datetime')
+            events = Event.objects.filter(event_datetime__gte=datetime.now() - timedelta(days=2))\
+                .exclude(session_keys__session_key=session_key).order_by('-event_imp').values()
+        else:
+            events = Event.objects.filter(event_datetime__gte=datetime.now() - timedelta(days=14))\
+                .order_by('-event_datetime').values()
+
+        if len(events):
+            for event in events:
+                events_data.append((
+                    event['id'],
+                    event['event_src'],
+                    event['event_descr'],
+                    get_alert(event['event_imp']),
+                    event['event_datetime']
+                ))
+        return events_data
+
     except Event.DoesNotExist:
         return []
 

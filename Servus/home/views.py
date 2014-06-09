@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 from django.contrib.sessions.models import Session
 from base.views import call_template
 from events.models import Event
-from events.views import get_alert, get_events
+from events.views import get_events
 from home.models import Plan
 from weather.models import Weather
 from weather.views import CLOUDS_RANGE, FALLS_RANGE
@@ -94,33 +94,19 @@ def summary(request):
     :param request: django request
     """
 
-    # Отображение краткой сводки прогноза погоды на сегодня и завтра
+    # Отображение краткой сводки прогноза погоды на сегодня и завтра и
+    # текущего значения температуры и влажности в помещениях
     params = {
         'forecasts': (position_nearest_forecast('сегодня'), position_nearest_forecast('завтра')),
         'sensors': get_sensors_values()
     }
-
-    # Отображение текущего значения температуры и влажности в помещениях
 
     # Получение списка событий для текущей сессии.
     # Если с событием еще не ассоциирован ключ данной сессии, оно добавляется в список events.
     request.session.save()
     current_session = request.session.session_key
 
-    events = get_events(current_session)
-    events_data = []
-
-    if len(events):
-        for event in events:
-            events_data.append((
-                event.id,
-                get_alert(event.event_imp),
-                event.event_datetime,
-                event.event_src,
-                event.event_descr
-            ))
-
-    params['events'] = events_data
+    params['events'] = get_events(current_session)
 
     # Обработка нажатия кнопки "x" на определнном событии.
     # (Ассоциируем с данным событием определенный ключ сессии).

@@ -3,7 +3,7 @@
 
 {% block content %}
     <div class='widget'>
-    {% for event_imp, event_datetime, event_src, event_descr in events %}
+    {% for event_id, event_src, event_descr, event_imp, event_datetime in events %}
         <div class='alert alert-{{ event_imp }} event_imp'>
 
             <div class='event_src event_img'>
