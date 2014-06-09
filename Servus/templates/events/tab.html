@@ -1,0 +1,23 @@
+{% extends 'base/body_tabs.html' %}
+{% load static %}
+
+{% block content %}
+    <div class='widget'>
+    {% for event_imp, event_datetime, event_src, event_descr in events %}
+        <div class='alert alert-{{ event_imp }} event_imp'>
+
+            <div class='event_src event_img'>
+                <img src='{% get_static_prefix %}img/home/{{ event_src }}.png' width='24' height='24'/>
+            </div>
+            <div class='event_src'>
+                {{ event_datetime|date:'M-d H:m' }}
+            </div>
+            <div class='event_descr'>
+                {{ event_descr }}
+            </div>
+        </div>
+    {%  empty %}
+        <small>отсутствуют :)</small>
+    {% endfor %}
+    </div>
+{% endblock %}

@@ -7,7 +7,8 @@ from django.core.mail import send_mail
 from Servus.settings import EMAIL_HOST_USER, MEDIA_ROOT
 from Servus.Servus import SITE_NAME
 from base.utils import CJB
-from base.models import Event, Slideshow, SlideshowChanges
+from base.models import Slideshow, SlideshowChanges
+from events.models import Event
 
 
 class EmailsSendJob(CJB):

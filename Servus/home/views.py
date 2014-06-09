@@ -2,8 +2,9 @@
 from datetime import datetime, timedelta
 from django.http import HttpResponseRedirect
 from django.contrib.sessions.models import Session
-from base.views import call_template, get_alert, get_events
-from base.models import Event
+from base.views import call_template
+from events.models import Event
+from events.views import get_alert, get_events
 from home.models import Plan
 from weather.models import Weather
 from weather.views import CLOUDS_RANGE, FALLS_RANGE
@@ -77,6 +78,7 @@ def position_nearest_forecast(day):
 def get_sensors_values():
     """
     Получение данных о текущей температуре и влажности из таблицы climate_temphumidvalue БД
+
     :returns: список кортежей вида [(<полное имя датчика>, влажность, тепмпература), ...]
     """
 
@@ -88,6 +90,7 @@ def get_sensors_values():
 def summary(request):
     """
     Контроллер для ajax-запроса обновления информации на Главной странице.
+
     :param request: django request
     """
 
@@ -135,6 +138,12 @@ def summary(request):
 
 
 def home(request, current_tab):
+    """
+    Контроллер для вывода Главной страницы
+
+    :param request: django request
+    :param current_tab: название текущей вкладки (передается в Servus.urls)
+    """
 
     plans = [(p.plan_name, p.plan_file) for p in Plan.objects.filter(is_shown=True)]
     params = {'house_plans': plans, }

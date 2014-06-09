@@ -60,6 +60,11 @@ table.tab_short{
 .event_src{
     float:left;
     margin-right: 5px;
+    font-style: italic;
+    font-size: 80%;
+}
+.event_descr{
+    font-size: 90%;
 }
 .event_img{
    margin-top: -5px;

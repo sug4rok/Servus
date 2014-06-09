@@ -2,7 +2,8 @@
 import time
 import serial
 from Servus.Servus import PORT
-from base.utils import event_setter, CJB
+from base.utils import CJB
+from events.utils import event_setter
 from climate.models import TempHumidSensor, TempHumidValue, TempHumidValueShort
 
 
@@ -85,13 +86,13 @@ class GetTempHumid(CJB):
                                         humidity=h
                                     )
                                     if 28 < t <= 35 or 15 <= t < 19:
-                                        event_setter('climate', u'%s: Температура вне нормы 19-28 С' % s.sensor_verb_name, 2, 24)
+                                        event_setter('climate', u'%s: Температура вне нормы 19-28 С' % s.sensor_verb_name, 2)
                                     elif t > 35 or t < 15:
                                         event_setter('climate', u'%s: Температура за границами 15-35 С' % s.sensor_verb_name, 3, 1)
                                     if h < 30:
-                                        event_setter('climate', u'%s: Воздух слишком сухой (%d%)' % (s.sensor_verb_name, h), 2)
-                                    elif 60 > h:
-                                        event_setter('climate', u'%s: Воздух слишком влажный (%d%)' % (s.sensor_verb_name, h), 3, 1)
+                                        event_setter('climate', u'%s: Воздух слишком сухой (%d%%)' % (s.sensor_verb_name, h), 2)
+                                    elif 60 < h:
+                                        event_setter('climate', u'%s: Воздух слишком влажный (%d%%)' % (s.sensor_verb_name, h), 3, 1)
 
                             else:
                                 event_setter('climate', u'Датчик %s вернул неверные данные' % s.sensor_name, 0, 6)

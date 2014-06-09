@@ -32,7 +32,6 @@ class WG(object):
         finally:
             url_sock.close()
 
-
     def node_value_get(self, tag, node=None, subnode_num=None, attr=None):
         if node is not None:
             subnodes = node.getElementsByTagName(tag)

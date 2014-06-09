@@ -25,7 +25,7 @@ CRON_CLASSES = [
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # EMAIL_USE_TLS = True
-EMAIL_HOST = 'localhost' # 'smtp.gmail.com'
+EMAIL_HOST = 'localhost'  # 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'user@gmail.com'
 # EMAIL_HOST_PASSWORD = 'password'
@@ -157,6 +157,7 @@ INSTALLED_APPS = (
     'south',
     'django_cron',
     'base',
+    'events',
     'home',
     'climate',
     'weather',

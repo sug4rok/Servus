@@ -1,14 +1,13 @@
 ﻿# coding=utf-8
 from os import walk, path
 from random import randint
-from datetime import datetime, timedelta
 from PIL import Image
 from django.http import Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from Servus.settings import MEDIA_ROOT
 from Servus.Servus import SITE_NAME
-from base.models import Tab, Slideshow, Event
+from base.models import Tab, Slideshow
 
 # It's a dictionary of parameters for sending to render_to_response
 PARAMS = {}
@@ -76,57 +75,6 @@ def get_month(month):
         12: u'Декабря'
     }
     return days[month]
-
-
-def get_alert(e_imp):
-    """
-    Функция получения степени кретичности системного события
-
-    :param e_imp: integer степень кретичности
-    """
-
-    e_status = {
-        0: 'default',
-        1: 'success',
-        2: 'info',
-        3: 'warning',
-        4: 'danger'
-    }
-    return e_status[e_imp]
-
-
-def get_events(session_key):
-    """
-    События за последние 7 дней для сессий, не ассоциированных еще с данным событием.
-    Ассоциация события с session_key происходит после его закрытия в списке событий на странице home
-
-    :param session_key: ключ конкретной сессии для браузера пользоватея, зарегистрированной django
-    :returns: список не просмотренных или не закрытых пользователем событий за последнии 7 дней
-    """
-
-    try:
-        return Event.objects.filter(event_datetime__gte=datetime.now() - timedelta(days=7)).exclude(session_keys__session_key=session_key).order_by('-event_imp')
-    except Event.DoesNotExist:
-        return []
-
-
-def get_events_short(request):
-    """
-    Функция, выводящая количесво событий и их кретичность для определенной сессии.
-    (См. описание к функции get_events).
-
-    :param request: django request
-    :returns: кортеж, вида (<количество сбобытий>, <кретичность>)
-    """
-
-    request.session.save()
-    events_short = get_events(request.session.session_key)
-
-    amount_events = len(events_short)
-    if amount_events:
-        return amount_events, get_alert(max(events_short.values_list('event_imp', flat=True)))
-    else:
-        return 0, 0
 
 
 def get_tab_options(current_tab):
@@ -226,23 +174,4 @@ def slideshow(request):
         request,
         params,
         templ_path='base/slideshow.html'
-    )
-
-
-def events(request):
-    """
-    Функция, выводящая количество и важность событий на главную страницу
-
-    :param request: django request
-    """
-
-    params = {
-        'amount_events': get_events_short(request)[0],
-        'event_imp': get_events_short(request)[1]
-    }
-
-    return call_template(
-        request,
-        params,
-        templ_path='base/events.html'
     )

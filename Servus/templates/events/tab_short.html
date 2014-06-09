@@ -17,11 +17,9 @@
                         <img src='{% get_static_prefix %}img/home/{{ event_src }}.png' width='24' height='24'/>
                     </div>
                     <div class='event_src'>
-                        <small>
-                            <em>{{ event_datetime|date:'M-d H:m' }}</em>
-                        </small>
+                        {{ event_datetime|date:'M-d H:m' }}
                     </div>
-                    <div>
+                    <div class='event_descr'>
                         {{ event_descr }}
                     </div>
                 </div>
