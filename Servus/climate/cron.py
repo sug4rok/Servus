@@ -55,12 +55,9 @@ class GetTempHumid(CJB):
                             h, t = ser_out[0], ser_out[1]
 
                             if h != 'e' and t != 'e':
+
                                 h, t = int(h), int(t)
-                                TempHumidValue.objects.create(
-                                    sensor_name=s,
-                                    temperature=t,
-                                    humidity=h
-                                )
+
                                 # Проверяем полученные данные на возможные ошибки показаний.
                                 # Делаем тртиизмерения подряд с 5 секундной паузой, чтобы удостоверится, что
                                 # "запредельные" значения - это не ошибка датчика

@@ -63,11 +63,12 @@ def get_amount_events(request):
     """
 
     request.session.save()
-    events_short = get_events(request.session.session_key)
+    events_short = Event.objects.filter(event_datetime__gte=datetime.now() - timedelta(days=2))\
+        .exclude(session_keys__session_key=request.session.session_key).values_list('event_imp', flat=True)
 
     amount_events = len(events_short)
     if amount_events:
-        return amount_events, get_alert(max(events_short.values_list('event_imp', flat=True)))
+        return amount_events, get_alert(max(events_short))
     else:
         return 0, 0
 
