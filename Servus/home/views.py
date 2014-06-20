@@ -82,7 +82,7 @@ def get_sensors_values():
     :returns: список кортежей вида [(<полное имя датчика>, влажность, тепмпература), ...]
     """
 
-    th_objs = TempHumidValueShort.objects.all()
+    th_objs = TempHumidValueShort.objects.filter(sensor_name__is_used=True)
 
     return [(th_obj.sensor_name.sensor_verb_name, th_obj.humidity, th_obj.temperature) for th_obj in th_objs]
 

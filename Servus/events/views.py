@@ -5,7 +5,7 @@ from events.utils import get_amount_events, get_events
 
 def events(request, current_tab):
     """
-    Вывод событий последних 10 дней на вкладку События.
+    Вывод событий последних 14 дней на вкладку События.
 
     :param request: django request
     :param current_tab: название текущей вкладки (передается в Servus.urls)
