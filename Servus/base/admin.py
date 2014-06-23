@@ -1,6 +1,11 @@
 ﻿# coding=utf-8
 from django.contrib import admin
-from base.models import Tab, Slideshow
+from django.contrib.auth.models import User, Group
+from base.models import UserProfile, Tab, Slideshow
+
+
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ('name', 'email')
 
 
 class TabAdmin(admin.ModelAdmin):
@@ -34,6 +39,7 @@ class EventRuleAdmin(admin.ModelAdmin):
 
 class SlideshowAdmin(admin.ModelAdmin):
     list_display = ('album_path', 'is_shown')
+    list_filter = ('is_shown',)
 
     def has_add_permission(self, request):
         return False
@@ -48,5 +54,8 @@ class SlideshowAdmin(admin.ModelAdmin):
         return actions
 
 
+admin.site.unregister(Group)
+admin.site.unregister(User)
+admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(Tab, TabAdmin)
 admin.site.register(Slideshow, SlideshowAdmin)

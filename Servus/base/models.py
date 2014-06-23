@@ -1,5 +1,35 @@
 ﻿# coding=utf-8
 from django.db import models
+from django.contrib.auth.models import User
+
+
+class UserProfile(models.Model):
+    """
+    Пользователи, которым будут приходить уведомления
+    """
+
+    name = models.CharField(
+        max_length=36,
+        verbose_name='Имя',
+    )
+    email = models.EmailField(
+        verbose_name='E-mail',
+        blank=True,
+        null=True
+    )
+    sms_ru_id = models.CharField(
+        max_length=40,
+        verbose_name='sms.ru api_id',
+        blank=True,
+        null=True
+    )
+
+    class Meta(object):
+        verbose_name = 'Пользователя'
+        verbose_name_plural = 'Пользователи'
+
+    def __unicode__(self):
+        return "%s's profile" % self.name
 
 
 class Tab(models.Model):

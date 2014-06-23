@@ -1,9 +1,9 @@
 ﻿# coding=utf-8
 import smtplib
-from django.contrib.auth.models import User
 from django.core.mail import EmailMultiAlternatives
 from Servus.settings import EMAIL_HOST_USER
 from Servus.Servus import SITE_NAME
+from base.models import UserProfile
 from base.utils import CJB
 from events.models import Event
 
@@ -21,12 +21,12 @@ class EmailsSendJob(CJB):
         """
         Функция проверяет наличие сообщений с важностью 'warning' и 'error' и
         формирует письмо для отправлки по расписанию на все почтовые адреса из
-        таблицы auth_user БД. Затем, меняет флаг was_sent у каждого события, которое
-        блыо отправлено.
+        таблицы base_userprofile БД. Затем, меняет флаг email_sent у каждого события,
+        которое блыо отправлено.
         """
 
-        events = Event.objects.filter(event_imp__gte=3).exclude(was_sent=True).order_by('-event_imp')
-        emails = User.objects.exclude(email='').values_list('email', flat=True)
+        events = Event.objects.filter(event_imp__gte=3).exclude(email_sent=True).order_by('-event_imp')
+        emails = UserProfile.objects.exclude(email='').values_list('email', flat=True)
 
         subj = 'Предупреждение от %s' % SITE_NAME
 
@@ -54,6 +54,39 @@ class EmailsSendJob(CJB):
                 msg.attach_alternative(html_msg, 'text/html')
                 msg.send()
 
-                events.update(was_sent=True)
+                events.update(email_sent=True)
             except smtplib.SMTPException as e:
                 print e
+
+
+class SMSSendJob(CJB):
+    """
+    CronJobBase класс для отправки SMS-сообщений с наиболее важными событиями.
+    Для отправки используются возможность отправки бесплатных сообщений для разработчиков
+    на сайте sms.ru. Затем, меняет флаг sms_sent у каждого события,
+    которое блыо отправлено.
+    """
+
+    RUN_EVERY_MINS = 10
+
+    @staticmethod
+    def do():
+        """
+        Функция проверяет наличие сообщений с важностью 'warning' и 'error' и
+        формирует SMS-сообщение для отправлки по расписанию на все api_id из таблицы base_userprofile БД.
+        Затем, меняет флаг email_sent у каждого события, которое
+        блыо отправлено.
+        """
+
+        events = Event.objects.filter(event_imp__gte=3).exclude(sms_sent=True).order_by('-event_imp')
+        sms_apies = UserProfile.objects.exclude(sms_ru_id='').values_list('sms_ru_id', flat=True)
+
+        txt_msg = ''
+
+        for e in events:
+            txt_msg += '%s/%s\n' % (e.event_datetime.strftime('%Y.%m.%d %H:%M'), e.event_descr)
+
+        if events and sms_apies:
+            # Some code
+
+            sms_apies.update(sms_sent=True)

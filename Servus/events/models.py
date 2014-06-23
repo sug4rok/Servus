@@ -32,7 +32,10 @@ class Event(models.Model):
         Session,
         editable=False
     )
-    was_sent = models.BooleanField(
+    email_sent = models.BooleanField(
+        default=False
+    )
+    sms_sent = models.BooleanField(
         default=False
     )
 
