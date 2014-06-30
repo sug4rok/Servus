@@ -78,7 +78,7 @@ class EmailsSendJob(CJB):
 
                 events.update(email_sent=True)
             except smtplib.SMTPException as e:
-                event_setter('system', 'Ошибка отправки письма: %s' % e, 3, delay=3)
+                event_setter('system', u'Ошибка отправки письма: %s' % e, 3, delay=3)
 
 
 class SMSSendJob(CJB):
@@ -116,9 +116,9 @@ class SMSSendJob(CJB):
                         res = urlopen(url.encode('utf-8')).read().splitlines()
 
                         if res is not None and int(res[0]) != 100:
-                            event_setter('system', 'Ошибка отправки СМС: %s' % servicecodes[int(res[0])], 3, delay=3)
+                            event_setter('system', u'Ошибка отправки СМС: %s' % servicecodes[int(res[0])], 3, delay=3)
                         else:
                             e.sms_sent = True
                             e.save()
                     except URLError as e:
-                        event_setter('system', 'Ошибка отправки СМС: %s' % e, 3, delay=3)
+                        event_setter('system', u'Ошибка отправки СМС: %s' % e, 3, delay=3)
