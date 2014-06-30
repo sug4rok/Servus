@@ -1,6 +1,6 @@
 ﻿# coding=utf-8
 from xml.dom import minidom
-import urllib2
+from urllib2 import urlopen, HTTPError
 from datetime import datetime, timedelta
 
 
@@ -19,8 +19,8 @@ class WG(object):
 
     def parse_xml(self):
         try:
-            url_sock = urllib2.urlopen(self.wp_url)
-        except urllib2.HTTPError, err:
+            url_sock = urlopen(self.wp_url)
+        except HTTPError, err:
             print 'Opening %s...' % self.wp_url
             print 'urllib2 HTTPError: ', err.code
             return -1

@@ -73,7 +73,7 @@ def get_amount_events(request):
         return 0, 0
 
 
-def event_setter(event_src, event_descr, event_imp, td=24):
+def event_setter(event_src, event_descr, event_imp, delay=24):
     """
     Функция записи новых сообщений в БД (таблица base_event).
     В БД записываются только уникальные (сравнение event_descr) в пределах семи дней сообщения.
@@ -81,10 +81,10 @@ def event_setter(event_src, event_descr, event_imp, td=24):
     :param event_src: источник события
     :param event_descr: описание события (сообщение)
     :param event_imp: важность (от 0 до 4)
-    :param td: интервал добавления (в часах) аналогичной записи о событии
+    :param delay: интервал добавления (в часах) аналогичной записи о событии
     """
 
-    events = Event.objects.filter(event_datetime__gte=datetime.now() - timedelta(hours=td))
+    events = Event.objects.filter(event_datetime__gte=datetime.now() - timedelta(hours=delay))
 
     if event_descr not in events.values_list('event_descr', flat=True):
         Event.objects.create(event_src=event_src, event_descr=event_descr, event_imp=event_imp)

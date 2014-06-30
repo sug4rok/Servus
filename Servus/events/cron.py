@@ -1,11 +1,33 @@
 ﻿# coding=utf-8
 import smtplib
+from urllib2 import urlopen, URLError
 from django.core.mail import EmailMultiAlternatives
 from Servus.settings import EMAIL_HOST_USER
 from Servus.Servus import SITE_NAME
 from base.models import UserProfile
 from base.utils import CJB
 from events.models import Event
+from events.utils import event_setter
+
+servicecodes = {
+    100: 'Сообщение принято к отправке.',
+    200: 'Неправильный api_id',
+    201: 'Не хватает средств на лицевом счету',
+    202: 'Неправильно указан получатель',
+    203: 'Нет текста сообщения',
+    204: 'Имя отправителя не согласовано с администрацией',
+    205: 'Сообщение слишком длинное (превышает 8 СМС)',
+    206: 'Будет превышен или уже превышен дневной лимит на отправку сообщений',
+    207: 'На этот номер (или один из номеров) нельзя отправлять сообщения, либо указано более 100 номеров в списке получателей',
+    208: 'Параметр time указан неправильно',
+    209: 'Вы добавили этот номер (или один из номеров) в стоп-лист',
+    210: 'Используется GET, где необходимо использовать POST',
+    211: 'Метод не найден',
+    220: 'Сервис временно недоступен, попробуйте чуть позже.',
+    300: 'Неправильный token (возможно истек срок действия, либо ваш IP изменился)',
+    301: 'Неправильный пароль, либо пользователь не найден',
+    302: 'Пользователь авторизован, но аккаунт не подтвержден (пользователь не ввел код, присланный в регистрационной смс)',
+}
 
 
 class EmailsSendJob(CJB):
@@ -56,7 +78,7 @@ class EmailsSendJob(CJB):
 
                 events.update(email_sent=True)
             except smtplib.SMTPException as e:
-                print e
+                event_setter('system', 'Ошибка отправки письма: %s' % e, 3, delay=3)
 
 
 class SMSSendJob(CJB):
@@ -79,14 +101,24 @@ class SMSSendJob(CJB):
         """
 
         events = Event.objects.filter(event_imp__gte=3).exclude(sms_sent=True).order_by('-event_imp')
-        sms_apies = UserProfile.objects.exclude(sms_ru_id='').values_list('sms_ru_id', flat=True)
+        recipients = UserProfile.objects.exclude(sms_ru_id='').values().exclude(phone=None)
 
         txt_msg = ''
 
-        for e in events:
-            txt_msg += '%s/%s\n' % (e.event_datetime.strftime('%Y.%m.%d %H:%M'), e.event_descr)
+        if recipients:
+            for r in recipients:
+                for e in events:
+                    txt_msg = '[%s] %s' % (e.event_datetime.strftime('%b-%d %H:%M'), e.event_descr)
+                    url = 'http://sms.ru/sms/send?api_id=%s&to=%s&text=%s' % (r['sms_ru_id'], r['phone'], txt_msg)
+                    # В API sms.ru  в тексте сообщения использутся знаки "+" в качестве пробела
+                    url = url.replace(' ', '+')
+                    try:
+                        res = urlopen(url.encode('utf-8')).read().splitlines()
 
-        if events and sms_apies:
-            # Some code
-
-            sms_apies.update(sms_sent=True)
+                        if res is not None and int(res[0]) != 100:
+                            event_setter('system', 'Ошибка отправки СМС: %s' % servicecodes[int(res[0])], 3, delay=3)
+                        else:
+                            e.sms_sent = True
+                            e.save()
+                    except URLError as e:
+                        event_setter('system', 'Ошибка отправки СМС: %s' % e, 3, delay=3)

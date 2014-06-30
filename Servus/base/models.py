@@ -17,6 +17,14 @@ class UserProfile(models.Model):
         blank=True,
         null=True
     )
+    phone = models.PositiveIntegerField(
+        max_length=11,
+        verbose_name='Номер телефона',
+        help_text='Номер в формате 7xxxyyyyyyy, где xxx - код оператора, yyyyyyy - номер телефона.<br>\
+            Номер телефона нужен для отправки сообщений через сервис sms.ru.',
+        blank=True,
+        null=True
+    )
     sms_ru_id = models.CharField(
         max_length=40,
         verbose_name='sms.ru api_id',

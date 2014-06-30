@@ -5,4 +5,4 @@ SITE_NAME = 'Servus'
 SPEAKER_NAME = 'Servus'
 
 # Arduino COM port number
-PORT = 9
+PORT = 7

@@ -92,10 +92,10 @@ class GetTempHumid(CJB):
                                         event_setter('climate', u'%s: Воздух слишком влажный (%d%%)' % (s.sensor_verb_name, h), 3, 1)
 
                             else:
-                                event_setter('climate', u'Датчик %s вернул неверные данные' % s.sensor_name, 0, 6)
+                                event_setter('system', u'Датчик %s вернул неверные данные' % s.sensor_name, 0, 6)
                         else:
-                            event_setter('climate', u'Ошибка получения данных с %s' % s.sensor_name, 0, 1)
+                            event_setter('system', u'Ошибка получения данных с %s' % s.sensor_name, 0, 1)
 
                     ser.close()
             except serial.SerialException:
-                event_setter('climate', u'Не могу открыть порт COM%s' % PORT, 3, 1)
+                event_setter('system', u'Не могу открыть порт COM%s' % PORT, 3, 1)
