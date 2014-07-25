@@ -2,7 +2,7 @@
 from os import walk, stat
 from Servus.settings import MEDIA_ROOT
 from base.utils import CJB
-from base.models import Slideshow, SlideshowChanges
+from slideshow.models import Slideshow, SlideshowChanges
 
 
 class SlideshowJob(CJB):

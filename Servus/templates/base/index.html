@@ -56,8 +56,8 @@
 <body id='body'>
 
     {% spaceless %}
-        {% if request.path == '/' %}
-            {% block body_main %}{% endblock %}              
+        {% if request.path == '/slideshow/' %}
+            {% block slideshow %}{% endblock %}
         {% else %}
             {% block body_tabs %}{% endblock %}    
         {% endif %}

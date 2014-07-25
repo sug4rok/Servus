@@ -1,9 +1,9 @@
 ﻿# coding=utf-8
 from datetime import datetime
+from base.utils import get_month
 from events.utils import event_setter
 from weather.models import Weather
 from weather.views import FALLS_RANGE
-from base.views import get_month
 
 
 def weather_db_cleaner():

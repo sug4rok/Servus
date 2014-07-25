@@ -1,12 +1,12 @@
 {% extends 'base/index.html' %}
 
-{% block body_main %}
+{% block slideshow %}
 
-    <div id='slideshow' class='height100'></div>
+    <div id='slide' class='height100'></div>
 
     <script>
         $(document).ready(function(){
-            reload_div('slideshow', 300000);
+            reload_div('slide', 300000);
             reload_div('amount_events', 3000);
         });
     </script>

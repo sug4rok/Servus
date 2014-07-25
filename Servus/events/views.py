@@ -35,5 +35,5 @@ def amount_events(request):
     return call_template(
         request,
         params,
-        templ_path='base/amount_events.html'
+        templ_path='events/amount_events.html'
     )

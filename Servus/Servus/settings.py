@@ -19,6 +19,7 @@ CRON_CLASSES = [
     # 'events.cron.SMSSendJob',
     'climate.cron.GetTempHumid',
     'weather.cron.GetWeatherJob',
+    'slideshow.cron.SlideshowJob',
 ]
 
 # Настройки почтового аккаунта gmail для отправки писем
@@ -162,6 +163,7 @@ INSTALLED_APPS = (
     'home',
     'climate',
     'weather',
+    'slideshow',
 )
 
 # A sample logging configuration. The only tangible logging

@@ -1,5 +1,6 @@
 ﻿# coding=utf-8
-from base.views import call_template, get_weekday, get_month
+from base.views import call_template
+from base.utils import get_weekday, get_month
 from weather.models import Weather, WeatherProvider
 
 CLOUDS_RANGE = {
