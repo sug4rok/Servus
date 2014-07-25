@@ -69,11 +69,7 @@ def slide(request):
                             raise NotImageError(file_type)
                 else:
                     raise PathNotFound(rnd_album)
-            except NotImageError as e:
-                print e
-                continue
-            except PathNotFound as e:
-                print e
+            except (NotImageError, PathNotFound):
                 continue
             else:
                 break

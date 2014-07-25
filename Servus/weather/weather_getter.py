@@ -2,6 +2,7 @@
 from xml.dom import minidom
 from urllib2 import urlopen, HTTPError
 from datetime import datetime, timedelta
+from events.utils import event_setter
 
 
 class WG(object):
@@ -21,13 +22,13 @@ class WG(object):
         try:
             url_sock = urlopen(self.wp_url)
         except HTTPError, err:
-            print 'Opening %s...' % self.wp_url
-            print 'urllib2 HTTPError: ', err.code
+            event_setter('system', u'Weather: urllib2 HTTPError: %s' % err.code, 3, delay=3, sms=False)
             return -1
         try:
             parsed_xml = minidom.parse(url_sock)
             return parsed_xml
         except:
+            event_setter('system', u'Weather: Ошибка парсинга для %s' % self.wp, 3, delay=3, sms=False)
             return -1
         finally:
             url_sock.close()
@@ -272,7 +273,8 @@ class WGYA(WG):
                 'overcast-and-snow': ['5', 't3d2'],
             }
             if weather_condition not in weather_conditions:
-                print 'Unknown weather condition: ', weather_condition
+                event_setter('system', u'Weather ya.ru: Неизвестные погодные условия %s' % weather_condition,
+                             3, delay=3, sms=False)
                 return [('na', 'na')]
             return [(
                     self.file_name_prefix(d) + weather_conditions[weather_condition][0],
