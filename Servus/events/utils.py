@@ -1,6 +1,6 @@
 # coding=utf-8
 from datetime import datetime, timedelta
-from events.models import Event
+from .models import Event
 
 
 def get_alert(e_imp):

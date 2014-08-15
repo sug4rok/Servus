@@ -1,8 +1,8 @@
 ﻿# coding=utf-8
 from base.utils import CJB
-from weather.models import WeatherProvider
-from weather.weather_getter import weather_getter
-from weather.weather_setter import *
+from .models import WeatherProvider
+from .weather_getter import weather_getter
+from .weather_setter import *
 
 
 class GetWeatherJob(CJB):

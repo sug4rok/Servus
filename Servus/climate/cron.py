@@ -4,7 +4,7 @@ import serial
 from Servus.Servus import PORT
 from base.utils import CJB
 from events.utils import event_setter
-from climate.models import TempHumidSensor, TempHumidValue, TempHumidValueShort
+from .models import TempHumidSensor, TempHumidValue, TempHumidValueShort
 
 
 def check_bad_conditions(t, h):

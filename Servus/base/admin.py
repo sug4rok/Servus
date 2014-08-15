@@ -1,7 +1,7 @@
 ﻿# coding=utf-8
 from django.contrib import admin
 from django.contrib.auth.models import User, Group
-from base.models import UserProfile, Tab
+from .models import UserProfile, Tab
 
 
 class UserProfileAdmin(admin.ModelAdmin):

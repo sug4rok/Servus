@@ -1,6 +1,6 @@
 # coding=utf-8
 from django.contrib import admin
-from climate.models import TempHumidSensor
+from .models import TempHumidSensor
 
 
 class TempHumidAdmin(admin.ModelAdmin):

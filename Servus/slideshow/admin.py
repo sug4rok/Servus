@@ -1,6 +1,6 @@
 # coding=utf-8
 from django.contrib import admin
-from slideshow.models import Slideshow
+from .models import Slideshow
 
 
 class SlideshowAdmin(admin.ModelAdmin):

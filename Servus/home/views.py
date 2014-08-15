@@ -4,8 +4,8 @@ from django.contrib.sessions.models import Session
 from base.views import call_template
 from events.models import Event
 from events.views import get_events
-from home.models import Plan
-from home.utils import nearest_forecast, get_temp_humid
+from .models import Plan
+from .utils import nearest_forecast, get_temp_humid
 
 
 def summary(request):

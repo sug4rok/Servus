@@ -1,6 +1,6 @@
 # coding=utf-8
 from django.contrib import admin
-from weather.models import WeatherProvider
+from .models import WeatherProvider
 
 
 class WeatherProviderAdmin(admin.ModelAdmin):

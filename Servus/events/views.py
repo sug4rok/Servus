@@ -1,6 +1,6 @@
 # coding=utf-8
 from base.views import call_template
-from events.utils import get_amount_events, get_events
+from .utils import get_amount_events, get_events
 
 
 def events(request, current_tab):

@@ -3,7 +3,7 @@ from django.http import Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from Servus.Servus import SITE_NAME
-from base.models import Tab
+from .models import Tab
 
 # Словарь для передачи параметров с render_to_response
 PARAMS = {'site_name': SITE_NAME, 'tabs': Tab.objects.filter(is_shown=1)}

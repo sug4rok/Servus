@@ -22,13 +22,14 @@ class WG(object):
         try:
             url_sock = urlopen(self.wp_url)
         except HTTPError, err:
-            event_setter('system', u'Weather: urllib2 HTTPError: %s' % err.code, 3, delay=3, sms=False)
+            event_setter('system', u'Weather %s: urllib2 HTTPError: %s' % (self.wp.weather_provider, err.code),
+                         3, delay=3, sms=False)
             return -1
         try:
             parsed_xml = minidom.parse(url_sock)
             return parsed_xml
         except:
-            event_setter('system', u'Weather: Ошибка парсинга для %s' % self.wp, 3, delay=3, sms=False)
+            event_setter('system', u'Weather: Ошибка парсинга для %s' % self.wp.weather_provider, 3, delay=3, sms=False)
             return -1
         finally:
             url_sock.close()

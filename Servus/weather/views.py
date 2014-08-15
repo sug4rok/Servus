@@ -1,7 +1,7 @@
 ﻿# coding=utf-8
 from base.views import call_template
 from base.utils import get_weekday, get_month
-from weather.models import Weather, WeatherProvider
+from .models import Weather, WeatherProvider
 
 CLOUDS_RANGE = {
     '0': u'Ясно',

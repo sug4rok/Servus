@@ -4,7 +4,7 @@ from random import randint
 from PIL import Image
 from Servus.settings import MEDIA_ROOT
 from base.views import call_template
-from slideshow.models import Slideshow
+from .models import Slideshow
 
 
 class NotImageError(Exception):

@@ -1,10 +1,8 @@
-{% load static %}
-
 <div class='fullscreen_img slide' style='
         {% if slide %}
             background-image: url("{{ MEDIA_URL }}{{ slide }}");
         {% else %}
-            background-image: url({% get_static_prefix %}img/na.png);
+            background-image: url({{ STATIC_URL }}img/na.png);
             background-size: 10%;
         {% endif %}
     '>

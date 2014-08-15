@@ -6,8 +6,8 @@ from Servus.settings import EMAIL_HOST_USER
 from Servus.Servus import SITE_NAME
 from base.models import UserProfile
 from base.utils import CJB
-from events.models import Event
-from events.utils import event_setter
+from .models import Event
+from .utils import event_setter
 
 servicecodes = {
     100: u'Сообщение принято к отправке.',

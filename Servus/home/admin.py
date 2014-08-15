@@ -1,6 +1,6 @@
 # coding=utf-8
 from django.contrib import admin
-from home.models import Plan
+from .models import Plan
 
 
 class PlanAdmin(admin.ModelAdmin):
