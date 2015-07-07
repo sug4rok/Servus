@@ -1,7 +1,7 @@
 ﻿# coding=utf-8
 from base.utils import CJB
 from .models import WeatherProvider
-from .weather_getter import weather_getter
+from .weather_getter import get_weather
 from .weather_setter import *
 
 
@@ -19,8 +19,8 @@ class GetWeatherJob(CJB):
         и запись полученных результатов с помощью функции weather_setter в таблицу БД Weather.
         """
 
-        wps = WeatherProvider.objects.all()
+        wps = WeatherProvider.objects.filter(is_used=True)
         if wps.count():
             weather_db_cleaner()
             for wp in wps:
-                weather_setter(weather_getter(wp))
+                weather_setter(get_weather(wp))

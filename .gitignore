@@ -34,6 +34,5 @@ nosetests.xml
 .project
 .pydevproject
 
-bootstrap.css
-bootstrap.js
-jquery.js
+.gitignore
+.idea

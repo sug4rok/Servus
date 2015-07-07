@@ -1,14 +1,15 @@
 ﻿# coding=utf-8
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 
-class UserProfile(models.Model):
+class User(models.Model):
     """
     Пользователи, которым будут приходить уведомления
     """
 
     name = models.CharField(
-        max_length=36,
+        max_length=50,
         verbose_name='Имя',
     )
     email = models.EmailField(
@@ -16,13 +17,17 @@ class UserProfile(models.Model):
         blank=True,
         null=True
     )
-    phone = models.PositiveIntegerField(
-        max_length=11,
+    phone = models.BigIntegerField(
         verbose_name='Номер телефона',
-        help_text='Номер в формате 7xxxyyyyyyy, где xxx - код оператора, yyyyyyy - номер телефона.<br>\
-            Номер телефона нужен для отправки сообщений через сервис sms.ru.',
+        help_text='Номер телефона для отправки сообщений через сервис sms.ru.<br>\
+            Диапазон номеров ограничен 1*e10 - 9,(9)*e12 (подробности на sms.ru).<br>\
+            Формат для РФ 7xxxyyyyyyy, где xxx - код оператора, yyyyyyy - номер телефона.<br>',
         blank=True,
-        null=True
+        null=True,
+        validators=[
+            MaxValueValidator(9999999999999),
+            MinValueValidator(10000000000)
+        ]
     )
     sms_ru_id = models.CharField(
         max_length=40,
@@ -44,7 +49,7 @@ class Tab(models.Model):
     Вкладки и связанные с ними типы приложений
     """
 
-    app_name = models.CharField(
+    app_name = models.SlugField(
         max_length=20,
         default='home',
         verbose_name='Тип приложения',
@@ -73,6 +78,34 @@ class Tab(models.Model):
     class Meta(object):
         verbose_name = 'Вкладку'
         verbose_name_plural = 'Вкладки'
+        ordering = ('id',)
 
     def __unicode__(self):
         return self.tab_name
+
+class Location(models.Model):
+    """
+    Место, где размещается контролируемый объект, нампример, комната, дверь, улица и пр.
+    """
+
+    name = models.CharField(
+        max_length=20,
+        default='',
+        verbose_name='Расположение',
+        help_text='Место, где размещается контролируемый объект',
+        blank=False,
+        unique=True
+    )
+
+    description = models.CharField(
+        max_length=50,
+        verbose_name='Комментарий',
+        blank=True
+    )
+
+    class Meta(object):
+        verbose_name = 'Расположение'
+        verbose_name_plural = 'Расположения'
+
+    def __unicode__(self):
+        return self.name

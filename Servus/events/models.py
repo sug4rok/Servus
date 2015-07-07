@@ -10,21 +10,20 @@ class Event(models.Model):
     хосты, на которых события уже были просмотрены от "новых" хостов
     """
 
-    event_src = models.CharField(
+    source = models.SlugField(
         max_length=20,
         verbose_name='Источник события',
     )
-    event_descr = models.CharField(
+    message = models.CharField(
         max_length=255,
-        verbose_name='Описание события',
+        verbose_name='Сообщение',
         null=True
     )
-    event_imp = models.PositiveSmallIntegerField(
-        max_length=1,
+    level = models.PositiveSmallIntegerField(
         verbose_name='Критичность',
         default=2,
     )
-    event_datetime = models.DateTimeField(
+    datetime = models.DateTimeField(
         auto_now_add=True,
         verbose_name='Время возникновения события'
     )
@@ -40,7 +39,7 @@ class Event(models.Model):
     )
 
     class Meta(object):
-        ordering = ('event_datetime',)
+        ordering = ('datetime',)
 
     def __unicode__(self):
-        return self.event_descr
+        return u'%s: %s' % (self.source, self.message)

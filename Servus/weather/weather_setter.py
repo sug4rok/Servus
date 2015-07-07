@@ -1,6 +1,5 @@
 ﻿# coding=utf-8
 from datetime import datetime
-from base.utils import get_month
 from events.utils import event_setter
 from weather.models import Weather
 from weather.views import FALLS_RANGE
@@ -27,7 +26,7 @@ def set_weather_events(dt, temp, wind_speed, falls_img):
     :param falls_img: возможное количество осадков (см. weather_getter.py)
     """
 
-    event_day = '%s %s' % (dt.day, get_month(dt.month))
+    event_day = '%s %s' % (dt.day, dt.month)
 
     if 30 <= temp <= 35:
         event_setter('weather', u'%s: Будет жарко (выше 30 C)' % event_day, 2, 48)

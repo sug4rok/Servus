@@ -2,14 +2,13 @@
 import smtplib
 from urllib2 import urlopen, URLError
 from django.core.mail import EmailMultiAlternatives
-from Servus.settings import EMAIL_HOST_USER
-from Servus.Servus import SITE_NAME
-from base.models import UserProfile
+from base.settings import EMAIL_HOST_USER, SITE_NAME
+from base.models import User
 from base.utils import CJB
 from .models import Event
 from .utils import event_setter
 
-servicecodes = {
+SERVICECODES = {
     100: u'Сообщение принято к отправке.',
     200: u'Неправильный api_id',
     201: u'Не хватает средств на лицевом счету',
@@ -18,7 +17,8 @@ servicecodes = {
     204: u'Имя отправителя не согласовано с администрацией',
     205: u'Сообщение слишком длинное (превышает 8 СМС)',
     206: u'Будет превышен или уже превышен дневной лимит на отправку сообщений',
-    207: u'На этот номер (или один из номеров) нельзя отправлять сообщения, либо указано более 100 номеров в списке получателей',
+    207: u'На этот номер (или один из номеров) нельзя отправлять сообщения, либо указано более 100 номеров\
+     в списке получателей',
     208: u'Параметр time указан неправильно',
     209: u'Вы добавили этот номер (или один из номеров) в стоп-лист',
     210: u'Используется GET, где необходимо использовать POST',
@@ -26,7 +26,8 @@ servicecodes = {
     220: u'Сервис временно недоступен, попробуйте чуть позже.',
     300: u'Неправильный token (возможно истек срок действия, либо ваш IP изменился)',
     301: u'Неправильный пароль, либо пользователь не найден',
-    302: u'Пользователь авторизован, но аккаунт не подтвержден (пользователь не ввел код, присланный в регистрационной смс)',
+    302: u'Пользователь авторизован, но аккаунт не подтвержден (пользователь не ввел код, присланный\
+     в регистрационной смс)',
 }
 
 
@@ -47,8 +48,8 @@ class EmailsSendJob(CJB):
         которое блыо отправлено.
         """
 
-        events = Event.objects.filter(event_imp__gte=3).exclude(email_sent=True).order_by('-event_imp')
-        emails = UserProfile.objects.exclude(email='').values_list('email', flat=True)
+        events = Event.objects.filter(level__gte=3).exclude(email_sent=True).order_by('-level')
+        emails = User.objects.exclude(email='').values_list('email', flat=True)
 
         subj = 'Предупреждение от %s' % SITE_NAME
 
@@ -60,13 +61,13 @@ class EmailsSendJob(CJB):
         for e in events:
             bgcolor = '#faebcc'
 
-            if e.event_imp == 4:
+            if e.level == 4:
                 bgcolor = '#ebccd1'
                 subj = 'Важное сообщение от %s' % SITE_NAME
 
-            txt_msg += '%s\t%s\n' % (e.event_datetime.strftime('%Y.%m.%d %H:%M'), e.event_descr)
+            txt_msg += '%s\t%s\n' % (e.datetime.strftime('%Y.%m.%d %H:%M'), e.message)
             html_msg += '<tr bgcolor=%s><td>%s</font></td><td>%s</td></tr>' \
-                        % (bgcolor, e.event_datetime.strftime('%Y.%m.%d %H:%M'), e.event_descr)
+                        % (bgcolor, e.datetime.strftime('%Y.%m.%d %H:%M'), e.message)
 
         html_msg += '</table>'
 
@@ -100,12 +101,12 @@ class SMSSendJob(CJB):
         блыо отправлено.
         """
 
-        events = Event.objects.filter(event_imp__gte=3).exclude(sms_sent=True).order_by('-event_imp')
-        recipients = UserProfile.objects.exclude(sms_ru_id='').values().exclude(phone=None)
+        events = Event.objects.filter(level__gte=3).exclude(sms_sent=True).order_by('-level')
+        recipients = User.objects.exclude(sms_ru_id='').values().exclude(phone=None)
 
         # Объединяем  все события в одну строку для последующей разбивки по 70 символов
         # (ограничение СМС для русских символов в сообщении)
-        txt_msg = '\\n'.join(['[%s] %s' % (e.event_datetime.strftime('%b-%d %H:%M'), e.event_descr) for e in events])
+        txt_msg = '\\n'.join(['[%s] %s' % (e.datetime.strftime('%b-%d %H:%M'), e.message) for e in events])
         sms_msgs = []
         while txt_msg:
             sms_msgs.append(txt_msg[:69])
@@ -121,7 +122,8 @@ class SMSSendJob(CJB):
                         res = urlopen(url.encode('utf-8')).read().splitlines()
 
                         if res is not None and int(res[0]) != 100:
-                            event_setter('system', u'Ошибка отправки СМС: %s' % servicecodes[int(res[0])], 3, delay=3, sms=False)
+                            event_setter('system', u'Ошибка отправки СМС: %s' % SERVICECODES[int(res[0])], 3, delay=3,
+                                         sms=False)
                         else:
                             e.sms_sent = True
                             e.save()

@@ -22,7 +22,7 @@ def get_alert(e_imp):
 
 def get_events(session_key=None):
     """
-    События за последние 7 дней для сессий, не ассоциированных еще с данным событием.
+    События за последние 7 дней для сессий, не ассоциированных еще с данной сессией.
     Ассоциация события с session_key происходит после его закрытия в списке событий на странице home
 
     :param session_key: ключ конкретной сессии для браузера пользоватея, зарегистрированной django
@@ -32,20 +32,20 @@ def get_events(session_key=None):
     try:
         events_data = []
         if session_key:
-            events = Event.objects.filter(event_datetime__gte=datetime.now() - timedelta(days=2))\
-                .exclude(session_keys__session_key=session_key).order_by('-event_imp').values()
+            events = Event.objects.filter(datetime__gte=datetime.now() - timedelta(days=2)) \
+                .exclude(session_keys__session_key=session_key).order_by('-level', '-datetime').values()
         else:
-            events = Event.objects.filter(event_datetime__gte=datetime.now() - timedelta(days=14))\
-                .order_by('-event_datetime').values()
+            events = Event.objects.filter(datetime__gte=datetime.now() - timedelta(days=14)) \
+                .order_by('-datetime').values()
 
         if len(events):
             for event in events:
                 events_data.append((
                     event['id'],
-                    event['event_src'],
-                    event['event_descr'],
-                    get_alert(event['event_imp']),
-                    event['event_datetime']
+                    event['source'],
+                    event['message'],
+                    get_alert(event['level']),
+                    event['datetime']
                 ))
         return events_data
 
@@ -63,30 +63,30 @@ def get_amount_events(request):
     """
 
     request.session.save()
-    events_short = Event.objects.filter(event_datetime__gte=datetime.now() - timedelta(days=2))\
-        .exclude(session_keys__session_key=request.session.session_key).values_list('event_imp', flat=True)
+    events_short = Event.objects.filter(datetime__gte=datetime.now() - timedelta(days=2)) \
+        .exclude(session_keys__session_key=request.session.session_key).values_list('level', flat=True)
 
     amount_events = len(events_short)
     if amount_events:
         return amount_events, get_alert(max(events_short))
     else:
-        return 0, 0
+        return 0, get_alert(0)
 
 
-def event_setter(event_src, event_descr, event_imp, delay=24, sms=True, email=True):
+def event_setter(source, message, level, delay=24, sms=True, email=True):
     """
     Функция записи новых сообщений в БД (таблица base_event).
-    В БД записываются только уникальные (сравнение event_descr) в пределах семи дней сообщения.
+    В БД записываются только уникальные (сравнение message) в пределах семи дней сообщения.
 
-    :param event_src: источник события
-    :param event_descr: описание события (сообщение)
-    :param event_imp: важность (от 0 до 4)
+    :param source: источник события
+    :param message: описание события (сообщение)
+    :param level: важность (от 0 до 4)
     :param delay: интервал добавления (в часах) аналогичной записи о событии
     :param sms: необходимость отправки SMS-сообщения
     :param email: необходимость отправки EMail-сообщения
     """
 
-    events = Event.objects.filter(event_datetime__gte=datetime.now() - timedelta(hours=delay))
+    events = Event.objects.filter(datetime__gte=datetime.now() - timedelta(hours=delay))
 
-    if event_descr not in events.values_list('event_descr', flat=True):
-        Event.objects.create(event_src=event_src, event_descr=event_descr, event_imp=event_imp, sms_sent=not sms, email_sent=not email)
+    if message not in events.values_list('message', flat=True):
+        Event.objects.create(source=source, message=message, level=level, sms_sent=not sms, email_sent=not email)

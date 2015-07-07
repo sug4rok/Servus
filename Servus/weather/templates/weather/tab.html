@@ -1,0 +1,71 @@
+{% extends 'base/body_tabs.html' %}
+
+{% block content %}
+    {% for weather_provider, values_set, city in forecast %}
+        <div class='table-responsive'>
+        <table class='table table-condensed'>
+            <caption>{%  if city %}<em>{{ city }}</em>. {% endif %}Прогноз погоды по данным <em>{{ weather_provider }}</em></caption>
+            {% for field, caption, measure, values in values_set %}
+                <tr align='center'>
+                    <th class='weather'>{{ caption }}
+                        {% if measure %}
+                            , <small><em>{{ measure }}</em></small>
+                        {% endif %}
+                    </th>
+                    {% if field == 'datetime' %}
+                        {% for datetime, bg_style in values %}
+                            <td class='weather {{ bg_style }}'>
+                                {{ datetime|date:'l' }}<br>
+                                <nobr>{{ datetime|date:'d E' }}</nobr><br>
+                                {{ datetime|date:'H:i' }}
+                            </td>
+                        {% endfor %}
+                    {% elif field == 'clouds' %}
+                        {% for file_img, clouds, descr, bg_style in values %}
+                            <td class='weather {{ bg_style }}'>
+                                <attr title='{{ descr }}{% if clouds %} (облачность {{ clouds }}%){% endif %}'>
+                                    <img src='{{ STATIC_URL }}img/{{ file_img }}.png' width='30' height='25'/>
+                                </attr>
+                            </td>
+                        {% endfor %}
+                    {% elif field == 'precipitation' %}
+                        {% for file_img, precipitation, descr, bg_style in values %}
+                            <td class='weather {{ bg_style }}'>
+                                <attr title='{{ descr }}{% if precipitation %} ({{ precipitation }}мм воды / 6 часов{% endif %}'>
+                                    {% if file_img == 'na' %}
+                                        <img src='{{ STATIC_URL }}img/{{ file_img }}.png' width='30' height='30'/>
+                                    {% else %}
+                                        <img src='{{ STATIC_URL }}img/{{ file_img }}.png' width='18' height='27'/>
+                                    {% endif %}
+                                </attr>
+                            </td>
+                        {% endfor %}
+                    {% elif field == 'wind_speed' %}
+                        {% for wind_speed, wind_dir, bg_style in values %}
+                            <td class='weather {{ bg_style }}'>
+                                {{ wind_speed }}
+                                {% if wind_speed %}
+                                    <img style='
+                                            -moz-transform: rotate({{ wind_dir }}deg);
+                                            -ms-transform: rotate({{ wind_dir }}deg);
+                                            -webkit-transform:rotate({{ wind_dir }}deg);
+                                            -o-transform: rotate({{ wind_dir }}deg);
+                                            transform: rotate({{ wind_dir }}deg);
+                                        '
+                                        src='{{ STATIC_URL }}img/wd.png'
+                                        width='24'
+                                        height='24'
+                                    />
+                                {% endif %}    
+                            </td>
+                        {% endfor %}
+                    {% else %}
+                        {% for value, bg_style in values %}
+                            <td class='weather {{ bg_style }}'>{{ value }}</td>
+                        {% endfor %}
+                    {% endif %}
+            {% endfor %}
+        </table>
+        </div>
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,88 @@
+/* Переопределение стилей bootstrap */
+.row{
+    margin: 0 -13px 0 -15px;
+}
+.placeholder{
+    padding: 0 0 0 5px;
+}
+
+/* Стили Servus */
+html, body{
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+caption{
+    color: #5bc0de;
+    font-weight: bold;
+    font-size: 90%;
+    padding-bottom: 5px;
+}
+.height100{
+    height:100%;
+}
+.pad5{
+    padding: 5px;
+}
+
+/*Slideshow*/
+.fullscreen_img{
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    min-width: 100%;
+    min-height: 100%;
+}
+.slide{
+    border:0;
+    float:left;
+}
+
+/* Home */
+.widget{
+    text-align: center;
+    font-weight: bold;
+    font-size: 90%;
+}
+.widget-padding {
+    padding: 0;
+}
+.plan{
+    margin: 0 auto;
+}
+table.tab_short{
+    margin: 0 auto;
+}
+.cross_up{
+    margin-top: -2px;
+}
+.event_src{
+    float:left;
+    margin-right: 5px;
+    font-style: italic;
+    font-size: 80%;
+}
+.event_msg{
+    font-size: 90%;
+}
+.event_img{
+   margin-top: -5px;
+}
+.event_lvl{
+    padding: 5px;
+    margin: 5px;
+    font-weight: normal;
+}
+
+/*Weather*/
+.weather{
+    vertical-align:middle;
+    color: #a7a7a7;
+    font-size: 70%;
+}
+th{
+    font-weight: bold;
+}
+td.w_day{
+    background: #363b40
+}

@@ -1,13 +1,13 @@
 ﻿# coding=utf-8
 from os import walk, stat
-from Servus.settings import MEDIA_ROOT
+from base.settings import MEDIA_ROOT
 from base.utils import CJB
 from .models import Slideshow, SlideshowChanges
 
 
 class SlideshowJob(CJB):
     """
-    CronJobBase класс для проверки изменений в папке static/img/slideshow
+    CronJobBase класс для проверки изменений в папке media/slideshow
     и добавление/удаление альбомов с изображениями в таблицу БД slideshow.
     """
 
@@ -17,7 +17,7 @@ class SlideshowJob(CJB):
     def do():
         """
         Функция записи в таблицу БД base_slideshow абсолютных путей до каждого альбома,
-        находящегося в папке files/slideshow.
+        находящегося в папке media/slideshow.
         """
 
         album_paths = []
@@ -29,12 +29,15 @@ class SlideshowJob(CJB):
         mtime = obj_ssch.mtime
         dir_changed = False
 
-        for root, dirs, files in walk(unicode(MEDIA_ROOT + '/slideshow'), followlinks=True):
+        slideshow_folder = MEDIA_ROOT + '/slideshow'
+        for root, dirs, files in walk(unicode(slideshow_folder), followlinks=True):
 
             # Не вносим в список album_paths пустые папки
-            #amount_files = len(files)
             if len(files):
-                album_paths.append(root.replace('\\', '/').replace(MEDIA_ROOT, ''))
+                album = root.replace(slideshow_folder, '').replace('\\', '/')
+                if not album:
+                    album = '/'
+                album_paths.append(album)
 
             # Сравниваем время модификации текущей папки со временем, хранящемся
             # в таблице БД base_slideshowchanges

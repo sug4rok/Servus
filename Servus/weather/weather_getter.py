@@ -1,8 +1,23 @@
 ﻿# coding=utf-8
+import logging
 from xml.dom import minidom
 from urllib2 import urlopen, HTTPError
 from datetime import datetime, timedelta
-from events.utils import event_setter
+
+logger = logging.getLogger(__name__)
+
+
+def file_name_prefix(d):
+    """
+    Функция получения приставки к файлу с картинкой в зависимости от времени суток.
+    :param d: datetime Время прогноза
+    :returns: str Префикс файла изображения:'cd' для дня и 'cn' - для ночи.
+    """
+
+    hours_format = '%H'
+    h = int(d.strftime(hours_format))
+
+    return 'cd' if 8 < h <= 20 else 'cn'
 
 
 class WG(object):
@@ -14,7 +29,7 @@ class WG(object):
 
     def __init__(self, wp):
         self.wp = wp
-        self.wp_url = wp.weather_url        
+        self.wp_url = wp.url
         self.parsed_xml = self.parse_xml()
         self.format = '%Y-%m-%d %H:%M'
 
@@ -22,14 +37,13 @@ class WG(object):
         try:
             url_sock = urlopen(self.wp_url)
         except HTTPError, err:
-            event_setter('system', u'Weather %s: urllib2 HTTPError: %s' % (self.wp.weather_provider, err.code),
-                         3, delay=3, sms=False)
+            logger.warning(u'Weather %s: urllib2 HTTPError: %s' % (self.wp.name, err.code))
             return -1
         try:
             parsed_xml = minidom.parse(url_sock)
             return parsed_xml
         except:
-            event_setter('system', u'Weather: Ошибка парсинга для %s' % self.wp.weather_provider, 3, delay=3, sms=False)
+            logger.warning(u'Weather: Ошибка парсинга для %s' % self.wp.name)
             return -1
         finally:
             url_sock.close()
@@ -49,31 +63,20 @@ class WG(object):
                 return subnodes[subnode_num].childNodes[0].nodeValue
         else:
             return subnodes
-        
-    @staticmethod
-    def file_name_prefix(d):
-        hours_format = '%H'
-        h = int(d.strftime(hours_format))
-        if 8 < h <= 20:
-            prefix = 'cd'
-        else:
-            prefix = 'cn'         
-        return prefix 
-    
-    def __str__(self):
-        return 'Weather setter class for %s weather provider' % self.wp.weather_provider
 
-        
+    def __str__(self):
+        return 'Weather getter class for %s weather provider' % self.wp.name
+
+
 # Четыре последующих класса реализую свой собственный метод parse_to_dict, т.к. у прогнозных сайтов
 # сильно разнятся API, а в базу данных weather_weather необходимо вносить данные в определенном виде
 class WGRP5(WG):
-    
     def parse_to_dict(self):
         weather_data = []
-        
+
         if self.parsed_xml == -1:
             return weather_data
-            
+
         def get_clouds_img(clouds, d):
             clouds_ranges = [
                 xrange(0, 11),
@@ -85,25 +88,15 @@ class WGRP5(WG):
             ]
             for r in xrange(0, 6):
                 if clouds in clouds_ranges[r]:
-                    return self.file_name_prefix(d) + str(r) 
-            
+                    return file_name_prefix(d) + str(r)
+            return 'na'
+
         def get_wd(wd):
-            wds = {
-                u'ШТЛ': -1,
-                u'С': 0,
-                u'С-В': 45,
-                u'С-З': 315,
-                u'Ю': 180,
-                u'Ю-В': 135,
-                u'Ю-З': 225,
-                u'В': 90,
-                u'З': 270
-            }
+            wds = {u'ШТЛ': -1, u'С': 0, u'С-В': 45, u'С-З': 315, u'Ю': 180,
+                   u'Ю-В': 135, u'Ю-З': 225, u'В': 90, u'З': 270}
             return wds[wd]
-            
+
         def get_falls_img(falls, drops):
-            global post_img
-            pref_img = 't%sd' % falls
             if drops in ('0', '0.5', '1'):
                 post_img = '0'
             elif drops in ('2', '3'):
@@ -114,14 +107,16 @@ class WGRP5(WG):
                 post_img = '3'
             elif drops in ('8', '9'):
                 post_img = '4'
-            return pref_img + post_img
-        
+            else:
+                return 'na'
+            return 't%sd%s' % (falls, post_img)
+
         for day in self.node_value_get('timestep'):
             clouds = int(self.node_value_get('cloud_cover', node=day, subnode_num=0))
             tmp_data = {'wp': self.wp}
             d = self.node_value_get('datetime', node=day, subnode_num=0)
             tmp_data['datetime'] = datetime.strptime(d, self.format)
-            tmp_data['clouds'] = clouds 
+            tmp_data['clouds'] = clouds
             tmp_data['precipitation'] = self.node_value_get('precipitation', node=day, subnode_num=0)
             tmp_data['temperature'] = self.node_value_get('temperature', node=day, subnode_num=0)
             tmp_data['pressure'] = self.node_value_get('pressure', node=day, subnode_num=0)
@@ -134,15 +129,14 @@ class WGRP5(WG):
                 self.node_value_get('drops', node=day, subnode_num=0)
             )
             weather_data.append(tmp_data)
-            
+
         return weather_data
 
-        
+
 class WGWUA(WG):
-    
     def parse_to_dict(self):
         weather_data = []
-        
+
         if self.parsed_xml == -1:
             return weather_data
 
@@ -157,8 +151,9 @@ class WGWUA(WG):
             ]
             for num, clouds_range in enumerate(clouds_ranges):
                 if clouds in clouds_range:
-                    return self.file_name_prefix(d) + str(num)
-            
+                    return file_name_prefix(d) + str(num)
+            return 'na'
+
         def get_falls_img(clouds):
             falls_ranges = {
                 't0d0': xrange(0, 40),
@@ -183,6 +178,7 @@ class WGWUA(WG):
             for r in falls_ranges:
                 if clouds in falls_ranges[r]:
                     return r
+            return 'na'
 
         for day in self.node_value_get('day')[:8]:
             clouds = int(self.node_value_get('cloud', node=day, subnode_num=0))
@@ -207,30 +203,20 @@ class WGWUA(WG):
             tmp_data['clouds_img'] = get_clouds_img(clouds, tmp_data['datetime'])
             tmp_data['falls_img'] = get_falls_img(clouds)
             weather_data.append(tmp_data)
-        
+
         return weather_data
 
-        
+
 class WGYA(WG):
-    
     def parse_to_dict(self):
         weather_data = []
-        
+
         if self.parsed_xml == -1:
             return weather_data
 
         def get_wd(wd):
-            wds = {
-                'calm': -1,
-                'n': 0,
-                'ne': 45,
-                'nw': 315,
-                's': 180,
-                'se': 135,
-                'sw': 225,
-                'e': 90,
-                'w': 270,
-            }
+            wds = {'calm': -1, 'n': 0, 'ne': 45, 'nw': 315, 's': 180,
+                   'se': 135, 'sw': 225, 'e': 90, 'w': 270}
             return wds[wd]
 
         def get_file_img(weather_condition, d):
@@ -238,6 +224,7 @@ class WGYA(WG):
                 'clear': ['0', 't0d0'],
                 'mostly-clear': ['1', 't0d0'],
                 'mostly-clear-slight-possibility-of-rain': ['1', 't1d0'],
+                'mostly-clear-slight-possibility-of-wet-snow': ['1', 't2d0'],
                 'mostly-clear-slight-possibility-of-snow': ['1', 't3d0'],
                 'partly-cloudy': ['2', 't0d0'],
                 'partly-cloudy-possible-thunderstorms-with-rain': ['2', 't1d0'],
@@ -274,14 +261,12 @@ class WGYA(WG):
                 'overcast-and-snow': ['5', 't3d2'],
             }
             if weather_condition not in weather_conditions:
-                event_setter('system', u'Weather ya.ru: Неизвестные погодные условия %s' % weather_condition,
-                             3, delay=3, sms=False)
                 return [('na', 'na')]
             return [(
-                    self.file_name_prefix(d) + weather_conditions[weather_condition][0],
-                    weather_conditions[weather_condition][1]
-                    )]
-        
+                file_name_prefix(d) + weather_conditions[weather_condition][0],
+                weather_conditions[weather_condition][1]
+            )]
+
         times = {'morning': '07:00', 'day': '13:00', 'evening': '19:00', 'night': '01:00'}
         for day in self.node_value_get('day')[:2]:
             date = day.attributes['date'].value
@@ -309,12 +294,11 @@ class WGYA(WG):
                     weather_data.append(tmp_data)
         return weather_data
 
-        
+
 class WGOWM(WG):
-    
     def parse_to_dict(self):
         weather_data = []
-        
+
         if self.parsed_xml == -1:
             return weather_data
 
@@ -326,10 +310,10 @@ class WGOWM(WG):
                 '803': '3',
                 '804': '5',
             }
-            if clouds not in clouds_ranges:
-                return self.file_name_prefix(d) + '5'
-            return self.file_name_prefix(d) + clouds_ranges[clouds]            
-            
+            if clouds in clouds_ranges:
+                return file_name_prefix(d) + clouds_ranges[clouds]
+            return file_name_prefix(d) + '5'
+
         def get_falls_img(clouds):
             falls_ranges = {
                 't1d0': ['321', '520', '521', '522'],
@@ -378,26 +362,21 @@ class WGOWM(WG):
                 tmp_data['clouds_img'] = get_clouds_img(symbol_num, tmp_data['datetime'])
                 tmp_data['falls_img'] = get_falls_img(symbol_num)
                 weather_data.append(tmp_data)
-        
-        return weather_data
- 
 
-def weather_getter(wp):
+        return weather_data
+
+
+def get_weather(wp):
     """
-    Выбор класса, соответствующего прогнозному сайту и запуск его метода
+    Выбор класса, соответствующего прогнозному сайту и запуск его метода, отвечающего за
+    парсинг полученных результатов.
 
     :param wp: объект WeatherProvider, для которого будем парсить данные
     :returns: список из словарей погодных характеристик для различных временных точек
     """
-    if wp.weather_provider == 'rp5':
-        wg = WGRP5(wp)
-    elif wp.weather_provider == 'wua':
-        wg = WGWUA(wp)
-    elif wp.weather_provider == 'ya':
-        wg = WGYA(wp)
-    elif wp.weather_provider == 'owm':
-        wg = WGOWM(wp)
-    else:
-        return
 
-    return wg.parse_to_dict()
+    try:
+        wg = {'rp5':WGRP5, 'wua':WGWUA, 'ya':WGYA, 'owm':WGOWM}[wp.name](wp)
+        return wg.parse_to_dict()
+    except KeyError:
+        return []

@@ -8,7 +8,7 @@ def events(request, current_tab):
     Вывод событий последних 14 дней на вкладку События.
 
     :param request: django request
-    :param current_tab: название текущей вкладки (передается в Servus.urls)
+    :param current_tab: название текущей вкладки (передается в base.urls)
     """
 
     params = dict(events=get_events())
@@ -29,7 +29,7 @@ def amount_events(request):
 
     params = {
         'amount_events': get_amount_events(request)[0],
-        'event_imp': get_amount_events(request)[1]
+        'level': get_amount_events(request)[1]
     }
 
     return call_template(

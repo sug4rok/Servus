@@ -1,59 +1,53 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+from __future__ import unicode_literals
+
+from django.db import models, migrations
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'TempHumidSensor'
-        db.create_table(u'climate_temphumidsensor', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('sensor_name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=10)),
-            ('sensor_pin', self.gf('django.db.models.fields.PositiveSmallIntegerField')(unique=True, max_length=2)),
-            ('sensor_verb_name', self.gf('django.db.models.fields.CharField')(max_length=20, blank=True)),
-            ('is_used', self.gf('django.db.models.fields.BooleanField')(default=False)),
-        ))
-        db.send_create_signal(u'climate', ['TempHumidSensor'])
+    dependencies = [
+    ]
 
-        # Adding model 'TempHumidValue'
-        db.create_table(u'climate_temphumidvalue', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('sensor_name', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['climate.TempHumidSensor'])),
-            ('temperature', self.gf('django.db.models.fields.SmallIntegerField')(default=0, max_length=3)),
-            ('humidity', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, max_length=2)),
-            ('sensor_datetime', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-        ))
-        db.send_create_signal(u'climate', ['TempHumidValue'])
-
-
-    def backwards(self, orm):
-        # Deleting model 'TempHumidSensor'
-        db.delete_table(u'climate_temphumidsensor')
-
-        # Deleting model 'TempHumidValue'
-        db.delete_table(u'climate_temphumidvalue')
-
-
-    models = {
-        u'climate.temphumidsensor': {
-            'Meta': {'object_name': 'TempHumidSensor'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_used': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'sensor_name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '10'}),
-            'sensor_pin': ('django.db.models.fields.PositiveSmallIntegerField', [], {'unique': 'True', 'max_length': '2'}),
-            'sensor_verb_name': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'})
-        },
-        u'climate.temphumidvalue': {
-            'Meta': {'object_name': 'TempHumidValue'},
-            'humidity': ('django.db.models.fields.PositiveSmallIntegerField', [], {'default': '0', 'max_length': '2'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'sensor_datetime': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'sensor_name': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['climate.TempHumidSensor']"}),
-            'temperature': ('django.db.models.fields.SmallIntegerField', [], {'default': '0', 'max_length': '3'})
-        }
-    }
-
-    complete_apps = ['climate']
+    operations = [
+        migrations.CreateModel(
+            name='TempHumidSensor',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('sensor_name', models.CharField(unique=True, max_length=10, verbose_name=b'\xd0\xa1\xd0\xb8\xd1\x81\xd1\x82\xd0\xb5\xd0\xbc\xd0\xbd\xd0\xbe\xd0\xb5 \xd0\xb8\xd0\xbc\xd1\x8f')),
+                ('sensor_pin', models.PositiveSmallIntegerField(help_text=b'\xd0\x94\xd0\xbb\xd1\x8f \xd0\xb4\xd0\xb0\xd1\x82\xd1\x87\xd0\xb8\xd0\xba\xd0\xbe\xd0\xb2 \xd1\x82\xd0\xb5\xd0\xbc\xd0\xbf\xd0\xb5\xd1\x80\xd0\xb0\xd1\x82\xd1\x83\xd1\x80\xd1\x8b \xd0\xb2\xd1\x8b\xd0\xb4\xd0\xb5\xd0\xbb\xd0\xb5\xd0\xbd\xd1\x8b \xd0\xb2\xd1\x8b\xd0\xb2\xd0\xbe\xd0\xb4\xd1\x8b \xd1\x81 2 \xd0\xbf\xd0\xbe 5', unique=True, max_length=2, verbose_name=b'\xd0\x92\xd1\x8b\xd0\xb2\xd0\xbe\xd0\xb4 (pin) \xd0\xbd\xd0\xb0 Arduino')),
+                ('sensor_verb_name', models.CharField(help_text=b'\xd0\x98\xd0\xbc\xd1\x8f, \xd0\xbe\xd1\x82\xd0\xbe\xd0\xb1\xd1\x80\xd0\xb0\xd0\xb6\xd0\xb0\xd0\xb5\xd0\xbc\xd0\xbe\xd0\xb5 \xd0\xbd\xd0\xb0 \xd1\x81\xd1\x82\xd1\x80\xd0\xb0\xd0\xbd\xd0\xb8\xd1\x86\xd0\xb5', max_length=20, verbose_name=b'\xd0\x9f\xd0\xbe\xd0\xbb\xd0\xbd\xd0\xbe\xd0\xb5 \xd0\xb8\xd0\xbc\xd1\x8f', blank=True)),
+                ('is_used', models.BooleanField(default=False, help_text=b'\xd0\x92\xd1\x8b\xd0\xb1\xd0\xb5\xd1\x80\xd0\xb8\xd1\x82\xd0\xb5 "\xd0\x97\xd0\xb0\xd0\xb4\xd0\xb5\xd0\xb9\xd1\x81\xd1\x82\xd0\xb2\xd0\xbe\xd0\xb2\xd0\xb0\xd0\xbd", \xd0\xb5\xd1\x81\xd0\xbb\xd0\xb8 \xd0\xb4\xd0\xb0\xd1\x82\xd1\x87\xd0\xb8\xd0\xba \xd0\xb1\xd1\x8b\xd0\xbb \xd0\xbf\xd0\xbe\xd0\xb4\xd0\xba\xd0\xbb\xd1\x8e\xd1\x87\xd0\xb5\xd0\xbd', verbose_name=b'\xd0\x97\xd0\xb0\xd0\xb4\xd0\xb5\xd0\xb9\xd1\x81\xd1\x82\xd0\xb2\xd0\xbe\xd0\xb2\xd0\xb0\xd0\xbd')),
+            ],
+            options={
+                'verbose_name': '\u0414\u0430\u0442\u0447\u0438\u043a \u0442\u0435\u043c\u043f\u0435\u0440\u0430\u0442\u0443\u0440\u044b',
+                'verbose_name_plural': '\u0414\u0430\u0442\u0447\u0438\u043a\u0438 \u0442\u0435\u043c\u043f\u0435\u0440\u0430\u0442\u0443\u0440\u044b',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='TempHumidValue',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('temperature', models.SmallIntegerField(default=0, max_length=3, verbose_name=b'\xd0\xa2\xd0\xb5\xd0\xbc\xd0\xbf\xd0\xb5\xd1\x80\xd0\xb0\xd1\x82\xd1\x83\xd1\x80\xd0\xb0')),
+                ('humidity', models.PositiveSmallIntegerField(default=0, max_length=2, verbose_name=b'\xd0\x92\xd0\xbb\xd0\xb0\xd0\xb6\xd0\xbd\xd0\xbe\xd1\x81\xd1\x82\xd1\x8c')),
+                ('sensor_datetime', models.DateTimeField(auto_now_add=True, verbose_name=b'\xd0\x92\xd1\x80\xd0\xb5\xd0\xbc\xd1\x8f \xd0\xb7\xd0\xb0\xd0\xbc\xd0\xb5\xd1\x80\xd0\xb0 \xd1\x82\xd0\xb5\xd0\xbc\xd0\xbf\xd0\xb5\xd1\x80\xd0\xb0\xd1\x82\xd1\x83\xd1\x80\xd1\x8b/\xd0\xb2\xd0\xbb\xd0\xb0\xd0\xb6\xd0\xbd\xd0\xbe\xd1\x81\xd1\x82\xd0\xb8')),
+                ('sensor_name', models.ForeignKey(to='climate.TempHumidSensor')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='TempHumidValueShort',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('temperature', models.SmallIntegerField(default=0, max_length=3, verbose_name=b'\xd0\xa2\xd0\xb5\xd0\xbc\xd0\xbf\xd0\xb5\xd1\x80\xd0\xb0\xd1\x82\xd1\x83\xd1\x80\xd0\xb0')),
+                ('humidity', models.PositiveSmallIntegerField(default=0, max_length=2, verbose_name=b'\xd0\x92\xd0\xbb\xd0\xb0\xd0\xb6\xd0\xbd\xd0\xbe\xd1\x81\xd1\x82\xd1\x8c')),
+                ('sensor_name', models.ForeignKey(to='climate.TempHumidSensor')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+    ]

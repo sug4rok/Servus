@@ -4,7 +4,7 @@ from .models import Plan
 
 
 class PlanAdmin(admin.ModelAdmin):
-    list_display = ('plan_name', 'is_shown')
+    list_display = ('name', 'is_shown')
     ordering = ('is_shown',)
 
 

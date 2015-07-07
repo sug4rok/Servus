@@ -2,13 +2,12 @@
 from os import walk, path
 from random import randint
 from PIL import Image
-from Servus.settings import MEDIA_ROOT
+from base.settings import MEDIA_ROOT
 from base.views import call_template
 from .models import Slideshow
 
 
 class NotImageError(Exception):
-
     def __init__(self, file_type):
         self.file_type = file_type
 
@@ -17,7 +16,6 @@ class NotImageError(Exception):
 
 
 class PathNotFound(Exception):
-
     def __init__(self, broken_path):
         self.broken_path = broken_path
 
@@ -45,31 +43,39 @@ def slide(request):
     :param request: django request
     """
 
-    params = {}
+    params = {'album': 'Нет альбомов', 'slide': ''}
 
-    if len(Slideshow.objects.all()):
-        while True:
+    albums = Slideshow.objects.exclude(is_shown=False)
+    if len(albums):
+        slideshow_folder = MEDIA_ROOT + '/slideshow'
+        attempts = 0
+
+        # Делаем 10 попыток найти подходящий для показа файл.
+        # Если альбом был удален, а база не проиндексирована еще, нет графических файлов,
+        # выводим на экран об этом сообщение.
+        while attempts < 10:
             try:
                 # Получаем первый элемент произвольно отсортированного списка фотоальбомов,
                 # исключая альбомы с пометкой is_shown = False
                 rnd_album = unicode(
-                    MEDIA_ROOT + Slideshow.objects.exclude(is_shown=False).order_by('?')[0].album_path
+                    slideshow_folder + albums.order_by('?')[0].album_path
                 )
                 if path.exists(rnd_album):
                     for root, dirs, files in walk(rnd_album):
                         rnd_file = randint(0, len(files) - 1)
                         img = '%s/%s' % (root, files[rnd_file])
-                        file_type = img .split('.')[-1].lower()
+                        file_type = img.split('.')[-1].lower()
                         try:
                             Image.open(img)
                             params['album'] = rnd_album.split('/')[-1].replace('_', ' ')
-                            params['slide'] = img .replace(MEDIA_ROOT, '')
+                            params['slide'] = img.replace(MEDIA_ROOT, '').replace('//', '/')
                             break
                         except:
                             raise NotImageError(file_type)
                 else:
                     raise PathNotFound(rnd_album)
             except (NotImageError, PathNotFound):
+                attempts += 1
                 continue
             else:
                 break

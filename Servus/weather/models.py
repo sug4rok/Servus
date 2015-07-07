@@ -7,7 +7,7 @@ class WeatherProvider(models.Model):
     Модель для хранения данных о провайдерах прогнозов погоды и выбранных населенных пунктах
     """
 
-    weather_provider = models.CharField(
+    name = models.CharField(
         max_length=20,
         choices=(
             # ('rp5', 'rp5.ru'), # С 1 июля 2014 недоступен бесплатно
@@ -18,7 +18,7 @@ class WeatherProvider(models.Model):
         verbose_name='Прогнозный сайт',
         help_text='Сайт, предоставляющий API прогноза погоды.'
     )
-    weather_url = models.URLField(
+    url = models.URLField(
         verbose_name='URL на XML-API',
         # url для rp5.ru: http://rp5.ru/xml/7285/00000/ru
         help_text='url на XML-API сайта прогноза погоды. Для выбранного прогнозного сайта\
@@ -26,14 +26,14 @@ class WeatherProvider(models.Model):
             - weather.ua: <strong>http://xml.weather.co.ua/1.2/forecast/<font color="#5577cc">XXXX</font>?dayf=4?lang=ru</strong><br>\
             - Яндекс.Погода: <strong>http://export.yandex.ru/weather-ng/forecasts/<font color="#5577cc">XXXX</font>.xml</strong><br>\
             - Open Weather Map: <strong>http://api.openweathermap.org/data/2.5/forecast/daily?q=<font color="#5577cc">XXXX</font>&mode=xml&units=metric&cnt=4</strong><br><br>\
-            ,где <strong><font color="#5577cc">XXXX</font></strong> - код города, для которого составляется прогноз погоды. \
+            ,где <strong><font color="#5577cc">XXXX</font></strong> - код города прогноза погоды.\
             Например, для Санкт-Петербурга (Россия) коды будут следующие:<br><br>\
             - weather.ua: <strong><font color="#5577cc">773</font></strong><br>\
             - Яндекс.Погода: <strong><font color="#5577cc">26063</font></strong><br>\
             - Open Weather Map: <strong><font color="#5577cc">St.Petersburg</font></strong>',
         unique=True
     )
-    weather_city = models.CharField(
+    city = models.CharField(
         max_length=20,
         verbose_name='Населенный пункт',
         help_text='Название города, для которого отображается прогноз погоды \
@@ -42,6 +42,12 @@ class WeatherProvider(models.Model):
 
         blank=True,
         null=True
+    )
+    is_used = models.BooleanField(
+        default=True,
+        verbose_name='Задействован',
+        help_text='Отключите вместо удаления, если пока нет необходимости в данном прогнозе, или нет возможности\
+         получить данные с сайта прогноза погоды.'
     )
     on_sidebar = models.BooleanField(
         default=False,
@@ -55,7 +61,7 @@ class WeatherProvider(models.Model):
         verbose_name_plural = 'Прогноз погоды'
 
     def __unicode__(self):
-        return 'Forecast class for %s weather provider' % self.weather_provider
+        return 'Forecast class for %s weather provider' % self.name
 
 
 class Weather(models.Model):
@@ -68,10 +74,10 @@ class Weather(models.Model):
     )
     datetime = models.DateTimeField(
         verbose_name='Время прогноза',
+        help_text='',
         default='2013-08-30 00:00'
     )
     clouds = models.PositiveSmallIntegerField(
-        max_length=2,
         verbose_name='Облачность',
         default=0
     )
@@ -81,27 +87,26 @@ class Weather(models.Model):
         default=0.0
     )
     temperature = models.SmallIntegerField(
-        max_length=3,
         verbose_name='Температура',
+        help_text='°C',
         default=0
     )
     pressure = models.PositiveSmallIntegerField(
-        max_length=3,
         verbose_name='Давление',
+        help_text='мм рт. ст.',
         default=0
     )
     humidity = models.PositiveSmallIntegerField(
-        max_length=2,
         verbose_name='Влажность',
+        help_text='%',
         default=0
     )
     wind_speed = models.PositiveSmallIntegerField(
-        max_length=2,
         verbose_name='Ветер',
+        help_text='м/c',
         default=0
     )
     wind_direction = models.SmallIntegerField(
-        max_length=3,
         verbose_name='Направление ветра',
         default=0
     )
@@ -115,7 +120,7 @@ class Weather(models.Model):
     )
 
     def __unicode__(self):
-        return 'Forecast class for %s weather provider' % self.wp_id
+        return self.wp.name
 
     class Meta(object):
-        ordering = ('wp',)
+        ordering = ('wp', 'datetime')

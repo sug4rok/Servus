@@ -1,10 +1,11 @@
 ﻿# coding=utf-8
 from django.contrib import admin
-from django.contrib.auth.models import User, Group
-from .models import UserProfile, Tab
+from django.contrib.auth.models import User as DjangoUser
+from django.contrib.auth.models import Group
+from .models import User, Tab, Location
 
 
-class UserProfileAdmin(admin.ModelAdmin):
+class UserAdmin(admin.ModelAdmin):
     list_display = ('name', 'email')
 
 
@@ -31,13 +32,12 @@ class TabAdmin(admin.ModelAdmin):
             del actions['delete_selected']
         return actions
 
-
-class EventRuleAdmin(admin.ModelAdmin):
-    list_display = ('event_src', 'event_descr')
-    ordering = ('event_src',)
+class LocationAdmin(admin.ModelAdmin):
+    list_display = ('name', 'description')
 
 
 admin.site.unregister(Group)
-admin.site.unregister(User)
-admin.site.register(UserProfile, UserProfileAdmin)
+admin.site.unregister(DjangoUser)
+admin.site.register(User, UserAdmin)
 admin.site.register(Tab, TabAdmin)
+admin.site.register(Location, LocationAdmin)

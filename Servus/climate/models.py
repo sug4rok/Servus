@@ -1,28 +1,38 @@
 ﻿# coding=utf-8
 from django.db import models
+from base.models import Location
 
-
+LOCATION_TYPES = (
+    ('inside', 'В помещении'),
+    ('outside', 'На улице'),
+    ('other', 'Другое'),
+)
+    
+    
 class TempHumidSensor(models.Model):
     """
     Модель для добавления новых датчиков влажности и температуры
     """
 
-    sensor_name = models.CharField(
+    name = models.SlugField(
         max_length=10,
         verbose_name='Системное имя',
         unique=True
     )
-    sensor_pin = models.PositiveSmallIntegerField(
-        max_length=2,
+    arduino_pin = models.PositiveSmallIntegerField(
         verbose_name='Вывод (pin) на Arduino',
         help_text='Для датчиков температуры выделены выводы с 2 по 5',
         unique=True,
     )
-    sensor_verb_name = models.CharField(
-        max_length=20,
-        verbose_name='Полное имя',
-        help_text='Имя, отображаемое на странице',
-        blank=True
+    location = models.ForeignKey(
+        Location,
+        verbose_name='Расположение',
+        help_text='Расположение датчика',
+    )
+    location_type = models.SlugField(
+        choices=LOCATION_TYPES,
+        default='inside',
+        verbose_name='Тип расположение датчика',
     )
     is_used = models.BooleanField(
         verbose_name='Задействован',
@@ -30,20 +40,12 @@ class TempHumidSensor(models.Model):
         default=False
     )
 
-    def get_sensor_name(self):
-        return self.sensor_name
-
-    def save(self, *args, **kwargs):
-        if not self.sensor_verb_name:
-            self.sensor_verb_name = self.get_sensor_name()
-        super(TempHumidSensor, self).save(*args, **kwargs)
-
     class Meta(object):
         verbose_name = 'Датчик температуры'
         verbose_name_plural = 'Датчики температуры'
 
     def __unicode__(self):
-        return self.sensor_name
+        return self.name
 
 
 class TempHumidValue(models.Model):
@@ -51,24 +53,22 @@ class TempHumidValue(models.Model):
     Модель для хранения данных, полученных с датчиков температуры и влажности
     """
 
-    sensor_name = models.ForeignKey(TempHumidSensor)
+    sensor = models.ForeignKey(TempHumidSensor)
     temperature = models.SmallIntegerField(
-        max_length=3,
         verbose_name='Температура',
         default=0
     )
     humidity = models.PositiveSmallIntegerField(
-        max_length=2,
         verbose_name='Влажность',
         default=0
     )
-    sensor_datetime = models.DateTimeField(
+    datetime = models.DateTimeField(
         auto_now_add=True,
         verbose_name='Время замера температуры/влажности'
     )
 
     def __unicode__(self):
-        return '%s' % self.sensor_name
+        return '%s' % self.sensor
 
 
 class TempHumidValueShort(models.Model):
@@ -77,18 +77,15 @@ class TempHumidValueShort(models.Model):
     В отличие от TempHumidValue хронит только последние данные.
     """
 
-    sensor_name = models.ForeignKey(TempHumidSensor)
+    sensor = models.ForeignKey(TempHumidSensor)
     temperature = models.SmallIntegerField(
-        max_length=3,
         verbose_name='Температура',
         default=0
     )
     humidity = models.PositiveSmallIntegerField(
-        max_length=2,
         verbose_name='Влажность',
         default=0
     )
 
     def __unicode__(self):
-        return '%s' % self.sensor_name
-
+        return '%s' % self.sensor

@@ -4,7 +4,7 @@ from django.db import models
 
 class SlideshowChanges(models.Model):
     """
-    Время последней модификации папки, содержащей фотоальбомы (static/img/slideshow) -
+    Время последней модификации папки, содержащей фотоальбомы (media/slideshow) -
     тригер при проверке необходимости переиндексации фотоальбомов
     """
 

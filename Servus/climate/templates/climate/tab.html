@@ -1,0 +1,123 @@
+{% extends 'base/body_tabs.html' %}
+
+{% block content %}
+
+    <script src='{{ STATIC_URL }}js/highcharts.js' type='text/javascript'></script>
+
+    {% for chart_title, measure, rooms in charts %}
+        {% if rooms %}
+            <div id='{{ chart_title }}' class='charts'></div>
+
+            <script type='text/javascript'>
+                Highcharts.setOptions({
+                    lang: {
+                        resetZoom: 'Исходный вид',
+                        shortMonths: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек']
+                    }
+                });
+                $(function () {
+                    $('#{{ chart_title }}').highcharts({
+                        chart: {
+                            type: 'spline',
+                            marginBottom: 120,
+                            zoomType: 'x',
+                            panning: true,
+                            backgroundColor: '#272b30',
+                            panKey: 'shift',
+                            style: {fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif' }
+                        },
+                        colors: ['#2b90ae', '#ff9900', '#ff0000', '#29b36b', '#5bc0de', '#ffcc00', '#ff3333', '#59e39b'],
+                        credits: {
+                            enabled: false
+                        },
+                        title: {
+                            text: 'Изменения {{ chart_title }}',
+                            margin: 10,
+                            style: {
+                                color: '#5bc0de',
+                                fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif',
+                                fontWeight: 'bold',
+                                fontSize: '13px'
+                            }
+                        },
+                        legend: {
+                            lineHeight: 10,
+                            itemStyle: {
+                                color: '#a7a7a7',
+                                fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif',
+                                fontWeight: 'normal',
+                                fontSize: '10px'
+                            },
+                            align: 'left',
+                            floating: true,
+                            padding: 5,
+                            margin: 2,
+                            backgroundColor: '#2e3338',
+                            borderColor: '#1f2326',
+                            borderRadius: 3,
+                            borderWidth: 1,
+                            title: {
+                                text: 'Помещения:',
+                                style: {
+                                    color: '#5bc0de',
+                                    fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif',
+                                    fontWeight: 'bold',
+                                    fontSize: '12px'
+                                }
+                            }
+                        },
+                        plotOptions:{
+                            series: {
+                                animation: false,
+                                lineWidth: 3,
+                                marker: {
+                                    radius: 3,
+                                    symbol: 'circle'
+                                }
+                            }
+                        },
+                         xAxis: {
+                            type: 'datetime',
+                            dateTimeLabelFormats: {day: '%d %b %H:%M'},
+                            tickPixelInterval: 40,
+                            labels: {
+                                rotation: -45,
+                                style: {
+                                    color: '#a7a7a7',
+                                    fontWeight: 'bold'
+                                }
+                            }
+                        },
+                        yAxis: {
+                            title: {text: null},
+                            allowDecimals: false,
+                            gridLineColor: '#555',
+                            gridLineDashStyle: 'Dash',
+                            tickPixelInterval: 10,
+                            labels: {
+                                format: '{value}{{ measure }}',
+                                style: {
+                                    color: '#a7a7a7',
+                                    fontWeight: 'bold'
+                                }
+                            }
+                        },
+                        series: [
+                            {% for room, vals in rooms %}
+                                {
+                                name: '{{ room }}',
+                                data: [
+                                    {% for date, val in vals %}
+                                        [Date.parse("{{ date|date:'Y-m-d H:i' }} UTC"), {{ val }}],
+                                    {% endfor %}
+                                 ]
+                            },
+                            {% endfor %}
+                        ]
+                    });
+                });
+            </script>
+        {% endif %}
+    {% endfor %}
+
+{% endblock %}

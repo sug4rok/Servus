@@ -1,0 +1,22 @@
+{% extends 'base/body_tabs.html' %}
+
+{% block content %}
+    <div class='widget'>
+    {% for event_id, source, message, level, datetime in events %}
+        <div class='alert alert-{{ level }} event_lvl'>
+
+            <div class='event_src event_img'>
+                <img src='{{ STATIC_URL }}img/{{ source }}.png' width='24' height='24'/>
+            </div>
+            <div class='event_src'>
+                {{ datetime|date:'M-d H:m' }}
+            </div>
+            <div class='event_msg'>
+                {{ message }}
+            </div>
+        </div>
+    {%  empty %}
+        <small>отсутствуют :)</small>
+    {% endfor %}
+    </div>
+{% endblock %}

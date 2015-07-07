@@ -2,11 +2,8 @@
 from django.http import Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from Servus.Servus import SITE_NAME
+from base.settings import SITE_NAME, THEME
 from .models import Tab
-
-# Словарь для передачи параметров с render_to_response
-PARAMS = {'site_name': SITE_NAME, 'tabs': Tab.objects.filter(is_shown=1)}
 
 
 def get_tab_options(current_tab):
@@ -14,13 +11,13 @@ def get_tab_options(current_tab):
     Функция получения названия вкладки, заголовка и краткого описания страницы для
     конкретной вкладки.
 
-    :param current_tab: имя вкладки (в базе таблица base_tab)
+    :param current_tab: str Имя вкладки (в базе таблица base_tab)
+    :returns: dict Список параметров вкладки
     """
 
     tab_options = Tab.objects.get(app_name=current_tab)
-    PARAMS['active_app_name'] = current_tab
-    PARAMS['active_title'] = tab_options.title
-    PARAMS['active_sub_title'] = tab_options.sub_title
+    return {'active_app_name':current_tab, 'active_title':tab_options.title,
+            'active_sub_title':tab_options.sub_title}
 
 
 def call_template(request, *args, **kwargs):
@@ -33,18 +30,21 @@ def call_template(request, *args, **kwargs):
                    или templ_path - запрашиваемый шаблон
     """
 
+    # Словарь для передачи параметров с render_to_response
+    params = {'site_name':SITE_NAME, 'theme':THEME, 'tabs':Tab.objects.filter(is_shown=1)}
+
     if args:
-        PARAMS.update(args[0])
+        params.update(args[0])
 
     current_tab = kwargs.pop('current_tab', None)
     if current_tab is not None:
-        get_tab_options(current_tab)
+        params.update(get_tab_options(current_tab))
 
         # RequestContext необходим для получения текущего URL в шаблоне
-        return render_to_response('%s/tab.html' % current_tab, PARAMS, context_instance=RequestContext(request))
-        
+        return render_to_response('%s/tab.html' % current_tab, params, context_instance=RequestContext(request))
+
     templ_path = kwargs.pop('templ_path', None)
     if templ_path is not None:
-        return render_to_response(templ_path, PARAMS, context_instance=RequestContext(request))
+        return render_to_response(templ_path, params, context_instance=RequestContext(request))
 
     raise Http404()

@@ -7,11 +7,11 @@ class Plan(models.Model):
     Модель для добавления на главную страницу планировки помещений
     """
 
-    plan_name = models.CharField(
+    name = models.CharField(
         max_length=20,
         verbose_name='Название',
     )
-    plan_file = models.ImageField(
+    image = models.ImageField(
         upload_to='plans',
         verbose_name='Файл с планировкой',
         help_text='Выберите файл с планировкой помещения',
@@ -27,4 +27,4 @@ class Plan(models.Model):
         verbose_name_plural = 'Планировки помещения'
 
     def __unicode__(self):
-        return self.plan_name
+        return self.name

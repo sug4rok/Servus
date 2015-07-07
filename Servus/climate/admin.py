@@ -3,9 +3,9 @@ from django.contrib import admin
 from .models import TempHumidSensor
 
 
-class TempHumidAdmin(admin.ModelAdmin):
-    list_display = ('sensor_verb_name', 'sensor_name', 'sensor_pin', 'is_used')
-    ordering = ('sensor_name',)
+class TempHumidSensorAdmin(admin.ModelAdmin):
+    list_display = ('name', 'arduino_pin', 'location', 'location_type', 'is_used')
+    ordering = ('name',)
 
 
-admin.site.register(TempHumidSensor, TempHumidAdmin)
+admin.site.register(TempHumidSensor, TempHumidSensorAdmin)

@@ -4,9 +4,8 @@ from .models import WeatherProvider
 
 
 class WeatherProviderAdmin(admin.ModelAdmin):
-    list_display = ('weather_provider', 'weather_url', 'weather_city')
-    ordering = ('weather_provider',)
+    list_display = ('name', 'city', 'is_used')
+    ordering = ('name',)
 
 
 admin.site.register(WeatherProvider, WeatherProviderAdmin)
-
