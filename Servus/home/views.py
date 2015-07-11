@@ -3,7 +3,7 @@ from importlib import import_module
 from django.http import HttpResponseRedirect
 from django.contrib.sessions.models import Session
 from base.views import call_template
-from base.settings import PLUGINS
+from base.settings import EXTENDED_APPS
 from events.models import Event
 from events.views import get_events
 from .models import Plan
@@ -21,13 +21,13 @@ def summary(request):
     widget_pages = []
 
     # Получаем данные с виджетов плагинов, если они виджеты есть (функция widget в файле plugin.views
-    for plugin in PLUGINS:
+    for app in EXTENDED_APPS:
         try:
-            views = import_module(plugin + '.views')
+            views = import_module(app + '.views')
             try:
                 widget = getattr(views, 'widget')
-                params[plugin] = widget()
-                widget_pages.append(plugin + '/widget.html')
+                params[app] = widget()
+                widget_pages.append(app + '/widget.html')
             except AttributeError:
                 pass
         except ImportError:

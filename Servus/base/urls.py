@@ -1,7 +1,7 @@
 ﻿# coding=utf-8
 from django.conf.urls import patterns, include, url
 from .settings import MEDIA_ROOT
-from base.models import Tab
+from base.models import Application
 from django.contrib import admin
 
 admin.autodiscover()
@@ -17,7 +17,7 @@ urlpatterns = patterns(
     url(r'^admin/', include(admin.site.urls)),
 )
 
-for tab_app in Tab.objects.filter(is_shown=1).values_list('app_name', flat=True):
-    urlpatterns += patterns(tab_app + '.views',
-                            url(r'^%s/$' % tab_app, tab_app, {'current_tab': '%s' % tab_app}),
+for app in Application.objects.filter(is_tab=1).values_list('name', flat=True):
+    urlpatterns += patterns(app + '.views',
+                            url(r'^%s/$' % app, app, {'current_tab': '%s' % app}),
                             )

@@ -3,7 +3,7 @@ from django.http import Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from base.settings import SITE_NAME, THEME
-from .models import Tab
+from .models import Application
 
 
 def get_tab_options(current_tab):
@@ -15,7 +15,7 @@ def get_tab_options(current_tab):
     :returns: dict Список параметров вкладки
     """
 
-    tab_options = Tab.objects.get(app_name=current_tab)
+    tab_options = Application.objects.get(name=current_tab)
     return {'active_app_name':current_tab, 'active_title':tab_options.title,
             'active_sub_title':tab_options.sub_title}
 
@@ -31,7 +31,7 @@ def call_template(request, *args, **kwargs):
     """
 
     # Словарь для передачи параметров с render_to_response
-    params = {'site_name':SITE_NAME, 'theme':THEME, 'tabs':Tab.objects.filter(is_shown=1)}
+    params = {'site_name':SITE_NAME, 'theme':THEME, 'tabs':Application.objects.filter(is_tab=1)}
 
     if args:
         params.update(args[0])

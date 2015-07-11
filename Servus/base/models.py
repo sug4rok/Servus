@@ -44,15 +44,18 @@ class User(models.Model):
         return "%s's profile" % self.name
 
 
-class Tab(models.Model):
+class Application(models.Model):
     """
-    Вкладки и связанные с ними типы приложений
+    Установленны приложения и их настройки
     """
-
-    app_name = models.SlugField(
-        max_length=20,
-        default='home',
-        verbose_name='Тип приложения',
+    name = models.SlugField(
+        verbose_name='Приложение',
+        unique=True
+    )
+    is_tab = models.BooleanField(
+        verbose_name='Вкладка',
+        help_text='Имеет собственную вкладку в меню web-интерфейса',
+        default=False
     )
     tab_name = models.CharField(
         max_length=20,
@@ -60,7 +63,9 @@ class Tab(models.Model):
     )
     title = models.CharField(
         max_length=50,
-        verbose_name='Заголовок'
+        verbose_name='Заголовок',
+        blank=True,
+        null=True
     )
     sub_title = models.CharField(
         max_length=100,
@@ -68,20 +73,20 @@ class Tab(models.Model):
         blank=True,
         null=True
     )
-
-    is_shown = models.BooleanField(
-        verbose_name='Включена',
-        help_text='Отображение/Скрытие вкладки (необходим перезапуск web-сервера)',
+    is_widget = models.BooleanField(
+        verbose_name='Виджет',    
+        help_text='Имеет собственный виджет на Главной странице',
         default=False
-    )
+    )    
 
     class Meta(object):
-        verbose_name = 'Вкладку'
-        verbose_name_plural = 'Вкладки'
+        verbose_name = 'Приложение'
+        verbose_name_plural = 'Приложения'
         ordering = ('id',)
 
     def __unicode__(self):
-        return self.tab_name
+        return self.name
+
 
 class Location(models.Model):
     """

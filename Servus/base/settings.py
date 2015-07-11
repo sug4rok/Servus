@@ -10,8 +10,10 @@ DEBUG = True
 TEMPLATE_DEBUG = True
 ALLOWED_HOSTS = ['localhost', ]
 
-# Plugins (applicatins) for Servus
-PLUGINS = (
+# Extended applications for Servus
+EXTENDED_APPS = (
+    'home',  # System application. Don't delete!
+    'events',  # System application. Don't delete!
     'arduino',
     'climate',
     'weather',
@@ -25,11 +27,9 @@ INSTALLED_APPS = (
                      'django.contrib.staticfiles',
                      'django.contrib.admin',
                      'django_cron',
-                     'base',
-                     'home',
-                     'events',
+                     'base',  
                      'slideshow',
-                 ) + PLUGINS
+                 ) + EXTENDED_APPS
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -77,7 +77,7 @@ STATICFILES_DIRS = (
                        os.path.join(BASE_DIR, 'home/static'),
                        os.path.join(BASE_DIR, 'events/static'),
                        os.path.join(BASE_DIR, 'slideshow/static'),
-                   ) + tuple(map(lambda p: os.path.join(BASE_DIR, p + '/static'), PLUGINS))
+                   ) + tuple(map(lambda p: os.path.join(BASE_DIR, p + '/static'), EXTENDED_APPS))
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
@@ -103,6 +103,20 @@ LANGUAGE_CODE = 'ru-ru'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = False
+
+# If in the database there is a table fill the table base_application
+from django.db.utils import OperationalError
+try:
+    from base.models import Application
+    for ext_app in EXTENDED_APPS:
+        app, created = Application.objects.get_or_create(name=ext_app)
+        if app.name == 'home':
+            app.is_tab = True
+        if app.tab_name == '':
+            app.tab_name = ext_app.capitalize()
+        app.save()
+except OperationalError:
+    pass
 
 # =================== #
 #   Servus settings   #
