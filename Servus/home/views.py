@@ -2,8 +2,8 @@
 from importlib import import_module
 from django.http import HttpResponseRedirect
 from django.contrib.sessions.models import Session
+from base.models import Application
 from base.views import call_template
-from base.settings import EXTENDED_APPS
 from events.models import Event
 from events.views import get_events
 from .models import Plan
@@ -12,21 +12,21 @@ from .models import Plan
 def summary(request):
     """
     Контроллер для ajax-запроса обновления информации на Главной странице.
-    Получаем список всех доступных плагинов и отображаем виджет каждого плагина,
-    если он есть.
+    Получаем список приложений, для которых создан виджет (т.е. поле is_widget=True).
     :param request: django request
     """
 
     params = {}
     widget_pages = []
 
-    # Получаем данные с виджетов плагинов, если они виджеты есть (функция widget в файле plugin.views
-    for app in EXTENDED_APPS:
+    # Получаем данные с виджетов приложений
+    apps = Application.objects.filter(is_widget=1).values_list('name', flat=True)
+    for app in apps:
         try:
-            views = import_module(app + '.views')
+            widget = import_module(app + '.widget')
             try:
-                widget = getattr(views, 'widget')
-                params[app] = widget()
+                get_widget_data = getattr(widget, 'get_widget_data')
+                params[app] = get_widget_data()
                 widget_pages.append(app + '/widget.html')
             except AttributeError:
                 pass

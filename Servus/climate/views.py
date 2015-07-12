@@ -1,7 +1,7 @@
 ﻿# coding=utf-8
 from datetime import datetime, timedelta
 from base.views import call_template
-from climate.models import TempHumidSensor, TempHumidValue, TempHumidValueShort
+from climate.models import TempHumidSensor, TempHumidValue
 
 
 def climate(request, current_tab):
@@ -30,23 +30,3 @@ def climate(request, current_tab):
         params,
         current_tab=current_tab
     )
-
-
-def get_temp_humid():
-    """
-    Получение данных о текущей температуре и влажности из таблицы climate_temphumidvalue БД
-    :returns: список кортежей вида [(<полное имя датчика>, влажность, тепмпература), ...]
-    """
-
-    th_objs = TempHumidValueShort.objects.filter(sensor__is_used=True)
-    return [(th_obj.sensor.location, th_obj.humidity, th_obj.temperature) for th_obj in th_objs]
-
-
-def widget():
-    """
-    Функция для получения данных для отображение текущего значения температуры и влажности в помещениях
-    на Главной странице
-    :return: list Данные с датчиков температуры и влажности
-    """
-
-    return get_temp_humid()

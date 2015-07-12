@@ -26,7 +26,7 @@ def set_weather_events(dt, temp, wind_speed, falls_img):
     :param falls_img: возможное количество осадков (см. weather_getter.py)
     """
 
-    event_day = '%s %s' % (dt.day, dt.month)
+    event_day = dt.strftime('%d %b')
 
     if 30 <= temp <= 35:
         event_setter('weather', u'%s: Будет жарко (выше 30 C)' % event_day, 2, 48)
