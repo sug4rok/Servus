@@ -1,6 +1,6 @@
-+3,3V - +5V Supply voltage
-0,3 m¿ Measure
-60 mk¿ Sleep mode
+Ôªø+3.3V or +5V Supply voltage
+0.3 mA Measure
+60 mkA Sleep mode
 5 kOhm pullup resistor
 
 Sensor pins:
