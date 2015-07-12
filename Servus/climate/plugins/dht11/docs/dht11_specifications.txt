@@ -1,0 +1,10 @@
++3,3V - +5V Supply voltage
+0,3 m¿ Measure
+60 mk¿ Sleep mode
+5 kOhm pullup resistor
+
+Sensor pins:
+1 - +5V
+2 - data
+3 - not used
+4 - ground
