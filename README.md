@@ -8,7 +8,7 @@ Depends
 --------
 
 * [django](https://www.djangoproject.com/download "Django project oficial site")
-* [django-cron](https://github.com/Tivix/django-cron "to perform tasks on schedule")
+* [django-cron](https://github.com/Tivix/django-cron "to perform scheduled tasks")
 * [Pillow](https://github.com/python-imaging/Pillow "it is necessary for the slideshow")
 
 For arduino plug-in:
