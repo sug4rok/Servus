@@ -14,7 +14,6 @@ ALLOWED_HOSTS = ['localhost', ]
 EXTENDED_APPS = (
     'home',  # System application. Don't delete!
     'events',  # System application. Don't delete!
-    'arduino',
     'climate',
     'weather',
 )
@@ -27,7 +26,8 @@ INSTALLED_APPS = (
                      'django.contrib.staticfiles',
                      'django.contrib.admin',
                      'django_cron',
-                     'base',  
+                     'base',
+                     'plugins',
                      'slideshow',
                  ) + EXTENDED_APPS
 

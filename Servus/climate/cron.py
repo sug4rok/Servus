@@ -2,7 +2,7 @@
 import time
 import logging
 from base.utils import CJB
-from arduino.utils import Arduino
+from plugins.arduino.utils import Arduino
 from events.utils import event_setter
 from .models import TempHumidSensor, TempHumidValue, TempHumidValueShort
 

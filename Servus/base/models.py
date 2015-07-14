@@ -44,6 +44,34 @@ class User(models.Model):
         return "%s's profile" % self.name
 
 
+class Location(models.Model):
+    """
+    Место, где размещается контролируемый объект, нампример, комната, дверь, улица и пр.
+    """
+
+    name = models.CharField(
+        max_length=20,
+        default='',
+        verbose_name='Расположение',
+        help_text='Место, где размещается контролируемый объект',
+        blank=True,
+        unique=True
+    )
+
+    description = models.CharField(
+        max_length=50,
+        verbose_name='Комментарий',
+        blank=True
+    )
+
+    class Meta(object):
+        verbose_name = 'Расположение'
+        verbose_name_plural = 'Расположения'
+
+    def __unicode__(self):
+        return self.name
+
+
 class Application(models.Model):
     """
     Установленны приложения и их настройки
@@ -77,7 +105,12 @@ class Application(models.Model):
         verbose_name='Виджет',    
         help_text='Имеет собственный виджет на Главной странице',
         default=False
-    )    
+    )
+    location = models.ForeignKey(
+        Location,
+        verbose_name='Расположение',
+        help_text='Место расположения объекта в помещении',
+    )   
 
     class Meta(object):
         verbose_name = 'Приложение'
@@ -87,30 +120,3 @@ class Application(models.Model):
     def __unicode__(self):
         return self.name
 
-
-class Location(models.Model):
-    """
-    Место, где размещается контролируемый объект, нампример, комната, дверь, улица и пр.
-    """
-
-    name = models.CharField(
-        max_length=20,
-        default='',
-        verbose_name='Расположение',
-        help_text='Место, где размещается контролируемый объект',
-        blank=False,
-        unique=True
-    )
-
-    description = models.CharField(
-        max_length=50,
-        verbose_name='Комментарий',
-        blank=True
-    )
-
-    class Meta(object):
-        verbose_name = 'Расположение'
-        verbose_name_plural = 'Расположения'
-
-    def __unicode__(self):
-        return self.name
