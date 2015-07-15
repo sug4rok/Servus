@@ -70,22 +70,3 @@ class TempHumidValue(models.Model):
     def __unicode__(self):
         return '%s' % self.sensor
 
-
-class TempHumidValueShort(models.Model):
-    """
-    Модель для хранения текущих данных, полученных с датчиков температуры и влажности.
-    В отличие от TempHumidValue хронит только последние данные.
-    """
-
-    sensor = models.ForeignKey(TempHumidSensor)
-    temperature = models.SmallIntegerField(
-        verbose_name='Температура',
-        default=0
-    )
-    humidity = models.PositiveSmallIntegerField(
-        verbose_name='Влажность',
-        default=0
-    )
-
-    def __unicode__(self):
-        return '%s' % self.sensor

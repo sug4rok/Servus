@@ -4,7 +4,7 @@ import logging
 from base.utils import CJB
 from plugins.repository.arduino.utils import Arduino
 from events.utils import event_setter
-from .models import TempHumidSensor, TempHumidValue, TempHumidValueShort
+from .models import TempHumidSensor, TempHumidValue
 
 logger = logging.getLogger(__name__)
 
@@ -57,11 +57,6 @@ class GetTempHumid(CJB):
 
     def do(self):
 
-        try:
-            TempHumidValueShort.objects.all().delete()
-        except TempHumidValue.DoesNotExist:
-            pass
-
         sensors = TempHumidSensor.objects.filter(is_used=True)
 
         if sensors:
@@ -85,11 +80,8 @@ class GetTempHumid(CJB):
                                 counter -= 1
                                 time.sleep(5)
                             else:
-                                TempHumidValueShort.objects.create(sensor=s, temperature=t, humidity=h)
-                                TempHumidValue.objects.create(sensor=s, temperature=t, humidity=h)
-                                
-                                set_climate_event(s, h, t)
-                                    
+                                TempHumidValue.objects.create(sensor=s, temperature=t, humidity=h)                                
+                                set_climate_event(s, h, t)                                    
                                 break
                         else:
                             logger.warning(u'Климатический датчик %s: %s' % (s, a.state[1]))
