@@ -27,7 +27,6 @@ INSTALLED_APPS = (
                      'django.contrib.admin',
                      'django_cron',
                      'base',
-                     'plugins',
                      'slideshow',
                  ) + EXTENDED_APPS
 
@@ -105,7 +104,7 @@ USE_L10N = True
 USE_TZ = False
 
 # If in the database there is a table fill the table base_application
-from django.db.utils import OperationalError
+from django.db.utils import OperationalError, ProgrammingError
 try:
     from base.models import Application
     for ext_app in EXTENDED_APPS:
@@ -115,7 +114,7 @@ try:
         if app.tab_name == '':
             app.tab_name = ext_app.capitalize()
         app.save()
-except OperationalError:
+except (OperationalError, ProgrammingError):
     pass
 
 # =================== #

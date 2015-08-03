@@ -13,10 +13,7 @@ class ApplicationAdmin(admin.ModelAdmin):
     list_display = ('name', 'is_tab', 'is_widget')
     fieldsets = (
         ('', {
-            'fields': ('name', )
-        }),
-        ('Настройки виджета', {
-            'fields': ('is_widget', 'location')
+            'fields': ('name', 'is_widget')
         }),
         ('Настройки вкладки', {
             'fields': ('is_tab', 'tab_name', 'title', 'sub_title')

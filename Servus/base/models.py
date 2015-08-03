@@ -105,12 +105,7 @@ class Application(models.Model):
         verbose_name='Виджет',    
         help_text='Имеет собственный виджет на Главной странице',
         default=False
-    )
-    location = models.ForeignKey(
-        Location,
-        verbose_name='Расположение',
-        help_text='Место расположения объекта в помещении',
-    )   
+    )  
 
     class Meta(object):
         verbose_name = 'Приложение'
