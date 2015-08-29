@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('arduino_dht11', '__first__'),
+        ('arduino_dht11', '0001_initial'),
         ('base', '0014_remove_application_location'),
         ('climate', '0013_auto_20150715_1248'),
     ]

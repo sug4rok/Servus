@@ -7,6 +7,7 @@ class Arduino(models.Model):
     """
     Модель для описания подключенного контроллера Arduino
     """
+    
     CONTAINER = 'system'
     ADMIN = True
     

@@ -14,8 +14,9 @@ LOCATION_TYPES = (
 
 class SensorDHT11(models.Model):
     """
-    Модель для добавления новых датчиков влажности и температуры
+    Модель для добавления новых датчиков влажности и температуры DHT11
     """
+    
     CONTAINER = 'climate'
     ADMIN = True
     
