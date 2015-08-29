@@ -7,16 +7,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = 'ky-kr37p8k^qdos0dk(ijv9m%*8(zre2+s@yct%+w(2(z1$2h2'
 
 DEBUG = True
-TEMPLATE_DEBUG = True
 ALLOWED_HOSTS = ['localhost', ]
-
-# Extended applications for Servus
-EXTENDED_APPS = (
-    'home',  # System application. Don't delete!
-    'events',  # System application. Don't delete!
-    'climate',
-    'weather',
-)
 
 INSTALLED_APPS = (
                      'django.contrib.auth',
@@ -28,7 +19,28 @@ INSTALLED_APPS = (
                      'django_cron',
                      'base',
                      'slideshow',
-                 ) + EXTENDED_APPS
+                     'plugins',
+                 )
+
+# Extended applications for Servus
+EXTENDED_APPS = (
+    'home',  # System application. Don't delete!
+    'events',  # System application. Don't delete!
+    'system',
+    'climate',
+    'weather',
+)
+                 
+# PLUGINS_DIR = os.path.join(BASE_DIR, 'plugins')
+# PLUGIN_DIRS = (d for d in os.listdir(PLUGINS_DIR) \
+            # if os.path.isdir(os.path.join(PLUGINS_DIR, d)) and d != 'migrations')
+# PLUGINS = tuple(('plugins.' + d for d in PLUGIN_DIRS ))
+PLUGINS = (
+    'plugins.arduino',
+    'plugins.arduino_dht11',
+)
+
+INSTALLED_APPS += PLUGINS + EXTENDED_APPS 
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -59,12 +71,13 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
             ],
+            'debug': True,
         },
     },
 ]
 
 # Media files
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media') #.replace('\\', '/')
 MEDIA_URL = '/media/'
 
 # Static files (CSS, JavaScript, Images)
@@ -103,19 +116,6 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = False
 
-# If in the database there is a table fill the table base_application
-from django.db.utils import OperationalError, ProgrammingError
-try:
-    from base.models import Application
-    for ext_app in EXTENDED_APPS:
-        app, created = Application.objects.get_or_create(name=ext_app)
-        if app.name == 'home':
-            app.is_tab = True
-        if app.tab_name == '':
-            app.tab_name = ext_app.capitalize()
-        app.save()
-except (OperationalError, ProgrammingError):
-    pass
 
 # =================== #
 #   Servus settings   #
