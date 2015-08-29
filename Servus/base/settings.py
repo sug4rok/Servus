@@ -31,16 +31,12 @@ EXTENDED_APPS = (
     'weather',
 )
                  
-# PLUGINS_DIR = os.path.join(BASE_DIR, 'plugins')
-# PLUGIN_DIRS = (d for d in os.listdir(PLUGINS_DIR) \
-            # if os.path.isdir(os.path.join(PLUGINS_DIR, d)) and d != 'migrations')
-# PLUGINS = tuple(('plugins.' + d for d in PLUGIN_DIRS ))
 PLUGINS = (
     'plugins.arduino',
     'plugins.arduino_dht11',
 )
 
-INSTALLED_APPS += PLUGINS + EXTENDED_APPS 
+INSTALLED_APPS += (PLUGINS + EXTENDED_APPS )
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -77,7 +73,7 @@ TEMPLATES = [
 ]
 
 # Media files
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media') #.replace('\\', '/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 # Static files (CSS, JavaScript, Images)
@@ -115,6 +111,10 @@ LANGUAGE_CODE = 'ru-ru'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = False
+
+# If in the database there is a table fill the table base_application
+from base.utils import fill_base_applications
+fill_base_applications(EXTENDED_APPS)
 
 
 # =================== #

@@ -4,7 +4,7 @@ from django_cron import CronJobBase, Schedule
 
 class CJB(CronJobBase):
     """
-    Промежуточный CronJobBase класс (см. https://github.com/Tivix/django-cro),
+    Промежуточный CronJobBase класс (см. https://github.com/Tivix/django-cron),
     наследуемый классами в cron.py.
     """
 
@@ -23,3 +23,24 @@ class CJB(CronJobBase):
         elif self.RUN_AT_TIMES:
             self.schedule = Schedule(run_at_times=self.RUN_AT_TIMES)
         self.code = type(self).__name__
+        
+
+def fill_base_applications(extended_apps):
+    """
+    If in the database there is a table fill the table base_application.
+    
+    :param extended_apps: tuple EXTENDED_APPS from settings file.
+    """
+    
+    from django.db.utils import OperationalError, ProgrammingError
+    try:
+        from base.models import Application
+        for ext_app in extended_apps:
+            app, created = Application.objects.get_or_create(name=ext_app)
+            if app.name == 'home':
+                app.is_tab = True
+            if app.tab_name == '':
+                app.tab_name = ext_app.capitalize()
+            app.save()
+    except (OperationalError, ProgrammingError):
+        pass
