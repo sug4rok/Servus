@@ -9,7 +9,7 @@ class Arduino(models.Model):
     """
     
     CONTAINER = 'system'
-    ADMIN = True
+    TYPE = 'Controller'
     
     name = models.CharField(
         max_length=50,

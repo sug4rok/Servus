@@ -28,12 +28,12 @@ class Plugins():
         except AttributeError:
             model_container = 'system'
         try:
-            model_admin = model_object.ADMIN
+            model_type = model_object.TYPE
         except AttributeError:
-            model_admin = False
+            model_type = None
             
         return {'name': model_name, 'object': model_object, 'container': model_container,
-                'admin': model_admin}
+                'type': model_type}
         
     def _get_new_plugin_model(self, plugin_model, container):
         """
@@ -46,6 +46,8 @@ class Plugins():
         """
         
         return type(plugin_model['name'], (plugin_model['object'], ), {
+            'CONTAINER': container,
+            'TYPE': plugin_model['type'],
             'location': models.ForeignKey(
                 Location,
                 verbose_name='Расположение',
@@ -68,7 +70,7 @@ class Plugins():
         """
         
         plugin_models = {}
-        
+
         for plugin in PLUGINS:
             plugin_package = __import__(plugin, fromlist=['models', ])
             plugin_model = self._get_plugin_model(plugin_package)

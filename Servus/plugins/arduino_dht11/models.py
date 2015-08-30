@@ -18,7 +18,7 @@ class SensorDHT11(models.Model):
     """
     
     CONTAINER = 'climate'
-    ADMIN = True
+    TYPE = 'TempHumidSensor'
     
     name = models.SlugField(
         max_length=10,
