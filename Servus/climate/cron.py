@@ -2,9 +2,10 @@
 import time
 import logging
 from base.utils import CJB
-from plugins.arduino.utils import Arduino
+from plugins.arduino.utils import Controller
 from events.utils import event_setter
-from .models import TempHumidSensor, TempHumidValue
+from .models import TempHumidValue
+from plugins.models import PLUGIN_MODELS
 
 logger = logging.getLogger(__name__)
 
@@ -50,27 +51,29 @@ def set_climate_event(s, h, t):
 
 class GetTempHumid(CJB):
     """
-    CronJobBase класс для опроса датчиков температуры/влажности, подключенных к контроллеру arduino.
+    CronJobBase класс для опроса датчиков температуры/влажности, подключенных к контроллеру.
     """
 
     RUN_EVERY_MINS = 15
 
     def do(self):
 
-        sensors = TempHumidSensor.objects.filter(is_used=True)
-
-        if sensors:
-            for s in sensors:
-                a = Arduino()
-                if a.state[0]:
+        th_sensors = filter(lambda s: s.TYPE == 'TempHumidSensor', PLUGIN_MODELS['climate'])
+        th_sensors_used = reduce(lambda res, s: res + tuple(s.objects.filter(is_used=True)), th_sensors, ())
+        
+        if th_sensors_used:
+            for s in th_sensors_used:
+                c = Controller(s.controller.port)
+                if c.state[0]:
                     counter = 3
                     while counter:
-                        cmd = 't%d\n' % s.arduino_pin
-                        result = a.command(cmd)
+                        cmd = 't%d\n' % s.controller_pin
+                        result = c.command(cmd)
 
-                        logger.debug('Arduino: command has been received %s | result %s | state: %s ' % (cmd, result, a.state[1]))
+                        logger.debug('Controller %s: command has been received %s | result %s | state: %s ' %\
+                        (s.controller, cmd, result, c.state[1]))
 
-                        if a.state[0]:                
+                        if c.state[0]:                
                             h, t = map(int, result.split(':'))
 
                             # Проверяем полученные данные на возможные ошибки показаний.
@@ -80,13 +83,13 @@ class GetTempHumid(CJB):
                                 counter -= 1
                                 time.sleep(5)
                             else:
-                                TempHumidValue.objects.create(sensor=s, temperature=t, humidity=h)                                
+                                TempHumidValue.objects.create(content_object=s, temperature=t, humidity=h)                                
                                 set_climate_event(s, h, t)                                    
                                 break
                         else:
-                            logger.warning(u'Климатический датчик %s: %s' % (s, a.state[1]))
+                            logger.warning(u'Климатический датчик %s: %s' % (s, c.state[1]))
                             break
                 else:
-                    logger.error(a.state[1])
-                    event_setter('system', a.state[1], 4, 1)
-                a.close_port()
+                    logger.error(c.state[1])
+                    event_setter('system', c.state[1], 4, 1)
+                c.close_port()

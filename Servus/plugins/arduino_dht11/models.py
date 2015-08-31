@@ -2,6 +2,8 @@
 from django.db import models
 from base.models import Application, Location
 from plugins.arduino.models import Arduino
+from django.contrib.contenttypes.generic import GenericRelation
+from climate.models import TempHumidValue
 
 MODEL = 'SensorDHT11'
 
@@ -25,11 +27,11 @@ class SensorDHT11(models.Model):
         verbose_name='Системное имя',
         unique=True
     )
-    arduino = models.ForeignKey(
+    controller = models.ForeignKey(
         Arduino,
         verbose_name='Контроллер Arduino',
     )
-    arduino_pin = models.PositiveSmallIntegerField(
+    controller_pin = models.PositiveSmallIntegerField(
         verbose_name='Вывод (pin) на Arduino',
         help_text='Для датчиков температуры выделены выводы с 2 по 5',
         unique=True,
@@ -45,4 +47,4 @@ class SensorDHT11(models.Model):
         verbose_name_plural = 'Датчики DHT11'
 
     def __unicode__(self):
-        return '%s: is used = %s' % (self.name, self.is_used)
+        return self.name

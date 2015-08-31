@@ -1,18 +1,14 @@
 # coding=utf-8
 import time
 import serial
-try:
-    from base.settings import PORT
-except ImportError:
-    PORT = '/dev/ttyACM0'
 
 
-class Arduino(object):
+class Controller(object):
     """
     Класс для работы с контроллером arduino, подключенного к последовательному порту.
     """
     
-    def __init__(self, port=PORT):
+    def __init__(self, port):
         """
         Инициализация подключения к последовательному порту.
         :param port: str Обязательный параметр номер (имя порта)

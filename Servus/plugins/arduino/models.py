@@ -18,12 +18,12 @@ class Arduino(models.Model):
     )
     port = models.CharField(
         default=1,
-        max_length=10,
+        max_length=20,
         verbose_name='COM-порт',
         help_text='COM-порт, к которому подключен контроллер.<br>\
                   Например:<br>\
                   В Windows порт = № порта - 1;<br>\
-                  В Linux   порт = ttyACM0'
+                  В Linux   порт = /dev/ttyACM0'
     )
     
     class Meta(object):

@@ -32,8 +32,8 @@ EXTENDED_APPS = (
 )
                  
 PLUGINS = (
-    'plugins.arduino',
-    'plugins.arduino_dht11',
+    'plugins.arduino',  # Arduino controller
+    'plugins.arduino_dht11',  # for connecting a DHT11 sensor to the Arduino
 )
 
 INSTALLED_APPS += (PLUGINS + EXTENDED_APPS )
