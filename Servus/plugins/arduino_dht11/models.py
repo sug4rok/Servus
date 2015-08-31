@@ -1,9 +1,6 @@
 ﻿# coding=utf-8
 from django.db import models
-from base.models import Application, Location
 from plugins.arduino.models import Arduino
-from django.contrib.contenttypes.generic import GenericRelation
-from climate.models import TempHumidValue
 
 MODEL = 'SensorDHT11'
 
