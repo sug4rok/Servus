@@ -7,7 +7,7 @@ Home Information System based on Django MVC
 Depends
 --------
 
-* [django](https://www.djangoproject.com/download "Django project oficial site")
+* [django](https://www.djangoproject.com/download "Django project official site")
 * [django-cron](https://github.com/Tivix/django-cron "to perform scheduled tasks")
 * [Pillow](https://github.com/python-imaging/Pillow "it is necessary for the slideshow")
 

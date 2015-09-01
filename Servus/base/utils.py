@@ -18,6 +18,7 @@ class CJB(CronJobBase):
     )
 
     def __init__(self):
+        super(CJB, self).__init__()
         if self.RUN_EVERY_MINS:
             self.schedule = Schedule(run_every_mins=self.RUN_EVERY_MINS)
         elif self.RUN_AT_TIMES:

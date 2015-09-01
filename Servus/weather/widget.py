@@ -75,4 +75,4 @@ def get_widget_data():
     :return: list Погодные данные
     """
 
-    return (nearest_forecast('сегодня'), nearest_forecast('завтра'))
+    return nearest_forecast('сегодня'), nearest_forecast('завтра')

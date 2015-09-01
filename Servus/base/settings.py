@@ -10,17 +10,17 @@ DEBUG = True
 ALLOWED_HOSTS = ['localhost', ]
 
 INSTALLED_APPS = (
-                     'django.contrib.auth',
-                     'django.contrib.contenttypes',
-                     'django.contrib.sessions',
-                     'django.contrib.messages',
-                     'django.contrib.staticfiles',
-                     'django.contrib.admin',
-                     'django_cron',
-                     'base',
-                     'slideshow',
-                     'plugins',
-                 )
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.admin',
+    'django_cron',
+    'base',
+    'slideshow',
+    'plugins',
+)
 
 # Extended applications for Servus
 EXTENDED_APPS = (
@@ -30,13 +30,13 @@ EXTENDED_APPS = (
     'climate',
     'weather',
 )
-                 
+
 PLUGINS = (
     'plugins.arduino',  # Arduino controller
     'plugins.arduino_dht11',  # for connecting a DHT11 sensor to the Arduino
 )
 
-INSTALLED_APPS += (PLUGINS + EXTENDED_APPS )
+INSTALLED_APPS += (PLUGINS + EXTENDED_APPS)
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -81,11 +81,11 @@ MEDIA_URL = '/media/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
-                       os.path.join(BASE_DIR, 'base/static'),
-                       os.path.join(BASE_DIR, 'home/static'),
-                       os.path.join(BASE_DIR, 'events/static'),
-                       os.path.join(BASE_DIR, 'slideshow/static'),
-                   ) + tuple(map(lambda p: os.path.join(BASE_DIR, p + '/static'), EXTENDED_APPS))
+    os.path.join(BASE_DIR, 'base/static'),
+    os.path.join(BASE_DIR, 'home/static'),
+    os.path.join(BASE_DIR, 'events/static'),
+    os.path.join(BASE_DIR, 'slideshow/static'),
+) + tuple(map(lambda p: os.path.join(BASE_DIR, p + '/static'), EXTENDED_APPS))
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',

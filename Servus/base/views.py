@@ -31,7 +31,7 @@ def call_template(request, *args, **kwargs):
     """
 
     # Словарь для передачи параметров с render_to_response
-    params = {'site_name':SITE_NAME, 'theme':THEME, 'tabs':Application.objects.filter(is_tab=1)}
+    params = {'site_name': SITE_NAME, 'theme': THEME, 'tabs': Application.objects.filter(is_tab=1)}
 
     if args:
         params.update(args[0])

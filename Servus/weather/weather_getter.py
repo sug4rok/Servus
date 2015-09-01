@@ -376,7 +376,7 @@ def get_weather(wp):
     """
 
     try:
-        wg = {'rp5':WGRP5, 'wua':WGWUA, 'ya':WGYA, 'owm':WGOWM}[wp.name](wp)
+        wg = {'rp5': WGRP5, 'wua': WGWUA, 'ya': WGYA, 'owm': WGOWM}[wp.name](wp)
         return wg.parse_to_dict()
     except KeyError:
         return []

@@ -23,8 +23,8 @@ def check_bad_conditions(t, h):
     """
 
     return t > 50 or t < 0 or h < 20 or h > 90
-    
-    
+
+
 def set_climate_event(s, h, t):
     """
     Функция записи в журнал событий данных с датчиков, находящихся за пределами нормы.
@@ -32,7 +32,7 @@ def set_climate_event(s, h, t):
     :param t: int Значение температуры
     :param h: int Значение влажности    
     """
-    
+
     if s.location == 'inside':
         if 28 < t <= 35 or 15 <= t < 19:
             event_setter('climate', u'%s: Температура вне нормы 19-28 С' % s.verbose_name, 2)
@@ -60,20 +60,20 @@ class GetTempHumid(CJB):
 
         th_sensors = filter(lambda s: s.TYPE == 'TempHumidSensor', PLUGIN_MODELS['climate'])
         th_sensors_used = reduce(lambda res, s: res + tuple(s.objects.filter(is_used=True)), th_sensors, ())
-        
+
         if th_sensors_used:
             for s in th_sensors_used:
-                c = Controller(s.controller.port)
+                c = Controller(s.controller.port, s)
                 if c.state[0]:
                     counter = 3
                     while counter:
                         cmd = 't%d\n' % s.controller_pin
                         result = c.command(cmd)
 
-                        logger.debug('Controller %s: command has been received %s | result %s | state: %s ' %\
-                        (s.controller, cmd, result, c.state[1]))
+                        logger.debug('Controller %s: command has been received %s | result %s | state: %s ' % (
+                            s.controller, cmd, result, c.state[1]))
 
-                        if c.state[0]:                
+                        if c.state[0]:
                             h, t = map(int, result.split(':'))
 
                             # Проверяем полученные данные на возможные ошибки показаний.
@@ -83,8 +83,8 @@ class GetTempHumid(CJB):
                                 counter -= 1
                                 time.sleep(5)
                             else:
-                                TempHumidValue.objects.create(content_object=s, temperature=t, humidity=h)                                
-                                set_climate_event(s, h, t)                                    
+                                TempHumidValue.objects.create(content_object=s, temperature=t, humidity=h)
+                                set_climate_event(s, h, t)
                                 break
                         else:
                             logger.warning(u'Климатический датчик %s: %s' % (s, c.state[1]))

@@ -95,7 +95,7 @@ def get_wind(wp):
     Функция, возвращающая кортеж с данными о ветре для определенного погодного API.
 
     :param wp: id объекта WeatherProvider, для которого получаем данные
-    :reuturns: список кортежей, вида [(<скорость ветра>, <направление ветра в градусах>, <класс css>), ...]
+    :returns: список кортежей, вида [(<скорость ветра>, <направление ветра в градусах>, <класс css>), ...]
     """
 
     wind_speeds = list_field_values(wp, 'wind_speed')
@@ -140,11 +140,10 @@ def weather(request, current_tab):
 
             forecast.append((wp_i[2], values, wp_i[1]))
 
-        params = {'forecast':forecast}
+        params = {'forecast': forecast}
 
     return call_template(
         request,
         params,
         current_tab=current_tab
     )
-

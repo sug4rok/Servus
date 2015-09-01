@@ -2,7 +2,6 @@
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from base.models import Location
 
 
 class TempHumidValue(models.Model):
@@ -28,4 +27,3 @@ class TempHumidValue(models.Model):
 
     def __unicode__(self):
         return '%s' % self.content_object
-

@@ -3,6 +3,7 @@ from django.db import models
 
 MODEL = 'Arduino'
 
+
 class Arduino(models.Model):
     """
     Модель для описания подключенного контроллера Arduino

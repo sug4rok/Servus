@@ -8,8 +8,8 @@ admin.autodiscover()
 
 urlpatterns = patterns(
     '',
-    url(r'^$', 'home.views.home', {'current_tab':'home'}),
-    url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root':MEDIA_ROOT}),
+    url(r'^$', 'home.views.home', {'current_tab': 'home'}),
+    url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': MEDIA_ROOT}),
     url(r'^slideshow/$', 'slideshow.views.slideshow'),
     url(r'^slide/$', 'slideshow.views.slide'),
     url(r'^amount_events/$', 'events.views.amount_events'),

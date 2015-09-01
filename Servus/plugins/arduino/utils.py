@@ -1,6 +1,9 @@
 # coding=utf-8
 import time
 import serial
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Controller(object):
@@ -8,13 +11,15 @@ class Controller(object):
     Класс для работы с контроллером arduino, подключенного к последовательному порту.
     """
     
-    def __init__(self, port):
+    def __init__(self, port, obj):
         """
         Инициализация подключения к последовательному порту.
         :param port: str Обязательный параметр номер (имя порта)
+        :param obj: object Объект, подключенный к порту port
         """
         
         self.port = port
+        self.obj = obj
         self.state = (True, '')
         try:
             self.ser = serial.Serial(self.port)
@@ -40,7 +45,7 @@ class Controller(object):
                 # Отсекаем от результата последние два служебных символа
                 result = result[:-2]
                 if 'e' in result:
-                    logger.warning(u'Датчик %s вернул неверные данные' % s)
+                    logger.warning(u'Датчик %s вернул неверные данные' % self.obj.name)
                     self.state = (False, 'Датчик вернул данные с ошибкой')
                 else:
                     self.state = (True, 'OK')
