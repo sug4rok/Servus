@@ -18,15 +18,15 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django_cron',
     'base',
+    'system',
     'slideshow',
     'plugins',
 )
 
-# Extended applications for Servus
-EXTENDED_APPS = (
+# Containers - applications for plug-ins of the Servus
+CONTAINER_APPS = (
     'home',  # System application. Don't delete!
     'events',  # System application. Don't delete!
-    'system',
     'climate',
     'weather',
 )
@@ -36,7 +36,7 @@ PLUGINS = (
     'plugins.arduino_dht11',  # for connecting a DHT11 sensor to the Arduino
 )
 
-INSTALLED_APPS += (PLUGINS + EXTENDED_APPS)
+INSTALLED_APPS += (PLUGINS + CONTAINER_APPS)
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -80,12 +80,6 @@ MEDIA_URL = '/media/'
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'base/static'),
-    os.path.join(BASE_DIR, 'home/static'),
-    os.path.join(BASE_DIR, 'events/static'),
-    os.path.join(BASE_DIR, 'slideshow/static'),
-) + tuple(map(lambda p: os.path.join(BASE_DIR, p + '/static'), EXTENDED_APPS))
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
@@ -114,7 +108,7 @@ USE_TZ = False
 
 # If in the database there is a table fill the table base_application
 from base.utils import fill_base_applications
-fill_base_applications(EXTENDED_APPS)
+fill_base_applications(CONTAINER_APPS)
 
 
 # =================== #
