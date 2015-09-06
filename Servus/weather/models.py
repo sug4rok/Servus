@@ -1,67 +1,7 @@
 ﻿# coding=utf-8
 from django.db import models
-
-
-class WeatherProvider(models.Model):
-    """
-    Модель для хранения данных о провайдерах прогнозов погоды и выбранных населенных пунктах
-    """
-
-    name = models.CharField(
-        max_length=20,
-        choices=(
-            # ('rp5', 'rp5.ru'), # С 1 июля 2014 недоступен бесплатно
-            ('wua', 'weather.ua'),
-            ('ya', 'Яндекс.Погода'),
-            ('owm', 'Open Weather Map')
-        ),
-        verbose_name='Прогнозный сайт',
-        help_text='Сайт, предоставляющий API прогноза погоды.'
-    )
-    url = models.URLField(
-        verbose_name='URL на XML-API',
-        # url для rp5.ru: http://rp5.ru/xml/7285/00000/ru
-        help_text='url на XML-API сайта прогноза погоды. Для выбранного прогнозного сайта\
-            впишите соответствующий URL<br><br>\
-            - weather.ua: <strong>http://xml.weather.co.ua/1.2/forecast/<font color="#5577cc">XXXX</font>?dayf=4?lang=ru</strong><br>\
-            - Яндекс.Погода: <strong>http://export.yandex.ru/weather-ng/forecasts/<font color="#5577cc">XXXX</font>.xml</strong><br>\
-            - Open Weather Map: <strong>http://api.openweathermap.org/data/2.5/forecast/daily?q=<font color="#5577cc">XXXX</font>&mode=xml&units=metric&cnt=4</strong><br><br>\
-            ,где <strong><font color="#5577cc">XXXX</font></strong> - код города прогноза погоды.\
-            Например, для Санкт-Петербурга (Россия) коды будут следующие:<br><br>\
-            - weather.ua: <strong><font color="#5577cc">773</font></strong><br>\
-            - Яндекс.Погода: <strong><font color="#5577cc">26063</font></strong><br>\
-            - Open Weather Map: <strong><font color="#5577cc">St.Petersburg</font></strong>',
-        unique=True
-    )
-    city = models.CharField(
-        max_length=20,
-        verbose_name='Населенный пункт',
-        help_text='Название города, для которого отображается прогноз погоды \
-            (необязательное поле, необходимо только для отличия на странице двух прогонозов \
-            погоды одного и того же провайдера).',
-
-        blank=True,
-        null=True
-    )
-    is_used = models.BooleanField(
-        default=True,
-        verbose_name='Задействован',
-        help_text='Отключите вместо удаления, если пока нет необходимости в данном прогнозе, или нет возможности\
-         получить данные с сайта прогноза погоды.'
-    )
-    on_sidebar = models.BooleanField(
-        default=False,
-        verbose_name='Участвует в усреднении',
-        help_text='Отметьте, если данный прогноз должен учитываться при расчете усредненной оценки прогноза погоды на панели слева.<br>\
-            (Отмечать, по понятным причинам, имеет смысл прогнозы для одного и того же города)'
-    )
-
-    class Meta(object):
-        verbose_name = 'Прогноз погоды'
-        verbose_name_plural = 'Прогноз погоды'
-
-    def __unicode__(self):
-        return 'Forecast class for %s weather provider' % self.name
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 
 class Weather(models.Model):
@@ -69,9 +9,9 @@ class Weather(models.Model):
     Модель для хранения погодных данных
     """
 
-    wp = models.ForeignKey(
-        WeatherProvider
-    )
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey()
     datetime = models.DateTimeField(
         verbose_name='Время прогноза',
         help_text='',
@@ -120,7 +60,7 @@ class Weather(models.Model):
     )
 
     def __unicode__(self):
-        return self.wp.name
+        return '%s' % self.content_object
 
     class Meta(object):
-        ordering = ('wp', 'datetime')
+        ordering = ('content_type', 'datetime')

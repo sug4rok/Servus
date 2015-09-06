@@ -53,7 +53,7 @@ class Plugins(object):
             'location': models.ForeignKey(
                 Location,
                 verbose_name='Расположение',
-                help_text='Место расположения объекта в помещении',
+                help_text='Место расположения объекта в помещении или вне его',
             ),
             'is_used': models.BooleanField(
                 verbose_name='Задействован',

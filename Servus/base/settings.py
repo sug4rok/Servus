@@ -34,6 +34,7 @@ CONTAINER_APPS = (
 PLUGINS = (
     'plugins.arduino',  # Arduino controller
     'plugins.arduino_dht11',  # for connecting a DHT11 sensor to the Arduino
+    'plugins.weather_yandex_ru'  # weather forecast from yandex.ru
 )
 
 INSTALLED_APPS += (PLUGINS + CONTAINER_APPS)

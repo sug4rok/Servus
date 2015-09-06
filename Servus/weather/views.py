@@ -1,6 +1,6 @@
 ﻿# coding=utf-8
 from base.views import call_template
-from .models import Weather, WeatherProvider
+from .models import Weather
 
 CLOUDS_RANGE = {
     '0': u'Ясно',
@@ -109,9 +109,11 @@ def weather(request, current_tab):
     forecast = []
 
     fields = Weather._meta.fields
-    wps = ((wp.id,
-            wp.city,
-            wp.get_name_display()) for wp in WeatherProvider.objects.filter(is_used=True))
+    # Закомментировано до полной миграции на плагинную систему
+    # wps = ((wp.id,
+            # wp.city,
+            # wp.get_name_display()) for wp in WeatherProvider.objects.filter(is_used=True))
+    wps = ()
     if wps:
         # Если хотябы один прогнозный API добавлен, собираем список данных для передачи в шаблон.
         for wp_i in wps:
