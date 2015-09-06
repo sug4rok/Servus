@@ -63,13 +63,12 @@ class GetTempHumid(CJB):
 
         if th_sensors_used:
             for s in th_sensors_used:
-                c = Controller(s.controller.port, s)
+                c = Controller(s)
                 if c.state[0]:
+                    cmd = 't%d\n' % s.controller_pin
                     counter = 3
-                    while counter:
-                        cmd = 't%d\n' % s.controller_pin
+                    while counter:                        
                         result = c.command(cmd)
-
                         logger.debug('Controller %s: command has been received %s | result %s | state: %s ' % (
                             s.controller, cmd, result, c.state[1]))
 
