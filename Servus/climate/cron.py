@@ -1,8 +1,8 @@
-# coding=utf-8
+﻿# coding=utf-8
 import time
 import logging
 from base.utils import CJB
-from plugins.arduino.utils import Controller
+# from plugins.arduino.utils import Controller
 from events.utils import event_setter
 from .models import TempHumidValue
 from plugins.models import PLUGIN_MODELS
@@ -63,32 +63,36 @@ class GetTempHumid(CJB):
 
         if th_sensors_used:
             for s in th_sensors_used:
-                c = Controller(s)
-                if c.state[0]:
-                    cmd = 't%d\n' % s.controller_pin
-                    counter = 3
-                    while counter:                        
-                        result = c.command(cmd)
-                        logger.debug('Controller %s: command has been received %s | result %s | state: %s ' % (
-                            s.controller, cmd, result, c.state[1]))
+                try:
+                    c = s.controller.Command(s)
+                    
+                    if c.state[0]:
+                        cmd = 't%d\n' % s.controller_pin
+                        counter = 3
+                        while counter:                        
+                            result = c.send(cmd)
+                            logger.debug('Controller %s: command has been received %s | result %s | state: %s ' % (
+                                s.controller, cmd, result, c.state[1]))
 
-                        if c.state[0]:
-                            h, t = map(int, result.split(':'))
+                            if c.state[0]:
+                                h, t = map(int, result.split(':'))
 
-                            # Проверяем полученные данные на возможные ошибки показаний.
-                            # Делаем три измерения подряд с 5 секундной паузой, чтобы удостоверится, что
-                            # "запредельные" значения - это не ошибка датчика
-                            if check_bad_conditions(t, h):
-                                counter -= 1
-                                time.sleep(5)
+                                # Проверяем полученные данные на возможные ошибки показаний.
+                                # Делаем три измерения подряд с 5 секундной паузой, чтобы удостоверится, что
+                                # "запредельные" значения - это не ошибка датчика
+                                if check_bad_conditions(t, h):
+                                    counter -= 1
+                                    time.sleep(5)
+                                else:
+                                    TempHumidValue.objects.create(content_object=s, temperature=t, humidity=h)
+                                    set_climate_event(s, h, t)
+                                    break
                             else:
-                                TempHumidValue.objects.create(content_object=s, temperature=t, humidity=h)
-                                set_climate_event(s, h, t)
+                                logger.warning(u'Объект %s: %s' % (s, c.state[1]))
                                 break
-                        else:
-                            logger.warning(u'Климатический датчик %s: %s' % (s, c.state[1]))
-                            break
-                else:
-                    logger.error(c.state[1])
-                    event_setter('system', c.state[1], 4, 1)
-                c.close_port()
+                    else:
+                        logger.error(c.state[1])
+                        event_setter('system', c.state[1], 4, 1)
+                    c.close_port()
+                except AttributeError:
+                    self.state = (False, u'Объект %s не имеет атрибута controller' % s)
