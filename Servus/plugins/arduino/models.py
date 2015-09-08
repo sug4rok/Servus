@@ -3,6 +3,7 @@ import time
 import serial
 import logging
 from django.db import models
+from events.utils import event_setter
 
 logger = logging.getLogger(__name__)
 
@@ -63,9 +64,13 @@ class Arduino(models.Model):
                     time.sleep(2)
                 except serial.SerialException:
                     self.state = (False, u'Не могу открыть COM-порт %s' % self.port)
+                    event_setter('system', self.state[1], 4, 1)
                     
             except AttributeError:
                 self.state = (False, u'Переданный контроллеру объект %s не имеет атрибута port' % self.obj)
+            
+            if self.state[0] is not True:
+                logger.error(self.state[1])
   
         def send(self, cmd):
             """
@@ -77,6 +82,7 @@ class Arduino(models.Model):
             """
             
             result = ''
+
             if self.state[0]:
                 if self.ser.isOpen:
                     self.ser.write(cmd)
@@ -86,14 +92,20 @@ class Arduino(models.Model):
                         # Отсекаем от результата последние два служебных символа
                         result = result[:-2]
                         if 'e' in result:
-                            logger.warning(u'Датчик %s вернул неверные данные' % self.obj.name)
-                            self.state = (False, u'Датчик вернул данные с ошибкой')
+                            self.state = (False, u'Датчик %s вернул неверные данные' % self.obj.name)
                         else:
                             self.state = (True, u'OK')
                     except:
-                        self.state = (False, u'Ошибка получения данных')
+                        self.state = (False, u'Ошибка получения данных от %s' % self.obj.name)
                 else:
                     self.state = (False, u'COM-порт %s закрыт' % self.port)
+            
+            logger.debug('Controller %s: command has been received %s | result %s | state: %s ' % (
+                self.obj.controller, cmd, result, self.state[1]))
+            
+            if self.state[0] is not True:
+                logger.warning(self.state[1])
+            
             return result
         
         def close_port(self):

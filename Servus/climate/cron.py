@@ -2,7 +2,6 @@
 import time
 import logging
 from base.utils import CJB
-# from plugins.arduino.utils import Controller
 from events.utils import event_setter
 from .models import TempHumidValue
 from plugins.models import PLUGIN_MODELS
@@ -71,8 +70,6 @@ class GetTempHumid(CJB):
                         counter = 3
                         while counter:                        
                             result = c.send(cmd)
-                            logger.debug('Controller %s: command has been received %s | result %s | state: %s ' % (
-                                s.controller, cmd, result, c.state[1]))
 
                             if c.state[0]:
                                 h, t = map(int, result.split(':'))
@@ -88,11 +85,7 @@ class GetTempHumid(CJB):
                                     set_climate_event(s, h, t)
                                     break
                             else:
-                                logger.warning(u'Объект %s: %s' % (s, c.state[1]))
                                 break
-                    else:
-                        logger.error(c.state[1])
-                        event_setter('system', c.state[1], 4, 1)
                     c.close_port()
                 except AttributeError:
-                    self.state = (False, u'Объект %s не имеет атрибута controller' % s)
+                    logger.error(u'Объект %s не имеет атрибута controller' % s)
