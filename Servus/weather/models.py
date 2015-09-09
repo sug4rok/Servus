@@ -4,7 +4,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
 
-class Weather(models.Model):
+class WeatherValue(models.Model):
     """
     Модель для хранения погодных данных
     """

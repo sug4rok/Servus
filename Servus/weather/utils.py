@@ -4,7 +4,7 @@ from xml.dom import minidom
 from urllib2 import urlopen, HTTPError
 from datetime import datetime, timedelta
 from events.utils import event_setter
-from weather.models import Weather
+from weather.models import WeatherValue
 from weather.views import FALLS_RANGE
 
 logger = logging.getLogger(__name__)
@@ -71,20 +71,20 @@ class WG(object):
         return 'Weather getter class for %s weather provider' % self.wp.name
 
 
-def get_weather(wp):
-    """
-    Выбор класса, соответствующего прогнозному сайту и запуск его метода, отвечающего за
-    парсинг полученных результатов.
+# def get_weather(wp):
+    # """
+    # Выбор класса, соответствующего прогнозному сайту и запуск его метода, отвечающего за
+    # парсинг полученных результатов.
 
-    :param wp: объект WeatherProvider, для которого будем парсить данные
-    :returns: список из словарей погодных характеристик для различных временных точек
-    """
+    # :param wp: объект WeatherProvider, для которого будем парсить данные
+    # :returns: список из словарей погодных характеристик для различных временных точек
+    # """
 
-    try:
-        wg = {'rp5': WGRP5, 'wua': WGWUA, 'ya': WGYA, 'owm': WGOWM}[wp.name](wp)
-        return wg.parse_to_dict()
-    except KeyError:
-        return []
+    # try:
+        # wg = {'rp5': WGRP5, 'wua': WGWUA, 'ya': WGYA, 'owm': WGOWM}[wp.name](wp)
+        # return wg.parse_to_dict()
+    # except KeyError:
+        # return []
 
 
 def weather_db_cleaner():
@@ -93,7 +93,7 @@ def weather_db_cleaner():
     """
 
     try:
-        Weather.objects.all().delete()
+        WeatherValue.objects.all().delete()
     except Weather.DoesNotExist:
         pass
 
@@ -145,7 +145,7 @@ def weather_setter(weather_data):
         dt = weather['datetime']
 
         if dt >= datetime.now():
-            obj_wp = Weather.objects.create(wp=weather['wp'])
+            obj_wp = WeatherValue.objects.create(wp=weather['wp'])
             obj_wp.datetime = dt
 
             if 'clouds' in weather:
@@ -171,3 +171,19 @@ def weather_setter(weather_data):
             obj_wp.save()
 
             set_weather_events(dt, temp, wind_speed, falls_img)
+            
+            
+def command(wp, write_db=False):
+    """
+    Функция получения прогноза погоды.
+    :param wp: object Поставщик прогноза погоды
+    :param write_db: boolean Переменная, для переключения вывода информации - запись в базу данных / вывод в лог
+    """
+
+    if wp.TYPE == 'Forecast':
+        weather_data = wp.Forecast(wp).parse_to_dict()
+        
+        if write_db:
+            weather_setter(weather_data)
+        else:
+            print u'Forecast %s: result = %s' % (wp, weather_data)

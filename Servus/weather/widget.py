@@ -1,6 +1,6 @@
 ﻿# coding=utf-8
 from datetime import datetime, timedelta
-from .models import Weather
+from .models import WeatherValue
 from .views import CLOUDS_RANGE, FALLS_RANGE
 
 
@@ -23,7 +23,7 @@ def nearest_forecast(day):
     # (будем считать, что день у нас с 12 до 16 часов ;)).
     dt1 = datetime(d.year, d.month, d.day, 12)
     dt2 = datetime(d.year, d.month, d.day, 16)
-    w_objs = Weather.objects.filter(wp__on_sidebar=True, wp__is_used=True, datetime__range=[dt1, dt2])
+    w_objs = WeatherValue.objects.filter(wp__on_sidebar=True, wp__is_used=True, datetime__range=[dt1, dt2])
 
     amount_data = len(w_objs)
     if amount_data:

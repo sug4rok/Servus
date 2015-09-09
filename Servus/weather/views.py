@@ -1,6 +1,6 @@
 ﻿# coding=utf-8
 from base.views import call_template
-from .models import Weather
+from .models import WeatherValue
 
 CLOUDS_RANGE = {
     '0': u'Ясно',
@@ -42,7 +42,7 @@ def get_bg_style(wp):
     """
     global BG_STYLE
 
-    forecast_times = Weather.objects.filter(wp=wp).values_list('datetime', flat=True)
+    forecast_times = WeatherValue.objects.filter(wp=wp).values_list('datetime', flat=True)
     BG_STYLE = tuple(('w_day' if 8 < t.hour <= 20 else 'w_night' for t in forecast_times))
 
 
@@ -55,7 +55,7 @@ def list_field_values(wp, field):
     :returns: генератор списка данных указанного поля
     """
 
-    return Weather.objects.filter(wp=wp).values_list(field, flat=True)
+    return WeatherValue.objects.filter(wp=wp).values_list(field, flat=True)
 
 
 def get_clouds(wp):

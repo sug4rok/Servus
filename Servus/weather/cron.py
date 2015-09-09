@@ -1,7 +1,7 @@
 ﻿# coding=utf-8
 from base.utils import CJB
 from plugins.models import PLUGIN_MODELS
-from .utils import get_weather, weather_db_cleaner
+from .utils import command  # , weather_db_cleaner
 
 
 class GetWeatherJob(CJB):
@@ -22,7 +22,6 @@ class GetWeatherJob(CJB):
         forecasts_used = reduce(lambda res, f: res + tuple(f.objects.filter(is_used=True)), forecasts, ())
         
         if forecasts_used:
-            weather_db_cleaner()
+            # weather_db_cleaner()
             for wp in forecasts_used:
-                print wp
-                # weather_setter(get_weather(wp))
+                command(wp, write_db=False)
