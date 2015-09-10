@@ -30,7 +30,6 @@ class SensorDHT11(models.Model):
     )
     controller_pin = models.PositiveSmallIntegerField(
         verbose_name='Вывод (pin) на Arduino',
-        help_text='Для датчиков температуры выделены выводы с 2 по 5',
         unique=True,
     )
     location_type = models.SlugField(
