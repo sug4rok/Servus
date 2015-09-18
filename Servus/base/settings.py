@@ -25,8 +25,8 @@ INSTALLED_APPS = (
 
 # Containers - applications for plug-ins of the Servus
 CONTAINER_APPS = (
-    'home',  # System application. Don't delete!
-    'events',  # System application. Don't delete!
+    'home',  # System application. Don't delete it!
+    'events',  # System application. Don't delete it!
     'climate',
     'weather',
 )
@@ -34,7 +34,9 @@ CONTAINER_APPS = (
 PLUGINS = (
     'plugins.arduino',  # Arduino controller
     'plugins.arduino_dht11',  # for connecting a DHT11 sensor to the Arduino
-    'plugins.weather_yandex_ru'  # weather forecast from yandex.ru
+    'plugins.weather_yandex_ru',  # weather forecast from yandex.ru
+    'plugins.weather_openweathermap',  # weather forecast from openweathermap.org
+    'plugins.weather_weather_ua',  # weather from weather.ua
 )
 
 INSTALLED_APPS += (PLUGINS + CONTAINER_APPS)

@@ -38,9 +38,6 @@ class YandexRU(models.Model):
     class Meta(object):
         verbose_name = 'прогноз yandex.ru'
         verbose_name_plural = 'Прогнозы погоды от yandex.ru'
-
-    def __unicode__(self):
-        return 'yandex.ru forecast class'
         
     class Forecast(WG):
         def parse_to_dict(self):

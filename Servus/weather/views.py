@@ -1,49 +1,9 @@
 ﻿# coding=utf-8
 from base.views import call_template
+from django.contrib.contenttypes.models import ContentType
+from plugins.models import PLUGIN_MODELS
 from .models import WeatherValue
-
-CLOUDS_RANGE = {
-    '0': u'Ясно',
-    '1': u'Малооблачно',
-    '2': u'Переменная облачность',
-    '3': u'Облачно с прояснениями',
-    '4': u'Облачно',
-    '5': u'Пасмурная погода'
-}
-FALLS_RANGE = {
-    't0d0': u'Без осадков',
-    't1d0': u'Кратковременный дождь',
-    't1d1': u'Небольшой дождь',
-    't1d2': u'Дождь',
-    't1d3': u'Сильный дождь',
-    't1d4': u'Ливень',
-    't1d5': u'Гроза',
-    't2d0': u'Кратковременный мокрый снег',
-    't2d1': u'Небольшой мокрый снег',
-    't2d2': u'Мокрый снег',
-    't2d3': u'Сильный мокрый снег',
-    't2d4': u'Метель',
-    't3d0': u'Кратковременный снег',
-    't3d1': u'Небольшой снег',
-    't3d2': u'Снег',
-    't3d3': u'Сильный снег',
-    't3d4': u'Метель',
-    'na': u'Нет данных'
-}
-
-
-def get_bg_style(wp):
-    """
-    Функция получения кортежа с перечнем названий классов css для задания стилей ячеек таблиц
-    Прогноза погоды в зависимости от времени дня (datetime) прогноза.
-    Значения кортежа - два вида класса w_day и w_night для отображения "дневных" и "ночных" ячеек
-    соответсвенно.
-    :param wp: id объекта WeatherProvider, для которого получаем данные
-    """
-    global BG_STYLE
-
-    forecast_times = WeatherValue.objects.filter(wp=wp).values_list('datetime', flat=True)
-    BG_STYLE = tuple(('w_day' if 8 < t.hour <= 20 else 'w_night' for t in forecast_times))
+from .utils import CLOUDS_RANGE, FALLS_RANGE
 
 
 def list_field_values(wp, field):
@@ -55,7 +15,22 @@ def list_field_values(wp, field):
     :returns: генератор списка данных указанного поля
     """
 
-    return WeatherValue.objects.filter(wp=wp).values_list(field, flat=True)
+    return WeatherValue.objects.filter(content_type_id=ContentType.objects.get_for_model(wp).id,
+        object_id=wp.id).values_list(field, flat=True)
+        
+        
+def get_bg_style(wp):
+    """
+    Функция получения кортежа с перечнем названий классов css для задания стилей ячеек таблиц
+    Прогноза погоды в зависимости от времени дня (datetime) прогноза.
+    Значения кортежа - два вида класса w_day и w_night для отображения "дневных" и "ночных" ячеек
+    соответсвенно.
+    :param wp: id объекта WeatherProvider, для которого получаем данные
+    """
+    global BG_STYLE
+
+    forecast_times = list_field_values(wp, 'datetime')
+    BG_STYLE = tuple(('w_day' if 8 < t.hour <= 20 else 'w_night' for t in forecast_times))
 
 
 def get_clouds(wp):
@@ -108,17 +83,23 @@ def weather(request, current_tab):
     params = {}
     forecast = []
 
-    fields = Weather._meta.fields
-    # Закомментировано до полной миграции на плагинную систему
-    # wps = ((wp.id,
-            # wp.city,
-            # wp.get_name_display()) for wp in WeatherProvider.objects.filter(is_used=True))
-    wps = ()
-    if wps:
+    fields = WeatherValue._meta.fields
+    
+    # Получаем все модели плагинов типа 'Forecast'
+    f_objs = filter(lambda f: f.TYPE == 'Forecast', PLUGIN_MODELS['weather'])
+
+    # Для каждой модели типа 'Forecast' получаем список подключенных объектов (is_used=True),
+    # учавствующих в усреднении (on_sidebar=True) и добавляем их в один кортеж.
+    f_objs_used = reduce(lambda res, f: res + tuple(f.objects.filter(
+        is_used=True, on_sidebar=True)), f_objs, ())
+        
+
+    if f_objs_used:
         # Если хотябы один прогнозный API добавлен, собираем список данных для передачи в шаблон.
-        for wp_i in wps:
+        # wp - от Weather Provider
+        for wp in f_objs_used:
             # Получаем кортеж названий классов css
-            get_bg_style(wp_i[0])
+            get_bg_style(wp)
 
             # Если ни одного названия класса css в переменной BG_STYLE не присутствует,
             # считаем, что нет данных для данного прогнозного API и пропускаем данную итерацию.
@@ -130,17 +111,18 @@ def weather(request, current_tab):
                 field_values = [field_i.name, field_i.verbose_name, field_i.help_text]
 
                 if field_i.name == 'clouds':
-                    field_values.append(get_clouds(wp_i[0]))
+                    field_values.append(get_clouds(wp))
                 elif field_i.name == 'precipitation':
-                    field_values.append(get_precipitation(wp_i[0]))
+                    field_values.append(get_precipitation(wp))
                 elif field_i.name == 'wind_speed':
-                    field_values.append(get_wind(wp_i[0]))
+                    field_values.append(get_wind(wp))
                 else:
-                    field_values.append(zip(list_field_values(wp_i[0], field_i.name), BG_STYLE))
+                    field_values.append(zip(list_field_values(wp, field_i.name), BG_STYLE))
 
                 values.append(field_values)
 
-            forecast.append((wp_i[2], values, wp_i[1]))
+            site = wp.url.split('/')[2].split('.')
+            forecast.append((site[-2] + '.' + site[-1], values, wp.city))
 
         params = {'forecast': forecast}
 

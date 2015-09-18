@@ -1,39 +1,46 @@
 ﻿# coding=utf-8
 from datetime import datetime, timedelta
+from django.contrib.contenttypes.models import ContentType
+from plugins.models import PLUGIN_MODELS
 from .models import WeatherValue
-from .views import CLOUDS_RANGE, FALLS_RANGE
+from .utils import CLOUDS_RANGE, FALLS_RANGE
 
 
-def nearest_forecast(day):
+def common_forecast(date):
     """
     Функция получения некоторых усредненных данных прогноза погоды для активированных погодных API,
     отображаемых на Главной странице.
-    :param day: день ('сегодня' | 'завтра'), для которого будем усреднять прогноз.
+    :param date: datetime День, для которого будем усреднять прогноз.
     :returns: словарь, с данными о температуре, скорости ветра и соответствующим облачности и
     осадкам файлам PNG.
     """
 
-    if day == 'сегодня':
-        d = datetime.today()
-    else:
-        d = datetime.today() + timedelta(days=1)
-
     # Создаем список объектов Weather, всех активированных прогнозных API,
     # приходящихся на переданный в функциию день с 12:00 до 16:00 включительно
     # (будем считать, что день у нас с 12 до 16 часов ;)).
-    dt1 = datetime(d.year, d.month, d.day, 12)
-    dt2 = datetime(d.year, d.month, d.day, 16)
-    w_objs = WeatherValue.objects.filter(wp__on_sidebar=True, wp__is_used=True, datetime__range=[dt1, dt2])
+    dt1 = datetime(date.year, date.month, date.day, 12)
+    dt2 = datetime(date.year, date.month, date.day, 16)
+    
+    # Получаем все модели плагинов типа 'Forecast'
+    f_objs = filter(lambda f: f.TYPE == 'Forecast', PLUGIN_MODELS['weather'])
+
+    # Для каждой модели типа 'Forecast' получаем список подключенных объектов (is_used=True),
+    # учавствующих в усреднении (on_sidebar=True) и добавляем их в один кортеж.
+    f_objs_used = reduce(lambda res, f: res + tuple(f.objects.filter(
+        is_used=True, on_sidebar=True)), f_objs, ())
+
+    # Для каждого объекта forecast получаем последние данные из таблицы weather_weathervalue.
+    w_objs = reduce(lambda res, f: res + tuple(WeatherValue.objects.filter(
+        content_type_id=ContentType.objects.get_for_model(f).id, object_id=f.id, datetime__range=[dt1, dt2])),
+        f_objs_used, ())
 
     amount_data = len(w_objs)
     if amount_data:
-        forecast = {
-            'temperature': w_objs.values_list('temperature', flat=True),
-            'wind_speed': w_objs.values_list('wind_speed', flat=True),
-            'clouds_img': w_objs.values_list('clouds_img', flat=True),
-            'falls_img': w_objs.values_list('falls_img', flat=True),
-            'wind_direction': w_objs.values_list('wind_direction', flat=True),
-        }
+        forecast = {'temperature': [], 'wind_speed': [], 'clouds_img': [], 'falls_img': [], 'wind_direction': []}
+        
+        for f in forecast:
+            for o in w_objs:
+                forecast[f].append(getattr(o, f))
     else:
         return None
 
@@ -64,7 +71,7 @@ def nearest_forecast(day):
             forecast[f_k] = '%d' % temperature
         else:
             forecast[f_k] = '%d' % round(float(sum(f_v)) / amount_data, 0)
-    forecast['day'] = day
+    forecast['day'] = date.strftime('%d %b')
     return forecast
 
 
@@ -75,4 +82,4 @@ def get_widget_data():
     :return: list Погодные данные
     """
 
-    return nearest_forecast('сегодня'), nearest_forecast('завтра')
+    return common_forecast(datetime.today()), common_forecast(datetime.today() + timedelta(days=1))

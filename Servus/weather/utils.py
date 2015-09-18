@@ -5,9 +5,38 @@ from urllib2 import urlopen, HTTPError
 from datetime import datetime, timedelta
 from events.utils import event_setter
 from weather.models import WeatherValue
-from weather.views import FALLS_RANGE
 
 logger = logging.getLogger(__name__)
+
+CLOUDS_RANGE = {
+    '0': u'Ясно',
+    '1': u'Малооблачно',
+    '2': u'Переменная облачность',
+    '3': u'Облачно с прояснениями',
+    '4': u'Облачно',
+    '5': u'Пасмурная погода'
+}
+
+FALLS_RANGE = {
+    't0d0': u'Без осадков',
+    't1d0': u'Кратковременный дождь',
+    't1d1': u'Небольшой дождь',
+    't1d2': u'Дождь',
+    't1d3': u'Сильный дождь',
+    't1d4': u'Ливень',
+    't1d5': u'Гроза',
+    't2d0': u'Кратковременный мокрый снег',
+    't2d1': u'Небольшой мокрый снег',
+    't2d2': u'Мокрый снег',
+    't2d3': u'Сильный мокрый снег',
+    't2d4': u'Метель',
+    't3d0': u'Кратковременный снег',
+    't3d1': u'Небольшой снег',
+    't3d2': u'Снег',
+    't3d3': u'Сильный снег',
+    't3d4': u'Метель',
+    'na': u'Нет данных'
+}
 
 
 def file_name_prefix(d):
@@ -25,9 +54,9 @@ def file_name_prefix(d):
 
 class WG(object):
     """
-    Класс, реализующий доставку прогноза погоды с XML-API прогнозных сайтов в таблицу weather_weather
-    базы данных. Функция parse_to_dict реализуется в каждом классе-потомке отдельно, т.к. 
-    у каждого прогнозного сайта свой API и парсинг XML-данных уникален.
+    Родительский класс для наследования схожими по инициализации работы с API прогнозных сайтов классами.
+    Функция parse_to_dict реализуется в каждом классе-потомке отдельно, т.к. у каждого прогнозного сайта
+    свой API и парсинг XML-данных уникален.
     """
 
     def __init__(self, wp):
@@ -40,7 +69,7 @@ class WG(object):
         try:
             url_sock = urlopen(self.wp_url)
         except HTTPError, err:
-            logger.warning(u'Weather %s: urllib2 HTTPError: %s' % (self.wp.name, err.code))
+            logger.warning(u'Weather %s: urllib2 HTTPError: %s (%s)' % (self.wp.name, err.code, err.msg))
             return -1
         try:
             parsed_xml = minidom.parse(url_sock)
@@ -69,22 +98,6 @@ class WG(object):
 
     def __str__(self):
         return 'Weather getter class for %s weather provider' % self.wp.name
-
-
-# def get_weather(wp):
-    # """
-    # Выбор класса, соответствующего прогнозному сайту и запуск его метода, отвечающего за
-    # парсинг полученных результатов.
-
-    # :param wp: объект WeatherProvider, для которого будем парсить данные
-    # :returns: список из словарей погодных характеристик для различных временных точек
-    # """
-
-    # try:
-        # wg = {'rp5': WGRP5, 'wua': WGWUA, 'ya': WGYA, 'owm': WGOWM}[wp.name](wp)
-        # return wg.parse_to_dict()
-    # except KeyError:
-        # return []
 
 
 def weather_db_cleaner():
@@ -145,7 +158,7 @@ def weather_setter(weather_data):
         dt = weather['datetime']
 
         if dt >= datetime.now():
-            obj_wp = WeatherValue.objects.create(wp=weather['wp'])
+            obj_wp = WeatherValue.objects.create(content_object=weather['wp'])
             obj_wp.datetime = dt
 
             if 'clouds' in weather:
