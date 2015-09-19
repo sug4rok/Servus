@@ -1,23 +1,18 @@
 # coding=utf-8
 from datetime import datetime, timedelta
+from base.settings import INSTALLED_APPS
 from .models import Event
 
 
-def get_alert(e_imp):
+def get_alert(level):
     """
-    Функция получения степени кретичности системного события
+    Функция получения названия уровня критичности события по его коду.
 
-    :param e_imp: integer степень кретичности
+    :param level: int Важность события.
+    :returns: str Важность события.
     """
 
-    e_status = {
-        0: 'default',
-        1: 'success',
-        2: 'info',
-        3: 'warning',
-        4: 'danger'
-    }
-    return e_status[e_imp]
+    return {0: 'default', 1: 'success', 2: 'info', 3: 'warning', 4: 'danger'}[level]
 
 
 def get_events(session_key=None):
@@ -25,8 +20,8 @@ def get_events(session_key=None):
     События за последние 7 дней для сессий, не ассоциированных еще с данной сессией.
     Ассоциация события с session_key происходит после его закрытия в списке событий на странице home
 
-    :param session_key: ключ конкретной сессии для браузера пользоватея, зарегистрированной django
-    :returns: список не просмотренных или не закрытых пользователем событий за последнии 7 дней
+    :param session_key: Ключ конкретной сессии для браузера пользоватея, зарегистрированной django.
+    :returns: list Непросмотренные или не закрытые пользователем события за последнии 7 дней.
     """
 
     try:
@@ -73,20 +68,29 @@ def get_amount_events(request):
         return 0, get_alert(0)
 
 
-def event_setter(source, message, level, delay=24, sms=True, email=True):
+def event_setter(source, message, level, delay=24, sms=False, email=False):
     """
     Функция записи новых сообщений в БД (таблица base_event).
     В БД записываются только уникальные (сравнение message) в пределах семи дней сообщения.
 
-    :param source: источник события
-    :param message: описание события (сообщение)
-    :param level: важность (от 0 до 4)
-    :param delay: интервал добавления (в часах) аналогичной записи о событии
-    :param sms: необходимость отправки SMS-сообщения
-    :param email: необходимость отправки EMail-сообщения
+    :param source: str Источник события.
+    :param message: str Описание события (сообщение).
+    :param level: int Код уровня критичности события от 0 до 4.
+    Варианты: 0 - 'default', 1 - 'success', 2 - 'info', 3 - 'warning', 4 - 'danger'.
+    :param delay: int Ннтервал добавления (в часах) аналогичной записи о событии.
+    :param sms: bool Необходимость отправки SMS-сообщения.
+    :param email: bool Необходимость отправки EMail-сообщения.
+    Во время записи в БД меняем sms_sent и email_sent на противоположное значение, эти параметры меняют свой
+    смысл с "отправлять"/"не отправлять" на "отправлено/не отправлено". Пример: параметр sms=False - означает
+    не отправлять СМС о событии, в базу попадет событие со значением в поле sms_sent = True - отправлено,
+    значит cron это событие пропустит и не отправит СМС, что нам и нужно.
     """
 
     events = Event.objects.filter(datetime__gte=datetime.now() - timedelta(hours=delay))
 
     if message not in events.values_list('message', flat=True):
+    
+        if source not in INSTALLED_APPS:
+            source = 'system'
+
         Event.objects.create(source=source, message=message, level=level, sms_sent=not sms, email_sent=not email)

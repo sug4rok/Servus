@@ -34,11 +34,11 @@ def set_climate_event(s, h, t):
         if 28 < t <= 35 or 15 <= t < 19:
             event_setter('climate', u'%s: Температура вне нормы 19-28 С' % s.verbose_name, 2)
         elif t > 35 or t < 15:
-            event_setter('climate', u'%s: Температура за границами 15-35 С' % s.verbose_name, 3, 1)
+            event_setter('climate', u'%s: Температура за границами 15-35 С' % s.verbose_name, 3, delay=1, email=True)
         if h < 30:
             event_setter('climate', u'%s: Воздух слишком сухой (%d%%)' % (s.verbose_name, h), 2)
         elif 60 < h:
-            event_setter('climate', u'%s: Воздух слишком влажный (%d%%)' % (s.verbose_name, h), 3, 1)
+            event_setter('climate', u'%s: Воздух слишком влажный (%d%%)' % (s.verbose_name, h), 3, delay=1, email=True)
     elif s.location == 'outside':
         if t > 35:
             event_setter('climate', u'%s: Температура на улице более 35 С' % s.verbose_name, 2)

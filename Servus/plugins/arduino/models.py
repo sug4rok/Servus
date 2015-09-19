@@ -64,12 +64,12 @@ class Arduino(models.Model):
                     time.sleep(2)
                 except serial.SerialException:
                     self.state = (False, u'Не могу открыть COM-порт %s' % self.port)
-                    event_setter('system', self.state[1], 4, 1)
                     
             except AttributeError:
                 self.state = (False, u'Переданный контроллеру объект %s не имеет атрибута port' % self.obj)
             
             if self.state[0] is not True:
+                event_setter('system', self.state[1], 4, delay=3, email=True)
                 logger.error(self.state[1])
   
         def send(self, cmd):
@@ -104,6 +104,7 @@ class Arduino(models.Model):
                 self.obj.controller, cmd, result, self.state[1]))
             
             if self.state[0] is not True:
+                event_setter('system', self.state[1], 3, delay=3)
                 logger.warning(self.state[1])
             
             return result

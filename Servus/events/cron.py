@@ -42,13 +42,13 @@ class EmailsSendJob(CJB):
     @staticmethod
     def do():
         """
-        Функция проверяет наличие сообщений с важностью 'warning' и 'error' и
+        Функция проверяет наличие сообщений с важностью 'info', 'warning' и 'error' и
         формирует письмо для отправлки по расписанию на все почтовые адреса из
         таблицы base_userprofile БД. Затем, меняет флаг email_sent у каждого события,
         которое блыо отправлено.
         """
 
-        events = Event.objects.filter(level__gte=3).exclude(email_sent=True).order_by('-level')
+        events = Event.objects.filter(level__gte=2).exclude(email_sent=True).order_by('-level')
         emails = User.objects.exclude(email='').values_list('email', flat=True)
 
         subj = 'Предупреждение от %s' % SITE_NAME

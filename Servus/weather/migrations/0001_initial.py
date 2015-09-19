@@ -7,11 +7,11 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('weather_weather_ua', '0001_initial'),
+        ('base', '0001_initial'),
         ('contenttypes', '0002_remove_content_type_name'),
         ('weather_yandex_ru', '0001_initial'),
+        ('weather_weather_ua', '0001_initial'),
         ('weather_openweathermap', '0001_initial'),
-        ('base', '0014_remove_application_location'),
     ]
 
     operations = [

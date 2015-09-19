@@ -21,7 +21,6 @@ class Migration(migrations.Migration):
                 'verbose_name': '\u0424\u043e\u0442\u043e\u0430\u043b\u044c\u0431\u043e\u043c',
                 'verbose_name_plural': '\u0424\u043e\u0442\u043e\u0430\u043b\u044c\u0431\u043e\u043c\u044b \u0432 \u043f\u0430\u043f\u043a\u0435 slideshow',
             },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='SlideshowChanges',
@@ -29,8 +28,5 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('mtime', models.FloatField(default=0.0)),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
     ]
