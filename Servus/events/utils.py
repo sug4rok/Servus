@@ -4,49 +4,24 @@ from base.settings import INSTALLED_APPS
 from .models import Event
 
 
-def get_alert(level):
+ALERTS = {0: 'default', 1: 'success', 2: 'info', 3: 'warning', 4: 'danger'}
+
+
+def get_events(days):
     """
-    Функция получения названия уровня критичности события по его коду.
-
-    :param level: int Важность события.
-    :returns: str Важность события.
-    """
-
-    return {0: 'default', 1: 'success', 2: 'info', 3: 'warning', 4: 'danger'}[level]
-
-
-def get_events(days, session_key=None):
-    """
-    События за последние days дней для сессий, не ассоциированных еще с данной сессией.
-    Ассоциация события с session_key происходит после его закрытия в списке событий на странице home
+    События за последние days дней.
     
-    :param days: int Количество дней, за которые нужно вывести произошедшие события
-    :param session_key: Ключ конкретной сессии для браузера пользоватея, зарегистрированной django.
-    :returns: list Непросмотренные или не закрытые пользователем события за последнии days дней.
+    :param days: int Количество дней, за которые нужно вывести произошедшие события.
+    :returns: list Непросмотренные пользователем события за последнии days дней.
     """
 
     try:
         events_data = []
-        if session_key:
-            events = Event.objects.filter(datetime__gte=datetime.now() - timedelta(days=2)) \
-                .exclude(session_keys__session_key=session_key).order_by('-level', '-datetime').values()
-        else:
-            events = Event.objects.filter(datetime__gte=datetime.now() - timedelta(days=days)) \
-                .order_by('-datetime').values()
-
-        if len(events):
-            for event in events:
-                events_data.append((
-                    event['id'],
-                    event['source'],
-                    event['message'],
-                    get_alert(event['level']),
-                    event['datetime']
-                ))
-        return events_data
-
+        events = Event.objects.filter(datetime__gte=datetime.now() - timedelta(days=days)).order_by(
+            '-datetime')
+        return events
     except Event.DoesNotExist:
-        return []
+        return  []
 
 
 def get_amount_events(days, session_key=None):
@@ -58,14 +33,14 @@ def get_amount_events(days, session_key=None):
     :returns: dict Словарь с количеством и уровнем важности непросмотренных событий.
     """
 
-    events_short = Event.objects.filter(datetime__gte=datetime.now() - timedelta(days=days)) \
-        .exclude(session_keys__session_key=session_key).values_list('level', flat=True)
+    try:
+        events_short = Event.objects.filter(datetime__gte=datetime.now() - timedelta(days=days)).exclude(
+            session_keys__session_key=session_key).values_list('level', flat=True)
 
-    amount_events = len(events_short)
-    if amount_events:
-        return {'amount': amount_events, 'level': get_alert(max(events_short))}
-    else:
-        return {'amount': 0, 'level': get_alert(0)}
+        amount = len(events_short)
+        return {'amount': amount, 'level': ALERTS[max(events_short) if amount else 0]}
+    except Event.DoesNotExist:
+        return {'amount': 0, 'level': ALERTS[0]}
 
 
 def event_setter(source, message, level, delay=24, sms=False, email=False):
