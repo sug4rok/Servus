@@ -1,0 +1,15 @@
+{% if amount %}
+    <attr title='Перейти к сообщениям'>
+        <form action='/events/' method='post'>{% csrf_token %}
+            <button class='btn btn-default btn-lg btn-{{ level }}' name='events' value=1>
+                <span class='badge'>{{ amount }}</span>
+            </button>
+        </form>
+    </attr>
+{% else %}
+    <attr title='Перейти на Главную'>
+        <a href='/' class='btn btn-default btn-lg'>
+            <span class='glyphicon glyphicon-align-justify'> </span> 
+        </a>
+    </attr>
+{% endif %}

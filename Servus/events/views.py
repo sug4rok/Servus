@@ -1,39 +1,33 @@
 # coding=utf-8
+from django.contrib.sessions.models import Session
 from base.views import call_template
-from .utils import get_amount_events, get_events
+from .utils import get_events
+from .models import Event
 
 
 def events(request, current_tab):
     """
-    Вывод событий последних 14 дней на вкладку События.
+    Вывод событий последних days дней на вкладку События. При нажатии на кнопку все еще не
+    ассоциированные с данной сессией браузера события добавятся в таблицу events_event_session_keys
+    и будут считаться просмотренными.
 
     :param request: django request
     :param current_tab: название текущей вкладки (передается в base.urls)
     """
 
-    params = dict(events=get_events())
+    days = 14
+    params = dict(events=get_events(days))
+    
+    request.session.save()
+    current_session = request.session.session_key
+
+    if request.POST.get('events'):
+        events = Event.objects.all().exclude(session_keys__session_key=current_session)
+        for e in events:
+            e.session_keys.add(Session.objects.get(pk=current_session))
 
     return call_template(
         request,
         params,
         current_tab=current_tab
-    )
-
-
-def amount_events(request):
-    """
-    Функция, выводящая количество и важность событий на главную страницу
-
-    :param request: django request
-    """
-
-    params = {
-        'amount_events': get_amount_events(request)[0],
-        'level': get_amount_events(request)[1]
-    }
-
-    return call_template(
-        request,
-        params,
-        templ_path='events/amount_events.html'
     )

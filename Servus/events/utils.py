@@ -15,13 +15,14 @@ def get_alert(level):
     return {0: 'default', 1: 'success', 2: 'info', 3: 'warning', 4: 'danger'}[level]
 
 
-def get_events(session_key=None):
+def get_events(days, session_key=None):
     """
-    События за последние 7 дней для сессий, не ассоциированных еще с данной сессией.
+    События за последние days дней для сессий, не ассоциированных еще с данной сессией.
     Ассоциация события с session_key происходит после его закрытия в списке событий на странице home
-
+    
+    :param days: int Количество дней, за которые нужно вывести произошедшие события
     :param session_key: Ключ конкретной сессии для браузера пользоватея, зарегистрированной django.
-    :returns: list Непросмотренные или не закрытые пользователем события за последнии 7 дней.
+    :returns: list Непросмотренные или не закрытые пользователем события за последнии days дней.
     """
 
     try:
@@ -30,7 +31,7 @@ def get_events(session_key=None):
             events = Event.objects.filter(datetime__gte=datetime.now() - timedelta(days=2)) \
                 .exclude(session_keys__session_key=session_key).order_by('-level', '-datetime').values()
         else:
-            events = Event.objects.filter(datetime__gte=datetime.now() - timedelta(days=14)) \
+            events = Event.objects.filter(datetime__gte=datetime.now() - timedelta(days=days)) \
                 .order_by('-datetime').values()
 
         if len(events):
@@ -48,24 +49,23 @@ def get_events(session_key=None):
         return []
 
 
-def get_amount_events(request):
+def get_amount_events(days, session_key=None):
     """
     Функция, выводящая количесво событий и их кретичность для определенной сессии.
     (См. описание к функции get_events).
 
-    :param request: django request
-    :returns: кортеж, вида (<количество сбобытий>, <кретичность>)
+    :param request: django request.
+    :returns: dict Словарь с количеством и уровнем важности непросмотренных событий.
     """
 
-    request.session.save()
-    events_short = Event.objects.filter(datetime__gte=datetime.now() - timedelta(days=2)) \
-        .exclude(session_keys__session_key=request.session.session_key).values_list('level', flat=True)
+    events_short = Event.objects.filter(datetime__gte=datetime.now() - timedelta(days=days)) \
+        .exclude(session_keys__session_key=session_key).values_list('level', flat=True)
 
     amount_events = len(events_short)
     if amount_events:
-        return amount_events, get_alert(max(events_short))
+        return {'amount': amount_events, 'level': get_alert(max(events_short))}
     else:
-        return 0, get_alert(0)
+        return {'amount': 0, 'level': get_alert(0)}
 
 
 def event_setter(source, message, level, delay=24, sms=False, email=False):

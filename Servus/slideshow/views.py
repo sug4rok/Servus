@@ -5,6 +5,7 @@ from PIL import Image
 from base.settings import MEDIA_ROOT
 from base.views import call_template
 from .models import Slideshow
+from events.utils import get_amount_events
 
 
 class NotImageError(Exception):
@@ -83,4 +84,23 @@ def slide(request):
         request,
         params,
         templ_path='slideshow/slide.html'
+    )
+
+
+def amount_events(request):
+    """
+    Функция, выводящая количество и важность событий на страницу слайдшоу
+
+    :param request: django request
+    """
+
+    request.session.save()
+    current_session = request.session.session_key
+
+    params = get_amount_events(1, session_key=current_session)
+
+    return call_template(
+        request,
+        params,
+        templ_path='slideshow/amount_events.html'
     )

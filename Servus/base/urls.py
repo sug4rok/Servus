@@ -12,7 +12,7 @@ urlpatterns = patterns(
     url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': MEDIA_ROOT}),
     url(r'^slideshow/$', 'slideshow.views.slideshow'),
     url(r'^slide/$', 'slideshow.views.slide'),
-    url(r'^amount_events/$', 'events.views.amount_events'),
+    url(r'^amount_events/$', 'slideshow.views.amount_events'),
     url(r'^summary/$', 'home.views.summary'),
     url(r'^admin/', include(admin.site.urls)),
 )
