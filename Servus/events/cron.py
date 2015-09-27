@@ -3,8 +3,9 @@ import smtplib
 from urllib2 import urlopen, URLError
 from django.core.mail import EmailMultiAlternatives
 from base.settings import EMAIL_HOST_USER, SITE_NAME
-from base.models import User
+from django.contrib.auth.models import User
 from base.utils import CJB
+from plugins.models import PLUGIN_MODELS
 from .models import Event
 from .utils import event_setter
 
@@ -100,22 +101,25 @@ class SMSSendJob(CJB):
         Затем, меняет флаг email_sent у каждого события, которое
         блыо отправлено.
         """
+        
+        recipients = filter(lambda r: r.TYPE == 'SMS', sum(PLUGIN_MODELS.values(), []))
+        recipients_used = reduce(lambda res, r: res + tuple(r.objects.filter(is_used=True)), recipients, ())
+        recipients_filled = filter(lambda r: r.phone is not None and r.sms_ru_id != '', recipients_used)
 
-        events = Event.objects.filter(level__gte=3).exclude(sms_sent=True).order_by('-level')
-        recipients = User.objects.exclude(sms_ru_id='').values().exclude(phone=None)
+        if recipients_filled:
+            events = Event.objects.filter(level__gte=3).exclude(sms_sent=True).order_by('-level')
 
-        # Объединяем  все события в одну строку для последующей разбивки по 70 символов
-        # (ограничение СМС для русских символов в сообщении)
-        txt_msg = '\\n'.join(['[%s] %s' % (e.datetime.strftime('%b-%d %H:%M'), e.message) for e in events])
-        sms_msgs = []
-        while txt_msg:
-            sms_msgs.append(txt_msg[:69])
-            txt_msg = txt_msg[69:]
-
-        if recipients:
-            for r in recipients:
+            # Объединяем  все события в одну строку для последующей разбивки по 70 символов
+            # (ограничение СМС для русских символов в сообщении)
+            txt_msg = '\\n'.join(['[%s] %s' % (e.datetime.strftime('%b-%d %H:%M'), e.message) for e in events])
+            sms_msgs = []
+            while txt_msg:
+                sms_msgs.append(txt_msg[:69])
+                txt_msg = txt_msg[69:]
+        
+            for r in recipients_filled:
                 for m in sms_msgs:
-                    url = 'http://sms.ru/sms/send?api_id=%s&to=%s&text=%s' % (r['sms_ru_id'], r['phone'], m)
+                    url = 'http://sms.ru/sms/send?api_id=%s&to=%s&text=%s' % (r.sms_ru_id, r.phone, m)
                     # В API sms.ru  в тексте сообщения использутся знаки "+" в качестве пробела
                     url = url.replace(' ', '+')
                     try:

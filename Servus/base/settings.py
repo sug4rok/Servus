@@ -32,6 +32,7 @@ CONTAINER_APPS = (
 )
 
 PLUGINS = (
+    'plugins.user_sms_ru',  # Sending sms through the website sms.ru
     'plugins.arduino',  # Arduino controller
     'plugins.arduino_dht11',  # for connecting a DHT11 sensor to the Arduino
     'plugins.weather_yandex_ru',  # weather forecast from yandex.ru

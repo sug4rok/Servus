@@ -1,47 +1,5 @@
 ﻿# coding=utf-8
 from django.db import models
-from django.core.validators import MaxValueValidator, MinValueValidator
-
-
-class User(models.Model):
-    """
-    Пользователи, которым будут приходить уведомления
-    """
-
-    name = models.CharField(
-        max_length=50,
-        verbose_name='Имя',
-    )
-    email = models.EmailField(
-        verbose_name='E-mail',
-        blank=True,
-        null=True
-    )
-    phone = models.BigIntegerField(
-        verbose_name='Номер телефона',
-        help_text='Номер телефона для отправки сообщений через сервис sms.ru.<br>\
-            Диапазон номеров ограничен 1*e10 - 9,(9)*e12 (подробности на sms.ru).<br>\
-            Формат для РФ 7xxxyyyyyyy, где xxx - код оператора, yyyyyyy - номер телефона.<br>',
-        blank=True,
-        null=True,
-        validators=[
-            MaxValueValidator(9999999999999),
-            MinValueValidator(10000000000)
-        ]
-    )
-    sms_ru_id = models.CharField(
-        max_length=40,
-        verbose_name='sms.ru api_id',
-        blank=True,
-        null=True
-    )
-
-    class Meta(object):
-        verbose_name = 'Пользователя'
-        verbose_name_plural = 'Пользователи'
-
-    def __unicode__(self):
-        return "%s's profile" % self.name
 
 
 class Location(models.Model):

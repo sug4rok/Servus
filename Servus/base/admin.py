@@ -1,14 +1,16 @@
 ﻿# coding=utf-8
 from django.contrib import admin
-from django.contrib.auth.models import User as DjangoUser
+from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
-from .models import User, Application, Location
+from .models import Application, Location
 
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ('name', 'email')
+    list_display = ('username', 'email', 'is_staff', 'is_active')
+    fields = ('username', 'first_name', 'last_name', 'email', 'is_staff', 'is_active', 'password')
+    readonly_fields = ('password', )
 
-
+    
 class ApplicationAdmin(admin.ModelAdmin):
     list_display = ('name', 'is_tab', 'is_widget')
     fieldsets = (
@@ -38,7 +40,7 @@ class LocationAdmin(admin.ModelAdmin):
 
 
 admin.site.unregister(Group)
-admin.site.unregister(DjangoUser)
+admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 admin.site.register(Application, ApplicationAdmin)
 admin.site.register(Location, LocationAdmin)
