@@ -5,7 +5,7 @@ from django.core.mail import EmailMultiAlternatives
 from base.settings import EMAIL_HOST_USER, SITE_NAME
 from django.contrib.auth.models import User
 from base.utils import CJB
-from plugins.models import PLUGIN_MODELS
+from plugins.utils import get_plugins
 from .models import Event
 from .utils import event_setter
 
@@ -102,7 +102,7 @@ class SMSSendJob(CJB):
         блыо отправлено.
         """
         
-        recipients = filter(lambda r: r.TYPE == 'SMS', sum(PLUGIN_MODELS.values(), []))
+        recipients = get_plugins('SMS')
         recipients_used = reduce(lambda res, r: res + tuple(r.objects.filter(is_used=True)), recipients, ())
         recipients_filled = filter(lambda r: r.phone is not None and r.sms_ru_id != '', recipients_used)
 

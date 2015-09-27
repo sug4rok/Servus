@@ -1,7 +1,7 @@
 ﻿# coding=utf-8
 from base.views import call_template
+from plugins.utils import get_plugins
 from django.contrib.contenttypes.models import ContentType
-from plugins.models import PLUGIN_MODELS
 from .models import WeatherValue
 from .utils import CLOUDS_RANGE, FALLS_RANGE
 
@@ -86,7 +86,7 @@ def weather(request, current_tab):
     fields = WeatherValue._meta.fields
     
     # Получаем все модели плагинов типа 'Forecast'
-    f_objs = filter(lambda f: f.TYPE == 'Forecast', PLUGIN_MODELS['weather'])
+    f_objs = get_plugins('Forecast')
 
     # Для каждой модели типа 'Forecast' получаем список подключенных объектов (is_used=True),
     # учавствующих в усреднении (on_sidebar=True) и добавляем их в один кортеж.

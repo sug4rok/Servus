@@ -1,7 +1,7 @@
 ﻿# coding=utf-8
 from django.contrib.contenttypes.models import ContentType
+from plugins.utils import get_plugins
 from climate.models import TempHumidValue
-from plugins.models import PLUGIN_MODELS
 
 
 def get_widget_data():
@@ -11,7 +11,7 @@ def get_widget_data():
     """
 
     # Получаем все модели плагинов типа 'TempHumidSensor'
-    th_sensors = filter(lambda s: s.TYPE == 'TempHumidSensor', PLUGIN_MODELS['climate'])
+    th_sensors = get_plugins('TempHumidSensor')
 
     # Для каждой модели типа 'TempHumidSensor' получаем список подключенных объектов (is_used=True)
     # и добавляем их в один кортеж.

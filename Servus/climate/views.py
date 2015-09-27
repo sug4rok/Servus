@@ -2,8 +2,8 @@
 from datetime import datetime, timedelta
 from base.views import call_template
 from django.contrib.contenttypes.models import ContentType
+from plugins.utils import get_plugins
 from climate.models import TempHumidValue
-from plugins.models import PLUGIN_MODELS
 
 
 def climate(request, current_tab):
@@ -15,7 +15,7 @@ def climate(request, current_tab):
     """
 
     # Получаем все модели плагинов типа 'TempHumidSensor'
-    th_sensors = filter(lambda s: s.TYPE == 'TempHumidSensor', PLUGIN_MODELS['climate'])
+    th_sensors = get_plugins('TempHumidSensor')
     
     # Для каждой модели типа 'TempHumidSensor' получаем список подключенных объектов (is_used=True)
     # и добавляем их в один кортеж.

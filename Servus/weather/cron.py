@@ -1,6 +1,6 @@
 ﻿# coding=utf-8
 from base.utils import CJB
-from plugins.models import PLUGIN_MODELS
+from plugins.utils import get_plugins
 from .utils import command, weather_db_cleaner
 
 
@@ -18,7 +18,7 @@ class GetWeatherJob(CJB):
         и запись полученных результатов с помощью функции weather_setter в таблицу БД Weather.
         """
         
-        forecasts = filter(lambda f: f.TYPE == 'Forecast', PLUGIN_MODELS['weather'])
+        forecasts = get_plugins('Forecast')
         forecasts_used = reduce(lambda res, f: res + tuple(f.objects.filter(is_used=True)), forecasts, ())
         
         if forecasts_used:
