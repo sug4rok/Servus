@@ -1,6 +1,6 @@
 ﻿# coding=utf-8
 from base.utils import CJB
-from plugins.utils import get_plugins
+from plugins.utils import get_plugins, get_used_objects
 from .utils import command
 
 
@@ -14,9 +14,8 @@ class GetTempHumid(CJB):
 
     def do(self):
 
-        th_sensors = get_plugins('TempHumidSensor')
-        th_sensors_used = reduce(lambda res, s: res + tuple(s.objects.filter(is_used=True)), th_sensors, ())
+        th_sensors = get_used_objects(get_plugins('TempHumidSensor'))
 
-        if th_sensors_used:
-            for s in th_sensors_used:
+        if th_sensors:
+            for s in th_sensors:
                 command(s, write_db=True)

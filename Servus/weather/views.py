@@ -1,7 +1,7 @@
 ﻿# coding=utf-8
-from base.views import call_template
-from plugins.utils import get_plugins
 from django.contrib.contenttypes.models import ContentType
+from base.views import call_template
+from plugins.utils import get_plugins, get_used_objects
 from .models import WeatherValue
 from .utils import CLOUDS_RANGE, FALLS_RANGE
 
@@ -84,6 +84,11 @@ def weather(request, current_tab):
     forecast = []
 
     fields = WeatherValue._meta.fields
+
+    # TODO: Переделать, ибо слишком сложно :)
+    # fields_dict = {}
+    # for f in fields:
+        # fields_dict[f.name] = (f.verbose_name, f.help_text)
     
     # Получаем все модели плагинов типа 'Forecast'
     f_objs = get_plugins('Forecast')
@@ -107,7 +112,7 @@ def weather(request, current_tab):
                 continue
 
             values = []
-            for field_i in fields[2:-3]:
+            for field_i in fields[3:-3]:
                 field_values = [field_i.name, field_i.verbose_name, field_i.help_text]
 
                 if field_i.name == 'clouds':
