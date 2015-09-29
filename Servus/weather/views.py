@@ -83,28 +83,17 @@ def weather(request, current_tab):
     params = {}
     forecast = []
 
-    fields = WeatherValue._meta.fields
-
-    # TODO: Переделать, ибо слишком сложно :)
-    # fields_dict = {}
-    # for f in fields:
-        # fields_dict[f.name] = (f.verbose_name, f.help_text)
-    
     # Получаем все модели плагинов типа 'Forecast'
-    f_objs = get_plugins('Forecast')
+    forecasts = get_used_objects(get_plugins('Forecast'))  
 
-    # Для каждой модели типа 'Forecast' получаем список подключенных объектов (is_used=True),
-    # учавствующих в усреднении (on_sidebar=True) и добавляем их в один кортеж.
-    f_objs_used = reduce(lambda res, f: res + tuple(f.objects.filter(
-        is_used=True, on_sidebar=True)), f_objs, ())
+    # Если хотябы один прогнозный API добавлен, собираем список данных для передачи в шаблон.    
+    if forecasts:
+    
+        fields = WeatherValue._meta.fields
         
-
-    if f_objs_used:
-        # Если хотябы один прогнозный API добавлен, собираем список данных для передачи в шаблон.
-        # wp - от Weather Provider
-        for wp in f_objs_used:
-            # Получаем кортеж названий классов css
-            get_bg_style(wp)
+        for wp in forecasts:  # wp - от Weather Provider
+            
+            get_bg_style(wp)  # Получаем кортеж названий классов css
 
             # Если ни одного названия класса css в переменной BG_STYLE не присутствует,
             # считаем, что нет данных для данного прогнозного API и пропускаем данную итерацию.
