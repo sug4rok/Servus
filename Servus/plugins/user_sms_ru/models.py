@@ -1,11 +1,7 @@
 ﻿# coding=utf-8
-import logging
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
-from events.utils import event_setter
-
-logger = logging.getLogger(__name__)
 
 MODEL = 'SMSRu'
 

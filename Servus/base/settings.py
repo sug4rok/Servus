@@ -18,13 +18,13 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django_cron',
     'base',
-    'system',
     'slideshow',
     'plugins',
 )
 
 # Containers - applications for plug-ins of the Servus
 CONTAINER_APPS = (
+    'system',  # System application. Don't delete it!
     'home',  # System application. Don't delete it!
     'events',  # System application. Don't delete it!
     'climate',
@@ -38,6 +38,7 @@ PLUGINS = (
     'plugins.weather_yandex_ru',  # weather forecast from yandex.ru
     'plugins.weather_openweathermap',  # weather forecast from openweathermap.org
     'plugins.weather_weather_ua',  # weather from weather.ua
+    'plugins.system_ping',  # ping utility
 )
 
 INSTALLED_APPS += (PLUGINS + CONTAINER_APPS)
@@ -154,6 +155,7 @@ CRON_CLASSES = [
     'climate.cron.GetTempHumid',
     'weather.cron.GetWeatherJob',
     'slideshow.cron.SlideshowJob',
+    'system.cron.GetPingStatus',
 ]
 
 LOGGING = {
