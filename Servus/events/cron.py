@@ -43,16 +43,18 @@ class EmailsSendJob(CJB):
     @staticmethod
     def do():
         """
-        Функция проверяет наличие сообщений с важностью 'info', 'warning' и 'error' и
+        Функция проверяет наличие сообщений с важностью 'success', 'info', 'warning' и 'error' и
         формирует письмо для отправлки по расписанию на все почтовые адреса из
         таблицы base_userprofile БД. Затем, меняет флаг email_sent у каждого события,
         которое блыо отправлено.
         """
 
-        events = Event.objects.filter(level__gte=2).exclude(email_sent=True).order_by('-level')
+        events = Event.objects.filter(level__gte=1).exclude(email_sent=True).order_by('-level')
         emails = User.objects.exclude(email='').values_list('email', flat=True)
+        
+        bgcolors = {1: '#62bd4f', 2: '#3dced8', 3: '#e96506', 4: '#ebccd1'}
 
-        subj = 'Предупреждение от %s' % SITE_NAME
+        subj = 'Сообщение от %s' % SITE_NAME
 
         txt_msg = u'\tДата\t\t\tТекст сообщения\n'
         txt_msg += '-----------------------------------\n'
@@ -60,15 +62,12 @@ class EmailsSendJob(CJB):
         html_msg = u'<table cellpadding=3px><tr><th>Дата</th><th>Текст сообщения</th></tr>'
 
         for e in events:
-            bgcolor = '#faebcc'
-
             if e.level == 4:
-                bgcolor = '#ebccd1'
                 subj = 'Важное сообщение от %s' % SITE_NAME
 
             txt_msg += '%s\t%s\n' % (e.datetime.strftime('%Y.%m.%d %H:%M'), e.message)
             html_msg += '<tr bgcolor=%s><td>%s</font></td><td>%s</td></tr>' \
-                        % (bgcolor, e.datetime.strftime('%Y.%m.%d %H:%M'), e.message)
+                        % (bgcolors[e.level], e.datetime.strftime('%Y.%m.%d %H:%M'), e.message)
 
         html_msg += '</table>'
 

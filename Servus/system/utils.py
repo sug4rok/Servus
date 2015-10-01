@@ -21,7 +21,7 @@ def ping(host, write_db=False):
             response = system('ping -n 1 -4 ' + host.ip_address)
         
         result = response == 0
-        msg = u'%s is %s' % (host.name, u'online' if result else u'offline')
+        msg = u'%s %s' % (host.name, u'снова доступен' if result else u'больше не доступен')
         
         if write_db:
             if host.online != result:              
