@@ -2,16 +2,16 @@
     <div class='list-group-item widget-padding'>
         Сеть
     </div>
-    {%  for host, status, color in system %}
-        <div class='panel-body widget-padding'>
-            <table class='tab_short' border='0'>
+    <div class='panel-body widget-padding'>
+        <table class='tab_short table table-condensed' border='0'>
+            {%  for host, status, color in system %}
                 <tr>
-                    <td style='padding-right: 10px;'>{{ host }}</td>
+                    <th>{{ host }}</th>
                     <td>
                         <span class='{{ status }}' style='color: {{ color }};'></span>
                     </td>
                 </tr>
-            </table>
-        </div>
-    {%  endfor %}
+            {%  endfor %}
+        </table>
+    </div>
 </div>
