@@ -1,0 +1,17 @@
+<div class='panel panel-default widget'>
+    <div class='list-group-item widget-padding'>
+        Сеть
+    </div>
+    {%  for host, status, color in system %}
+        <div class='panel-body widget-padding'>
+            <table class='tab_short' border='0'>
+                <tr>
+                    <td style='padding-right: 10px;'>{{ host }}</td>
+                    <td>
+                        <span class='{{ status }}' style='color: {{ color }};'></span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    {%  endfor %}
+</div>

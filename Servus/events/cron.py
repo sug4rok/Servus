@@ -52,7 +52,7 @@ class EmailsSendJob(CJB):
         events = Event.objects.filter(level__gte=1).exclude(email_sent=True).order_by('-level')
         emails = User.objects.exclude(email='').values_list('email', flat=True)
         
-        bgcolors = {1: '#62bd4f', 2: '#3dced8', 3: '#e96506', 4: '#ebccd1'}
+        bgcolors = {1: '#62bd4f', 2: '#3dced8', 3: '#e96506', 4: '#ed4d63'}
 
         subj = 'Сообщение от %s' % SITE_NAME
 

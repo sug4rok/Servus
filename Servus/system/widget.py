@@ -10,5 +10,6 @@ def get_widget_data():
     """
 
     hosts = get_used_objects(get_plugins('Ping'))
-    return [(host.name, host.online) for host in hosts]
-
+    
+    return [(host.name, 'glyphicon glyphicon-ok', '#62bd4f') if host.online else (
+        host.name, 'glyphicon glyphicon-remove', '#ed4d63') for host in hosts]
