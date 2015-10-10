@@ -1,8 +1,9 @@
 ﻿# coding=utf-8
 from django.conf.urls import patterns, include, url
+from django.contrib import admin
+
 from .settings import MEDIA_ROOT
 from base.models import Application
-from django.contrib import admin
 
 admin.autodiscover()
 

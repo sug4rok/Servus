@@ -1,6 +1,8 @@
 ﻿# coding=utf-8
 from datetime import datetime, timedelta
+
 from django.contrib.contenttypes.models import ContentType
+
 from base.views import call_template
 from plugins.utils import get_plugins, get_used_objects
 from climate.models import TempHumidValue

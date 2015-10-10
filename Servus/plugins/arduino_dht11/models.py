@@ -1,5 +1,6 @@
 ﻿# coding=utf-8
 from django.db import models
+
 from plugins.arduino.models import Arduino
 
 MODEL = 'SensorDHT11'

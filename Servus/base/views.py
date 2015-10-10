@@ -2,6 +2,7 @@
 from django.http import Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+
 from base.settings import SITE_NAME, THEME
 from .models import Application
 

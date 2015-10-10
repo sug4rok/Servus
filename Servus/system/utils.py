@@ -2,9 +2,10 @@
 from os import system
 from sys import platform
 from datetime import datetime
+
 from events.utils import event_setter
 
-    
+
 def ping(host, write_db=False):
     """
     Простой ping. Ждем результата однопакетного пинга.

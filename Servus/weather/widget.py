@@ -1,7 +1,9 @@
 ﻿# coding=utf-8
 from datetime import datetime, timedelta
+
 from django.contrib.contenttypes.models import ContentType
-from plugins.utils import get_plugins, get_used_objects
+
+from plugins.utils import get_plugins
 from .models import WeatherValue
 from .utils import CLOUDS_RANGE, FALLS_RANGE
 

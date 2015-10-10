@@ -2,7 +2,8 @@
 import logging
 from xml.dom import minidom
 from urllib2 import urlopen, HTTPError
-from datetime import datetime, timedelta
+from datetime import datetime
+
 from events.utils import event_setter
 from weather.models import WeatherValue
 

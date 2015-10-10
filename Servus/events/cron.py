@@ -1,8 +1,10 @@
 ﻿# coding=utf-8
 import smtplib
 from urllib2 import urlopen, URLError
+
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth.models import User
+
 from base.settings import EMAIL_HOST_USER, SITE_NAME
 from base.utils import CJB
 from plugins.utils import get_plugins, get_used_objects

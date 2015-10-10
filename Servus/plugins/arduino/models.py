@@ -1,8 +1,10 @@
 ﻿# coding=utf-8
 import time
-import serial
 import logging
+
+import serial
 from django.db import models
+
 from events.utils import event_setter
 
 logger = logging.getLogger(__name__)

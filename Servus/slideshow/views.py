@@ -1,6 +1,7 @@
 # coding=utf-8
 from os import walk, path
 from random import randint
+
 from PIL import Image
 from base.settings import MEDIA_ROOT
 from base.views import call_template

@@ -1,5 +1,6 @@
 # coding=utf-8
 from django.contrib.sessions.models import Session
+
 from base.views import call_template
 from .utils import get_events, ALERTS
 from .models import Event

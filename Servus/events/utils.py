@@ -1,8 +1,8 @@
 # coding=utf-8
 from datetime import datetime, timedelta
+
 from base.settings import INSTALLED_APPS
 from .models import Event
-
 
 ALERTS = {0: 'default', 1: 'success', 2: 'info', 3: 'warning', 4: 'danger'}
 

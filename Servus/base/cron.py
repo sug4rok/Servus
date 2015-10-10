@@ -1,7 +1,9 @@
 # coding=utf-8
 from datetime import datetime, timedelta
-from base.utils import CJB
+
 from django_cron.models import CronJobLog
+
+from base.utils import CJB
 from events.models import Event
 from climate.models import TempHumidValue
 

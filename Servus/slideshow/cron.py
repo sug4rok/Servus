@@ -1,5 +1,6 @@
 ﻿# coding=utf-8
 from os import walk, stat
+
 from base.settings import MEDIA_ROOT
 from base.utils import CJB
 from .models import Slideshow, SlideshowChanges

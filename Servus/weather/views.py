@@ -1,5 +1,6 @@
 ﻿# coding=utf-8
 from django.contrib.contenttypes.models import ContentType
+
 from base.views import call_template
 from plugins.utils import get_plugins, get_used_objects
 from .models import WeatherValue

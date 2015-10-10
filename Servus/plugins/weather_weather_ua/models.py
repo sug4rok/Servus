@@ -1,6 +1,8 @@
 ﻿# coding=utf-8
-from datetime import datetime, timedelta
+from datetime import datetime
+
 from django.db import models
+
 from weather.utils import WG, file_name_prefix
 
 MODEL = 'WeatherUa'

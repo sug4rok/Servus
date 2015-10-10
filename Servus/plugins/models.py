@@ -1,5 +1,6 @@
 ﻿# coding=utf-8
 from django.db import models
+
 from base.settings import PLUGINS
 from base.models import Location
 

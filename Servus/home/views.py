@@ -1,5 +1,6 @@
 ﻿# coding=utf-8
 from importlib import import_module
+
 from base.models import Application
 from base.views import call_template
 from .models import Plan
