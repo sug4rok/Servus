@@ -10,7 +10,7 @@ class WeatherUa(models.Model):
     """
     Модель для храннения ссылок API для выбранных населенных пунктов
     """
-    
+
     CONTAINER = 'weather'
     TYPE = 'Forecast'
 
@@ -22,8 +22,8 @@ class WeatherUa(models.Model):
     url = models.URLField(
         verbose_name='URL на XML-API',
         help_text='url на XML-API прогноза погоды от weather.ua вида:<br>\
-            <strong>http://xml.weather.ua/1.2/forecast/<font color="#5577cc">XXXX</font>?dayf=4?lang=ru</strong><br><br>\
-            ,где <strong><font color="#5577cc">XXXX</font></strong> - код населенного пункта прогноза погоды.\
+            <strong>http://xml.weather.ua/1.2/forecast/<font color="#5577cc">XXXX</font>?dayf=4?lang=ru</strong><br>\
+            <br>,где <strong><font color="#5577cc">XXXX</font></strong> - код населенного пункта прогноза погоды.\
             Например, для Санкт-Петербурга (Россия) код <strong><font color="#5577cc">773</font></strong>',
         unique=True
     )
@@ -38,7 +38,7 @@ class WeatherUa(models.Model):
     class Meta(object):
         verbose_name = 'прогноз weather.ua'
         verbose_name_plural = 'Прогнозы погоды от weather.ua'
-        
+
     class Forecast(WG):
         def parse_to_dict(self):
             weather_data = []

@@ -10,7 +10,7 @@ class OpenWeatherMap(models.Model):
     """
     Модель для храннения ссылок API для выбранных населенных пунктов
     """
-    
+
     CONTAINER = 'weather'
     TYPE = 'Forecast'
 
@@ -22,7 +22,8 @@ class OpenWeatherMap(models.Model):
     url = models.URLField(
         verbose_name='URL на XML-API',
         help_text='url на XML-API прогноза погоды от openweathermap.org вида:<br>\
-            <strong>http://api.openweathermap.org/data/2.5/forecast/daily?q=<font color="#5577cc">XXXX</font>&mode=xml&units=metric&cnt=4</strong><br><br>\
+            <strong>http://api.openweathermap.org/data/2.5/forecast/daily?q=\
+            <font color="#5577cc">XXXX</font>&mode=xml&units=metric&cnt=4</strong><br><br>\
             ,где <strong><font color="#5577cc">XXXX</font></strong> - код населенного пункта прогноза погоды.\
             Например, для Санкт-Петербурга (Россия) код <strong><font color="#5577cc">St.Petersburg</font></strong>',
         unique=True
@@ -39,7 +40,6 @@ class OpenWeatherMap(models.Model):
         verbose_name = 'прогноз openweathermap.org'
         verbose_name_plural = 'Прогнозы погоды от openweathermap.org'
 
-        
     class Forecast(WG):
         def parse_to_dict(self):
             weather_data = []
@@ -102,7 +102,8 @@ class OpenWeatherMap(models.Model):
                     tmp_data['wind_speed'] = round(
                         float(self.node_value_get('windSpeed', node=day, subnode_num=0, attr='mps')), 0
                     )
-                    tmp_data['wind_direction'] = self.node_value_get('windDirection', node=day, subnode_num=0, attr='deg')
+                    tmp_data['wind_direction'] = self.node_value_get('windDirection', node=day, subnode_num=0,
+                                                                     attr='deg')
                     symbol_num = self.node_value_get('symbol', node=day, subnode_num=0, attr='number')
                     tmp_data['clouds_img'] = get_clouds_img(symbol_num, tmp_data['datetime'])
                     tmp_data['falls_img'] = get_falls_img(symbol_num)

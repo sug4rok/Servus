@@ -4,7 +4,6 @@ from plugins.utils import get_plugins, get_used_objects
 from .utils import ping
 
 
-
 class GetPingStatus(CJB):
     """
     CronJobBase класс для ping'а сетевых устройств и записи их доступности.

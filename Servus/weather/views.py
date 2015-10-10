@@ -18,9 +18,9 @@ def list_field_values(wp, field):
     """
 
     return WeatherValue.objects.filter(content_type_id=ContentType.objects.get_for_model(wp).id,
-        object_id=wp.id).values_list(field, flat=True)
-        
-        
+                                       object_id=wp.id).values_list(field, flat=True)
+
+
 def get_bg_styles(forecast_times):
     """
     Функция получения кортежа с перечнем названий классов css для задания стилей ячеек таблиц
@@ -81,24 +81,24 @@ def get_wind(wp):
 
 def weather(request, current_tab):
     global BG_STYLES
-    
+
     params = {}
     forecast = []
 
     # Получаем все модели плагинов типа 'Forecast'
-    forecasts = get_used_objects(get_plugins('Forecast'))  
+    forecasts = get_used_objects(get_plugins('Forecast'))
 
     # Если хотябы один прогнозный API добавлен, собираем список данных для передачи в шаблон.    
     if forecasts:
-    
+
         fields = WeatherValue._meta.fields
-        
+
         for wp in forecasts:  # wp - от Weather Provider
-            
+
             forecast_times = list_field_values(wp, 'datetime')
 
             if not forecast_times:  # Если нет ни одной записи о времени прогноза погоды, считаем,
-                continue            # что нет данных для данного прогнозного API и пропускаем данную итерацию.
+                continue  # что нет данных для данного прогнозного API и пропускаем данную итерацию.
 
             BG_STYLES = get_bg_styles(forecast_times)  # Получаем кортеж названий классов css
             values = []

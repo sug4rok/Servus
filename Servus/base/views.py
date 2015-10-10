@@ -16,8 +16,8 @@ def get_tab_options(current_tab):
     """
 
     tab_options = Application.objects.get(name=current_tab)
-    return {'active_app_name':current_tab, 'active_title':tab_options.title,
-            'active_sub_title':tab_options.sub_title}
+    return {'active_app_name': current_tab, 'active_title': tab_options.title,
+            'active_sub_title': tab_options.sub_title}
 
 
 def call_template(request, *args, **kwargs):

@@ -16,12 +16,11 @@ def get_events(days):
     """
 
     try:
-        events_data = []
         events = Event.objects.filter(datetime__gte=datetime.now() - timedelta(days=days)).order_by(
             '-datetime')
         return events
     except Event.DoesNotExist:
-        return  []
+        return []
 
 
 def get_amount_events(days, session_key=None):

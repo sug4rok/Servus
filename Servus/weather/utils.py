@@ -137,7 +137,8 @@ def set_weather_events(dt, temp, wind_speed, falls_img):
     elif 17 <= wind_speed < 25:
         event_setter('weather', u'%s: Шторм! (скорость ветра более 17 м/с)' % event_day, 3, email=True)
     elif wind_speed >= 25:
-        event_setter('weather', u'%s: УРАГАН! (скорость ветра более 25 м/с)' % event_day, 4, delay=6, sms=True, email=True)
+        event_setter('weather', u'%s: УРАГАН! (скорость ветра более 25 м/с)' % event_day, 4, delay=6,
+                     sms=True, email=True)
 
     if falls_img in ['t1d3', 't2d3', 't3d3']:
         event_setter('weather', u'%s: %s' % (event_day, FALLS_RANGE[falls_img]), 2, delay=48)
@@ -184,8 +185,8 @@ def weather_setter(weather_data):
             obj_wp.save()
 
             set_weather_events(dt, temp, wind_speed, falls_img)
-            
-            
+
+
 def command(wp, write_db=False):
     """
     Функция получения прогноза погоды.
@@ -195,7 +196,7 @@ def command(wp, write_db=False):
 
     if wp.TYPE == 'Forecast':
         weather_data = wp.Forecast(wp).parse_to_dict()
-        
+
         if write_db:
             weather_setter(weather_data)
         else:

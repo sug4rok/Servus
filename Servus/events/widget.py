@@ -1,6 +1,7 @@
 ﻿# coding=utf-8
 from .utils import get_amount_events
 
+
 def get_widget_data(current_session):
     """
     Функция, выводящая количество и важность событий на Главную страницу в виде виджета.
