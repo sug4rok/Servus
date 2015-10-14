@@ -25,9 +25,12 @@ class OpenWeatherMap(models.Model):
         verbose_name='URL на XML-API',
         help_text='url на XML-API прогноза погоды от openweathermap.org вида:<br>\
             <strong>http://api.openweathermap.org/data/2.5/forecast/daily?q=\
-            <font color="#5577cc">XXXX</font>&mode=xml&units=metric&cnt=4</strong><br><br>\
-            ,где <strong><font color="#5577cc">XXXX</font></strong> - код населенного пункта прогноза погоды.\
-            Например, для Санкт-Петербурга (Россия) код <strong><font color="#5577cc">St.Petersburg</font></strong>',
+            <font color="#5577cc">XXXX</font>&mode=xml&units=metric&cnt=4&appid=\
+            <font color="#5577cc">YYYY</font></strong><br><br>\
+            ,где <strong><font color="#5577cc">XXXX</font></strong> - код населенного пункта\
+            прогноза погоды,<br><strong><font color="#5577cc">YYYY</font></strong> - Ваш ключ\
+            API (с 9 октября требуется регистрация).<br>Например, для Санкт-Петербурга (Россия)\
+            код <strong><font color="#5577cc">St.Petersburg</font></strong>',
         unique=True
     )
     on_sidebar = models.BooleanField(
@@ -82,7 +85,7 @@ class OpenWeatherMap(models.Model):
                 return 't0d0'
 
             times = [('morn', '07:00'), ('day', '13:00'), ('eve', '19:00'), ('night', '01:00')]
-            for day in self.node_value_get('time')[:2]:
+            for day in self.node_value_get('time')[:3]:
                 for day_part, time in times:
                     tmp_data = {'wp': self.wp}
                     d = '%s %s' % (day.attributes['day'].value, time)

@@ -88,7 +88,7 @@ class WeatherUa(models.Model):
                         return r
                 return 'na'
 
-            for day in self.node_value_get('day')[:8]:
+            for day in self.node_value_get('day')[:9]:
                 clouds = int(self.node_value_get('cloud', node=day, subnode_num=0))
                 tmp_data = {'wp': self.wp}
                 d = '%s %s:00' % (day.attributes['date'].value, day.attributes['hour'].value)

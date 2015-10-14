@@ -102,7 +102,7 @@ class YandexRU(models.Model):
                 )]
 
             times = {'morning': '07:00', 'day': '13:00', 'evening': '19:00', 'night': '01:00'}
-            for day in self.node_value_get('day')[:2]:
+            for day in self.node_value_get('day')[:3]:
                 date = day.attributes['date'].value
                 for j in xrange(0, 4):
                     weather_condition = self.node_value_get('weather_condition', node=day, subnode_num=j, attr='code')
