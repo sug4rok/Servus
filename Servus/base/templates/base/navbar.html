@@ -21,10 +21,14 @@
             </ul>
             <ul class='nav navbar-nav navbar-right'>
                 <li>
-                    <a href='/slideshow/'><input type='checkbox' autocomplete='off' checked id='slideshow'>&nbsp;Слайдшоу</a>
+                    <a href='#' type='button' class='glyphicon glyphicon-cog' data-toggle='dropdown'></a>
+                    <ul class='dropdown-menu'>
+                       <li><a href='/slideshow/'><input type='checkbox' autocomplete='off' checked id='slideshow'>&nbsp;Слайдшоу</a></li>
+                       <li><a href='/admin/'><span class='glyphicon glyphicon-wrench'></span>&nbsp;Админка</a></li>
+                    </ul>
                 </li>
-                <li><a href='/admin/' class='glyphicon glyphicon-wrench'></a></li>
             </ul>
+            
         </div>
     </div>
 </nav>
