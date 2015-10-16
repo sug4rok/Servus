@@ -2,6 +2,7 @@
 from datetime import datetime, timedelta
 
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 from weather.utils import WG, file_name_prefix
 
@@ -21,13 +22,17 @@ class YandexRU(models.Model):
         verbose_name='Населенный пункт',
         help_text='Название населенного пункта, для которого отображается прогноз погоды.',
     )
-    url = models.URLField(
-        verbose_name='URL на XML-API',
-        help_text='url на XML-API прогноза погоды от yandex.ru вида:<br>\
-            <strong>http://export.yandex.ru/weather-ng/forecasts/<font color="#5577cc">XXXX</font>.xml</strong><br><br>\
-            ,где <strong><font color="#5577cc">XXXX</font></strong> - код населенного пункта прогноза погоды.\
-            Например, для Санкт-Петербурга (Россия) код <strong><font color="#5577cc">26063</font></strong>',
-        unique=True
+    city_id = models.PositiveIntegerField(
+        verbose_name='ID населенного пункта',
+        help_text='Пятизначный ID населенного пункта. Узнать ID своего города можно\
+        <a href="https://pogoda.yandex.ru/static/cities.xml" target="_blank">здесь</a>',
+        unique=True,
+        blank=False,
+        null=False,
+        validators=[
+            MaxValueValidator(99999),
+            MinValueValidator(00000)
+        ]
     )
     on_sidebar = models.BooleanField(
         default=False,
@@ -36,12 +41,22 @@ class YandexRU(models.Model):
             прогноза погоды в виде виджета на Главной странице.<br>\
            (Отмечать, по понятным причинам, имеет смысл прогнозы для одного и того же города)'
     )
+    
+    def get_url(self):
+        return 'http://export.yandex.ru/weather-ng/forecasts/%s.xml' % self.city_id
+        
+    def __unicode__(self):
+        return self.city
 
     class Meta(object):
         verbose_name = 'прогноз yandex.ru'
         verbose_name_plural = 'Прогнозы погоды от yandex.ru'
         
     class Forecast(WG):
+        
+        def __init__(self, wp):
+            WG.__init__(self, wp)
+        
         def parse_to_dict(self):
             weather_data = []
 

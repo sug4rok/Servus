@@ -119,7 +119,7 @@ def weather(request, current_tab):
 
                 values.append(field_values)
 
-            site = wp.url.split('/')[2].split('.')
+            site = wp.get_url().split('/')[2].split('.')
             forecast.append((site[-2] + '.' + site[-1], values, wp.city))
 
         params = {'forecast': forecast}

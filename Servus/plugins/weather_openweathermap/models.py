@@ -2,6 +2,7 @@
 from datetime import datetime, timedelta
 
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 from weather.utils import WG, file_name_prefix
 
@@ -21,17 +22,22 @@ class OpenWeatherMap(models.Model):
         verbose_name='Населенный пункт',
         help_text='Название населенного пункта, для которого отображается прогноз погоды.',
     )
-    url = models.URLField(
-        verbose_name='URL на XML-API',
-        help_text='url на XML-API прогноза погоды от openweathermap.org вида:<br>\
-            <strong>http://api.openweathermap.org/data/2.5/forecast/daily?q=\
-            <font color="#5577cc">XXXX</font>&mode=xml&units=metric&cnt=4&appid=\
-            <font color="#5577cc">YYYY</font></strong><br><br>\
-            ,где <strong><font color="#5577cc">XXXX</font></strong> - код населенного пункта\
-            прогноза погоды,<br><strong><font color="#5577cc">YYYY</font></strong> - Ваш ключ\
-            API (с 9 октября требуется регистрация).<br>Например, для Санкт-Петербурга (Россия)\
-            код <strong><font color="#5577cc">St.Petersburg</font></strong>',
-        unique=True
+    city_id = models.PositiveIntegerField(
+        verbose_name='ID населенного пункта',
+        help_text='Узнать ID своего города можно\
+        <a href="http://bulk.openweathermap.org/sample/city.list.json.gz" target="_blank">здесь</a>',
+        unique=True,
+        blank=False,
+        null=False,
+        validators=[
+            MaxValueValidator(9999999),
+            MinValueValidator(00000)
+        ]
+    )
+    api_key = models.CharField(
+        max_length=32,
+        verbose_name='Ключ API',
+        help_text='Ваш ключ API (с 9 октября требуется регистрация).',    
     )
     on_sidebar = models.BooleanField(
         default=False,
@@ -40,12 +46,23 @@ class OpenWeatherMap(models.Model):
             прогноза погоды в виде виджета на Главной странице.<br>\
            (Отмечать, по понятным причинам, имеет смысл прогнозы для одного и того же города)'
     )
+    
+    def get_url(self):
+        return 'http://api.openweathermap.org/data/2.5/forecast/daily?id=%s&mode=xml&units=metric&cnt=4&appid=%s'\
+        % (self.city_id, self.api_key)
+        
+    def __unicode__(self):
+        return self.city
 
     class Meta(object):
         verbose_name = 'прогноз openweathermap.org'
         verbose_name_plural = 'Прогнозы погоды от openweathermap.org'
 
     class Forecast(WG):
+    
+        def __init__(self, wp):
+            WG.__init__(self, wp)
+
         def parse_to_dict(self):
             weather_data = []
 

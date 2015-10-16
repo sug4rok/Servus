@@ -62,7 +62,7 @@ class WG(object):
 
     def __init__(self, wp):
         self.wp = wp
-        self.wp_url = wp.url
+        self.wp_url = wp.get_url()
         self.parsed_xml = self.parse_xml()
         self.format = '%Y-%m-%d %H:%M'
 
@@ -70,13 +70,13 @@ class WG(object):
         try:
             url_sock = urlopen(self.wp_url)
         except HTTPError, err:
-            logger.warning(u'Weather %s: urllib2 HTTPError: %s (%s)' % (self.wp.name, err.code, err.msg))
+            logger.warning(u'Weather %s: urllib2 HTTPError: %s (%s)' % (self.wp, err.code, err.msg))
             return -1
         try:
             parsed_xml = minidom.parse(url_sock)
             return parsed_xml
         except:
-            logger.warning(u'Weather: Ошибка парсинга для %s' % self.wp.name)
+            logger.warning(u'Weather: Ошибка парсинга %s' % self.wp_url)
             return -1
         finally:
             url_sock.close()
@@ -98,7 +98,7 @@ class WG(object):
             return subnodes
 
     def __str__(self):
-        return 'Weather getter class for %s weather provider' % self.wp.name
+        return 'Weather getter class for %s weather provider' % self.wp
 
 
 def weather_db_cleaner():
