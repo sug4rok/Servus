@@ -3,7 +3,7 @@
 {% block body_tabs %}
     <style>
         body {
-            padding-top:65px;
+            padding-top:40px;
         }
     </style>
 
@@ -23,14 +23,4 @@
             </div>
         </div>
     </div>
-
-<script>
-    $(document).ready(function(){
-        setInterval(function(){
-            if(document.getElementById('slideshow').checked){
-                window.location.href = '/slideshow/';
-            }
-        }, 20000);
-    });
-</script>
 {% endblock %}

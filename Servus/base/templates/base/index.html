@@ -8,8 +8,9 @@
     <link href='{{ STATIC_URL }}css/Servus.{{ theme }}.min.css' rel='stylesheet' media='screen'>
     <link rel='shortcut icon' href='{{ STATIC_URL }}img/favicon.ico'>
     <script src='{{ STATIC_URL }}js/jquery.min.js' type='text/javascript'></script>
-
-    <script>
+    <script src='{{ STATIC_URL }}js/js.cookie.min.js' type='text/javascript'></script>
+    
+    <script async>
         function get_id_data(id){
             var result = null;
             $.ajax({
@@ -62,6 +63,52 @@
         {% endif %}
     {% endspaceless %}  
     
-    <script src='{{ STATIC_URL }}js/bootstrap.min.js' type='text/javascript'></script>
+    <script async>
+        // Записываем состояния всех checkbox'ов в json-cookie
+        $(':checkbox').on('change', function(){
+            var checkboxValues = {};
+            $(':checkbox').each(function(){
+                checkboxValues[this.id] = this.checked;
+            });
+            Cookies.set('checkboxValues', checkboxValues, {expires: 999, path: '/'})
+        });
+        // Подгружаем и устанавливаем состояния checkbox'ов ранее записанные в json-cookie
+        function repopulateCheckboxes(){
+            var checkboxValues = Cookies.getJSON('checkboxValues');
+            if(checkboxValues){
+                Object.keys(checkboxValues).forEach(function(element) {
+                    var checked = checkboxValues[element];
+                    $('#' + element).prop('checked', checked);
+                });
+            }
+        }
+        // Смена страниц с текущей на slideshow и обратно,если установлен соответствующий checkbox
+        function changePages(){
+            if (window.location.pathname === '/slideshow/'){
+                setTimeout(function(){
+                    if (Cookies.getJSON('checkboxValues')['slideshow']){
+                        window.location.href = '/home/';
+                    }
+                }, 60000);
+            } else {
+                setTimeout(function(){
+                    if (Cookies.getJSON('checkboxValues')['slideshow']){
+                        window.location.href = '/slideshow/';
+                    }
+                }, 20000);
+            } 
+        }
+
+        // Устанавливаем значения всех checkbox'ов, которые были установлены ранее и сохранены в cookie
+        repopulateCheckboxes();
+
+        // Когда документ полностью подгружен, начинаем переключать страницы slideshow<-->anyPage
+        $(document).ready(function(){
+            setInterval(function(){
+                if (Cookies.getJSON('checkboxValues')['slideshow']) changePages();
+            }, 1000);
+        });        
+    </script>  
+    <script src='{{ STATIC_URL }}js/bootstrap.min.js' type='text/javascript' async></script>
 </body>
 </html>

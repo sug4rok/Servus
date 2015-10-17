@@ -5,12 +5,9 @@
     <div id='slide' class='height100'></div>
 
     <script>
+        reload_div('amount_events', 3000);
         $(document).ready(function(){
-            reload_div('slide', 300000);
-            reload_div('amount_events', 3000);
+            reload_div('slide', 120000);
         });
-        setTimeout(function(){
-            window.location.href = '/home/';
-        }, 60000);
     </script>
 {% endblock %}
