@@ -1,11 +1,9 @@
-# coding=utf-8
-from django.contrib import admin
+﻿# coding=utf-8
+from plugins.admin import PluginAdmin
 
-from plugins.models import PLUGIN_MODELS
-
-for plugin_model in PLUGIN_MODELS[__name__.split('.')[0]]:
-    PluginAdmin = type(plugin_model.__name__ + 'Admin', (admin.ModelAdmin, ), {
-        'list_display': ('name', 'location', 'is_used'),
-        'ordering': ('name',),
-        })
-    admin.site.register(plugin_model, PluginAdmin)
+# Определяем имя текущего плагина, настройки отображения в панели администратора
+# и регистрируем его с помощью метода "register" вспомогательного класса PluginAdmin.
+container = __name__.split('.')[0]
+settings = {'list_display': ('name', 'location', 'is_used'),
+            'ordering': ('name',)}
+PluginAdmin(container, settings).register()
