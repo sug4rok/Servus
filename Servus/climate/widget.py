@@ -16,8 +16,11 @@ def get_widget_data():
     # Для каждого объекта-сенсора получаем последние данные из таблицы climate_temphumidvalue.
     # Вся сложность в определении в этой таблице пренадлежности данных конкретному сенсору, т.к.
     # для обезличивания сенсоров мы использовали GenericForeignKey.
-    th_values = [
-        TempHumidValue.objects.filter(content_type_id=ContentType.objects.get_for_model(s).id, object_id=s.id).order_by(
-            '-datetime')[0] for s in th_sensors]
+    try:
+        th_values = [
+            TempHumidValue.objects.filter(content_type_id=ContentType.objects.get_for_model(s).id, object_id=s.id).order_by(
+                '-datetime')[0] for s in th_sensors]
+    except IndexError:
+        return []
 
     return [(th_v.content_object.location, th_v.humidity, th_v.temperature) for th_v in th_values]

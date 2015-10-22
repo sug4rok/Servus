@@ -1,5 +1,6 @@
 ﻿# coding=utf-8
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 from base.settings import PLUGINS
 from base.models import Location
@@ -55,6 +56,28 @@ class Plugins(object):
                 Location,
                 verbose_name='Расположение',
                 help_text='Место расположения объекта в помещении или вне его',
+            ),
+            'horiz_percent': models.PositiveSmallIntegerField(
+                verbose_name='По горизонтали,%',
+                help_text='Расположение виджета по горизонтали в процентах от ширины изображения\
+                    планировки помещения.',
+                default=0,
+                validators=[
+                    MaxValueValidator(100),
+                    MinValueValidator(0)
+                ],
+                blank=True
+            ),
+            'vert_percent': models.PositiveSmallIntegerField(
+                verbose_name='По вертикали,%',
+                help_text='Расположение виджета по вертикали в процентах от высоты изображения\
+                    планировки помещения.',
+                default=0,
+                validators=[
+                    MaxValueValidator(100),
+                    MinValueValidator(0)
+                ],
+                blank=True
             ),
             'is_used': models.BooleanField(
                 verbose_name='Задействован',

@@ -1,4 +1,4 @@
-# coding=utf-8
+﻿# coding=utf-8
 from os import walk, path
 from random import randint
 
