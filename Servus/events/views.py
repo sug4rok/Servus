@@ -6,18 +6,17 @@ from .utils import get_events, ALERTS
 from .models import Event
 
 
-def events(request, current_tab):
+def events(request):
     """
     Вывод событий последних days дней на вкладку События. При нажатии на кнопку все еще не
     ассоциированные с данной сессией браузера события добавятся в таблицу events_event_session_keys
     и будут считаться просмотренными.
 
     :param request: django request
-    :param current_tab: название текущей вкладки (передается в base.urls)
     """
 
     days = 14
-    params = dict(events=get_events(days), alerts=ALERTS)
+    params = {'active_app_name': 'events', 'events': get_events(days), 'alerts': ALERTS}
     
     request.session.save()
     current_session = request.session.session_key
@@ -27,8 +26,4 @@ def events(request, current_tab):
         for e in events:
             e.session_keys.add(Session.objects.get(pk=current_session))
 
-    return call_template(
-        request,
-        params,
-        current_tab=current_tab
-    )
+    return call_template(request, params)

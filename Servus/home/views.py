@@ -49,21 +49,17 @@ def summary(request):
     )
 
 
-def home(request, current_tab):
+def home(request):
     """
     Контроллер для вывода Главной страницы
 
     :param request: django request
-    :param current_tab: название текущей вкладки (передается в base.urls)
     """
 
     plans = [(p.name, p.image) for p in Plan.objects.filter(is_shown=True)]
-    params = {'house_plans': plans, }
+    params = {'active_app_name': 'home', 'house_plans': plans, }
+    
     if len(plans):
         params['width_plans'] = 100 / len(plans)
 
-    return call_template(
-        request,
-        params,
-        current_tab=current_tab
-    )
+    return call_template(request, params)

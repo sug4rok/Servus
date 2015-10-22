@@ -80,7 +80,7 @@ def get_wind(wp):
     return zip(wind_speeds, wind_directions, BG_STYLES)
 
 
-def weather(request, current_tab):
+def weather(request):
     global BG_STYLES
 
     params = {}
@@ -122,10 +122,6 @@ def weather(request, current_tab):
             site = wp.get_url().split('/')[2].split('.')
             forecast.append((site[-2] + '.' + site[-1], values, wp.city))
 
-        params = {'forecast': forecast}
+        params = {'active_app_name': 'weather', 'forecast': forecast}
 
-    return call_template(
-        request,
-        params,
-        current_tab=current_tab
-    )
+    return call_template(request, params)

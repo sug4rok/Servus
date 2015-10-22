@@ -9,7 +9,7 @@ admin.autodiscover()
 
 urlpatterns = patterns(
     '',
-    url(r'^$', 'home.views.home', {'current_tab': 'home'}),
+    url(r'^$', 'home.views.home'),
     url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': MEDIA_ROOT}),
     url(r'^slideshow/$', 'slideshow.views.slideshow'),
     url(r'^slide/$', 'slideshow.views.slide'),
@@ -19,6 +19,4 @@ urlpatterns = patterns(
 )
 
 for app in Application.objects.filter(is_tab=1).values_list('name', flat=True):
-    urlpatterns += patterns(app + '.views',
-                            url(r'^%s/$' % app, app, {'current_tab': '%s' % app}),
-                            )
+    urlpatterns += patterns(app + '.views', url(r'^%s/$' % app, app))

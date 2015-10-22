@@ -8,12 +8,11 @@ from plugins.utils import get_plugins, get_used_objects
 from climate.models import TempHumidValue
 
 
-def climate(request, current_tab):
+def climate(request):
     """
     Функция отображения грификов данных с климатических датчиков
 
     :param request: django request
-    :param current_tab: название текущей вкладки (передается в base.urls)
     """
 
     th_sensors = get_used_objects(get_plugins('TempHumidSensor'))
@@ -27,10 +26,6 @@ def climate(request, current_tab):
         temps.append((s.location, ((i.datetime, i.temperature) for i in s_v)))
         humids.append((s.location, ((i.datetime, i.humidity) for i in s_v)))
 
-    params = {'charts': (('температуры', '°C', temps), ('влажности', '%', humids))}
+    params = {'active_app_name': 'climate', 'charts': (('температуры', '°C', temps), ('влажности', '%', humids))}
 
-    return call_template(
-        request,
-        params,
-        current_tab=current_tab
-    )
+    return call_template(request, params)
