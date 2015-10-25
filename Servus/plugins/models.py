@@ -4,6 +4,12 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 
 from base.settings import PLUGINS
 from base.models import Location
+from home.models import Plan
+
+WIDGET_CHOICES = (
+    ('tile', 'Плиточный'),
+    ('positioned', 'Позиционный'),
+)
 
 
 class Plugins(object):
@@ -57,31 +63,45 @@ class Plugins(object):
                 verbose_name='Расположение',
                 help_text='Место расположения объекта в помещении или вне его',
             ),
-            'horiz_percent': models.PositiveSmallIntegerField(
-                verbose_name='По горизонтали,%',
-                help_text='Расположение виджета по горизонтали в процентах от ширины изображения\
-                    планировки помещения.',
-                default=0,
-                validators=[
-                    MaxValueValidator(100),
-                    MinValueValidator(0)
-                ],
-                blank=True
-            ),
-            'vert_percent': models.PositiveSmallIntegerField(
-                verbose_name='По вертикали,%',
-                help_text='Расположение виджета по вертикали в процентах от высоты изображения\
-                    планировки помещения.',
-                default=0,
-                validators=[
-                    MaxValueValidator(100),
-                    MinValueValidator(0)
-                ],
-                blank=True
-            ),
             'is_used': models.BooleanField(
                 verbose_name='Задействован',
                 default=False
+            ),
+            'is_widget': models.BooleanField(
+                verbose_name='Виджет',    
+                help_text='Имеет собственный виджет на Главной странице',
+                default=False
+            ),
+            'widget_type': models.SlugField(
+                choices=WIDGET_CHOICES,
+                default='tile',
+                verbose_name='Тип виджета',
+                help_text='Для позиционного виджета укажите планировку и координаты виджета\
+                    в процентах от размера изображения, считая от левого верхнего угла.'
+            ),
+            'plan_image': models.ForeignKey(
+                Plan,
+                verbose_name='Планировка',
+                null=True,
+                default=None
+            ),
+            'horiz_position': models.PositiveSmallIntegerField(
+                verbose_name='По горизонтали,%',
+                default=0,
+                validators=[
+                    MaxValueValidator(100),
+                    MinValueValidator(0)
+                ],
+                blank=True
+            ),
+            'vert_position': models.PositiveSmallIntegerField(
+                verbose_name='По вертикали,%',
+                default=0,
+                validators=[
+                    MaxValueValidator(100),
+                    MinValueValidator(0)
+                ],
+                blank=True
             ),
             'parent': models.OneToOneField(plugin_model['object'], parent_link=True),
             '__module__': container + '.models',  # Меняем имя модуля, содержащего новый класс

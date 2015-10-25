@@ -14,14 +14,27 @@ class UserAdmin(admin.ModelAdmin):
     
 class ApplicationAdmin(admin.ModelAdmin):
     list_display = ('name', 'is_tab', 'is_widget')
-    fieldsets = (
-        ('', {
-            'fields': ('name', 'is_widget')
-        }),
-        ('Настройки вкладки', {
-            'fields': ('is_tab', 'tab_name', 'title', 'sub_title')
-        }),
-    )
+    base_fieldsets = (('', {'fields': ('name', 'is_tab', 'is_widget')}), )
+    
+    def get_form(self, request, obj=None, **kwargs):
+        """
+        Отображение полей в зависимости от значения is_widget и is_tab, чтобы не отображать
+        поля, в которых нет необходимости.
+        """
+        
+        if obj is not None:
+            self.fieldsets = self.base_fieldsets
+            if obj.is_tab:
+                self.fieldsets += (('Настройки вкладки', 
+                    {'fields': ('tab_name', 'title', 'sub_title')}), )
+                
+            if obj.is_widget:
+                if obj.widget_type=='positioned':
+                    self.fieldsets += (('Настройки виджета', 
+                        {'fields': ('widget_type', 'plan_image', ('horiz_position', 'vert_position'))}), )
+                else:
+                    self.fieldsets += (('Настройки виджета', {'fields': ('widget_type', )}), )
+        return super(ApplicationAdmin, self).get_form(request, obj, **kwargs)    
 
     def has_add_permission(self, request):
         return False

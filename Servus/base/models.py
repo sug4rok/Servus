@@ -1,5 +1,13 @@
 ﻿# coding=utf-8
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
+
+from home.models import Plan
+
+WIDGET_CHOICES = (
+    ('tile', 'Плиточный'),
+    ('positioned', 'Позиционный'),
+)
 
 
 class Location(models.Model):
@@ -63,7 +71,38 @@ class Application(models.Model):
         verbose_name='Виджет',    
         help_text='Имеет собственный виджет на Главной странице',
         default=False
-    )  
+    )
+    widget_type = models.SlugField(
+        choices=WIDGET_CHOICES,
+        default='tile',
+        verbose_name='Тип виджета',
+        help_text='Для позиционного виджета укажите планировку и координаты виджета\
+            в процентах от размера изображения, считая от левого верхнего угла.'
+    )
+    plan_image = models.ForeignKey(
+        Plan,
+        verbose_name='Планировка',
+        null=True,
+        default=None
+    )
+    horiz_position = models.PositiveSmallIntegerField(
+        verbose_name='По горизонтали,%',
+        default=0,
+        validators=[
+            MaxValueValidator(100),
+            MinValueValidator(0)
+        ],
+        blank=True
+    )
+    vert_position = models.PositiveSmallIntegerField(
+        verbose_name='По вертикали,%',
+        default=0,
+        validators=[
+            MaxValueValidator(100),
+            MinValueValidator(0)
+        ],
+        blank=True
+    )
 
     class Meta(object):
         verbose_name = 'Приложение'
