@@ -7,7 +7,7 @@ from base.models import Location
 from home.models import Plan
 
 WIDGET_CHOICES = (
-    ('tile', 'Плиточный'),
+    ('tiled', 'Плиточный'),
     ('positioned', 'Позиционный'),
 )
 
@@ -74,7 +74,7 @@ class Plugins(object):
             ),
             'widget_type': models.SlugField(
                 choices=WIDGET_CHOICES,
-                default='tile',
+                default='tiled',
                 verbose_name='Тип виджета',
                 help_text='Для позиционного виджета укажите планировку и координаты виджета\
                     в процентах от размера изображения, считая от левого верхнего угла.'

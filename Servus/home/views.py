@@ -34,7 +34,7 @@ def summary(request):
                 
                 # Если есть данные для виджета, добавляем его html-страницу к списку страниц виджетов
                 if params[app]:
-                    widget_pages.append(app + '/widget.html')
+                    widget_pages.append(app + '/widget_tiled.html')
             except AttributeError:
                 pass
         except ImportError:
