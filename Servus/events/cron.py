@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 
 from base.settings import EMAIL_HOST_USER, SITE_NAME
 from base.utils import CJB
-from plugins.utils import get_plugins, get_used_objects
+from plugins.utils import get_used_plugins_by_type
 from .models import Event
 from .utils import event_setter
 
@@ -125,7 +125,7 @@ class SMSSendJob(CJB):
         блыо отправлено.
         """
         
-        recipients = get_used_objects(get_plugins('SMS'))
+        recipients = get_used_plugins_by_type('SMS')
         recipients_filled = filter(lambda r: r.phone is not None and r.sms_ru_id != '', recipients)
 
         if recipients_filled:

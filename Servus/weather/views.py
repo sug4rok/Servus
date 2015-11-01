@@ -2,7 +2,7 @@
 from django.contrib.contenttypes.models import ContentType
 
 from base.views import call_template
-from plugins.utils import get_plugins, get_used_objects
+from plugins.utils import get_used_plugins_by_type
 from .models import WeatherValue
 from .utils import CLOUDS_RANGE, FALLS_RANGE
 
@@ -87,7 +87,7 @@ def weather(request):
     forecast = []
 
     # Получаем все модели плагинов типа 'Forecast'
-    forecasts = get_used_objects(get_plugins('Forecast'))
+    forecasts = get_used_plugins_by_type('Forecast')
 
     # Если хотябы один прогнозный API добавлен, собираем список данных для передачи в шаблон.    
     if forecasts:

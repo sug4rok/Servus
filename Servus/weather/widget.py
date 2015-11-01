@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from django.contrib.contenttypes.models import ContentType
 
-from plugins.utils import get_plugins
+from plugins.utils import get_used_plugins_by_type
 from .models import WeatherValue
 from .utils import CLOUDS_RANGE, FALLS_RANGE
 
@@ -24,17 +24,16 @@ def common_forecast(date):
     dt2 = datetime(date.year, date.month, date.day, 16)
     
     # Получаем все модели плагинов типа 'Forecast'
-    f_objs = get_plugins('Forecast')
+    f_objs = get_used_plugins_by_type('Forecast')
 
-    # Для каждой модели типа 'Forecast' получаем список подключенных объектов (is_used=True),
-    # учавствующих в усреднении (on_sidebar=True) и добавляем их в один кортеж.
-    f_objs_used = reduce(lambda res, f: res + tuple(f.objects.filter(
-        is_used=True, on_sidebar=True)), f_objs, ())
+    # Для каждой модели типа 'Forecast' получаем список объектов,учавствующих в усреднении
+    # (on_sidebar=True) и добавляем их в один кортеж.
+    sidebar_objs = reduce(lambda res, f: res + tuple(f.objects.filter(on_sidebar=True)), f_objs, ())
 
     # Для каждого объекта forecast получаем последние данные из таблицы weather_weathervalue.
     w_objs = reduce(lambda res, f: res + tuple(WeatherValue.objects.filter(
         content_type_id=ContentType.objects.get_for_model(f).id, object_id=f.id, datetime__range=[dt1, dt2])),
-        f_objs_used, ())
+        sidebar_objs, ())
 
     amount_data = len(w_objs)
     if amount_data:

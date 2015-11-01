@@ -1,7 +1,7 @@
 ﻿# coding=utf-8
 from django.contrib.contenttypes.models import ContentType
 
-from plugins.utils import get_plugins, get_used_objects
+from plugins.utils import get_used_plugins_by_type
 from climate.models import TempHumidValue
 
 
@@ -11,7 +11,7 @@ def get_widget_data():
     :returns: список кортежей вида [(<полное имя датчика>, влажность, тепмпература), ...]
     """
 
-    th_sensors = get_used_objects(get_plugins('TempHumidSensor'))
+    th_sensors = get_used_plugins_by_type('TempHumidSensor')
 
     # Для каждого объекта-сенсора получаем последние данные из таблицы climate_temphumidvalue.
     # Вся сложность в определении в этой таблице пренадлежности данных конкретному сенсору, т.к.

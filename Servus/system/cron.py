@@ -1,6 +1,6 @@
 ﻿# coding=utf-8
 from base.utils import CJB
-from plugins.utils import get_plugins, get_used_objects
+from plugins.utils import get_used_plugins_by_type
 from .utils import ping
 
 
@@ -13,7 +13,7 @@ class GetPingStatus(CJB):
 
     def do(self):
 
-        hosts = get_used_objects(get_plugins('Ping'))
+        hosts = get_used_plugins_by_type('Ping')
 
         if hosts:
             for host in hosts:
