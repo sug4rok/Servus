@@ -1,17 +1,26 @@
 <div class='row'>
 
-    {% for page in widget_pages %}
+    {% for widget_type, page in widget_pages %}
+        {% if widget_type == 'tiled' %}
             <div class='col-xs-4 col-sm-3 col-md-2 col-lg-2 placeholder'>
                 {% include page %}
             </div>
+        {% elif type == 'positioned' %}
+            <div style='position: absolute; border:1px solid white;' id='th'>
+                {% include page %}
+            </div>
+        {% endif %}
     {% endfor %}
 
 </div>
-
-{% comment %}
-<div class='row'>
-    <div class='col-xs-12 col-sm-12 col-md-12 col-lg-12 placeholder'>
-        {% include 'events/widget_tiled.html' %}
-    </div>
-</div>
-{% endcomment %}
+<!-- <script>
+    var posX = 16;
+    var posY = 45;
+    var planCanvasX = document.getElementById('plan-canvas').clientWidth;
+    var planImgX = document.getElementById('plan-img').clientWidth;
+    var planImgY = document.getElementById('plan-img').clientHeight;
+    var x = planCanvasX / 2 - planImgX / 2 + planImgX * posX / 100;
+    var y = planImgY * posY / 100;
+    document.getElementById('th').style.marginLeft = x.toString() + 'px';
+    document.getElementById('th').style.marginTop = y.toString() + 'px';
+</script> -->

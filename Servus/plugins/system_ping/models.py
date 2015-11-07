@@ -12,6 +12,7 @@ class PingHost(models.Model):
     
     CONTAINER = 'system'
     TYPE = 'Ping'
+    WIDGET_TYPE = 'tiled'
     
     name = models.CharField(
         max_length=50,

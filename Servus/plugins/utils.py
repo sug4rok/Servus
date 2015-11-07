@@ -12,6 +12,17 @@ def get_plugins_by_type(type):
     
     return filter(lambda p: p.TYPE == type, sum(PLUGIN_MODELS.values(), []))
 
+    
+def get_plugins_by_package(package):
+    """
+    Функция возвращает список плагинов с названием модуля package.
+    
+    :param package: str Модуль плагина, например "plugins.system_ping".
+    :returns: list Плагины модуля package.
+    """
+    
+    return filter(lambda p: p.PLUGIN_PACKAGE == package, sum(PLUGIN_MODELS.values(), []))
+    
 
 def get_used_plugins(plugins):
     """
@@ -25,24 +36,30 @@ def get_used_plugins(plugins):
     return reduce(lambda res, p: res + tuple(p.objects.filter(is_used=True)), plugins, ())
     
     
-def get_used_plugins_by_type(type):
+def get_used_plugins_by(type=None, package=None):
     """
-    Функция возвращает список плагинов типа type, атрибут is_used
+    Функция возвращает список плагинов с указанным типом или названим модуля, атрибут is_used
     которых равен True.
     
     :param type: str Тип плагинов, напремер "Forecast".
+    :param package: str Модуль плагина, например "plugins.system_ping".
     :returns: list Плагины типа type.
     """
+    
+    if type is not None:
+        return get_used_plugins(get_plugins_by_type(type))
+    elif package is not None:
+        return get_used_plugins(get_plugins_by_package(package))
+    else:
+        return []
 
-    return get_used_plugins(get_plugins_by_type(type))
-    
-    
-def get_widget_plugins():
+        
+def get_widget_plugin_names():
     """
-    Функция возвращает список плагинов, которые имеют виджеты.
-    
-    :returns: list Перечень плагинов-виджетов.
+    Функция возвращает список названий модулей плагинов-виджетов.
     """
 
     plugins = sum(PLUGIN_MODELS.values(), [])
-    return reduce(lambda res, p: res + tuple(p.objects.filter(is_widget=True)), plugins, ())
+    if plugins:
+        return [p.PLUGIN_PACKAGE for p in plugins if p.WIDGET_TYPE is not None]
+    return []

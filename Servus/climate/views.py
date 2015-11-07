@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from django.contrib.contenttypes.models import ContentType
 
 from base.views import call_template
-from plugins.utils import get_used_plugins_by_type
+from plugins.utils import get_used_plugins_by
 from climate.models import TempHumidValue
 
 
@@ -15,7 +15,7 @@ def climate(request):
     :param request: django request
     """
 
-    th_sensors = get_used_plugins_by_type('TempHumidSensor')
+    th_sensors = get_used_plugins_by(type='TempHumidSensor')
     
     values = TempHumidValue.objects.filter(datetime__gte=datetime.today() - timedelta(days=3)).order_by('datetime')
 

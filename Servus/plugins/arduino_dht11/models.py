@@ -19,6 +19,7 @@ class SensorDHT11(models.Model):
     
     CONTAINER = 'climate'
     TYPE = 'TempHumidSensor'
+    WIDGET_TYPE = 'positioned'
     
     name = models.SlugField(
         max_length=10,

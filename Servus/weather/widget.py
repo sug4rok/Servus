@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from django.contrib.contenttypes.models import ContentType
 
-from plugins.utils import get_used_plugins_by_type
+from plugins.utils import get_used_plugins_by
 from .models import WeatherValue
 from .utils import CLOUDS_RANGE, FALLS_RANGE
 
@@ -24,7 +24,7 @@ def common_forecast(date):
     dt2 = datetime(date.year, date.month, date.day, 16)
     
     # Получаем все используемые модели плагинов типа 'Forecast'
-    f_objs = get_used_plugins_by_type('Forecast')
+    f_objs = get_used_plugins_by(type='Forecast')
 
     # Получаем кортеж объектов, учавствующих в усреднении (on_sidebar=True).
     sidebar_objs = filter(lambda f: f.on_sidebar, f_objs)
@@ -82,4 +82,5 @@ def get_widget_data():
     :return: list Погодные данные
     """
 
-    return common_forecast(datetime.today()), common_forecast(datetime.today() + timedelta(days=1))
+    result = common_forecast(datetime.today()), common_forecast(datetime.today() + timedelta(days=1))
+    return {'widget_type': 'tiled', 'data': result}

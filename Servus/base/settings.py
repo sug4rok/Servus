@@ -59,7 +59,7 @@ ROOT_URLCONF = 'base.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['/plugins/{0}/tempates/'.format(p.split('.')[1]) for p in PLUGINS],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -155,7 +155,7 @@ CRON_CLASSES = [
     'climate.cron.GetTempHumid',
     'weather.cron.GetWeatherJob',
     'slideshow.cron.SlideshowJob',
-    'system.cron.GetPingStatus',
+    'plugins.system_ping.cron.GetPingStatus',
 ]
 
 LOGGING = {

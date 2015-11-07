@@ -1,9 +1,13 @@
 ﻿# coding=utf-8
 from importlib import import_module
+import logging
 
 from base.models import Application
 from base.views import call_template
 from .models import Plan
+from plugins.utils import get_widget_plugin_names
+
+logger = logging.getLogger(__name__)
 
 
 def summary(request):
@@ -21,24 +25,34 @@ def summary(request):
 
     # Получаем данные с виджетов приложений
     apps = Application.objects.filter(is_widget=1).values_list('name', flat=True)
-    for app in apps:
+    plugins = get_widget_plugin_names()
+    widget_apps = list(apps) + plugins
+
+    for app in widget_apps:
         try:
             widget = import_module(app + '.widget')
+            if 'plugins' in app:
+                app = app.split('.')[1]
+ 
             try:
+                widget_data = {}
                 get_widget_data = getattr(widget, 'get_widget_data')
+                
                 if app == 'events':
                     # Получение списка событий для текущей сессии.
-                    params[app] = get_widget_data(current_session)
+                    widget_data = get_widget_data(current_session)
                 else:
-                    params[app] = get_widget_data()
+                    widget_data = get_widget_data()
                 
                 # Если есть данные для виджета, добавляем его html-страницу к списку страниц виджетов
-                if params[app]:
-                    widget_pages.append(app + '/widget_tiled.html')
+                if widget_data:
+                    params[app] = widget_data['data']
+                    widget_pages.append((widget_data['widget_type'], app + '/widget.html'))
+
             except AttributeError:
-                pass
+                logger.error(app + ': widget module hasn\'t get_widget_data function.')
         except ImportError:
-            pass
+            logger.error(app + ': widget module ImportError.')
     
     params['widget_pages'] = widget_pages
 

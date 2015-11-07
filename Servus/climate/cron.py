@@ -1,6 +1,6 @@
 ﻿# coding=utf-8
 from base.utils import CJB
-from plugins.utils import get_used_plugins_by_type
+from plugins.utils import get_used_plugins_by
 from .utils import command
 
 
@@ -13,7 +13,7 @@ class GetTempHumid(CJB):
 
     def do(self):
 
-        th_sensors = get_used_plugins_by_type('TempHumidSensor')
+        th_sensors = get_used_plugins_by(type='TempHumidSensor')
 
         if th_sensors:
             for s in th_sensors:

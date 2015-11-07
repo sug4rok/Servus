@@ -12,18 +12,22 @@ class PreparePluginAdmin(admin.ModelAdmin):
         поля, в которых нет необходимости для данного плагина.
         """
         
-        # Получаем fieldsets по умолчанию и отрезаем последние 5 полей: widget_type,
-        # plan_image, horiz_position и vert_position
         fieldsets = super(PreparePluginAdmin, self).get_fieldsets(request, obj)
-        fieldsets[0][1]['fields'] = fieldsets[0][1]['fields'][:-4]
+        fields = fieldsets[0][1]['fields']
         
-        if obj is not None:
-            if obj.is_widget:
-                if obj.widget_type=='positioned':
-                    fieldsets += (('Настройки виджета', 
-                        {'fields': ('widget_type', 'plan_image', ('horiz_position', 'vert_position'))}), )
-                else:
-                    fieldsets += (('Настройки виджета', {'fields': ('widget_type', )}), )
+        # Убираем отображение полей настройки позиционного виджета, пока виджет явно включен,
+        # т.е. пока is_widget=False или объект не создан вообще.
+        try:
+            fields.remove('plan_image')
+            fields.remove('horiz_position')
+            fields.remove('vert_position')
+        except ValueError:
+            pass
+            
+        if obj is not None and hasattr(obj, 'is_widget'):
+            if obj.is_widget and obj.WIDGET_TYPE == 'positioned':
+                fieldsets += (('Настройки виджета', 
+                    {'fields': ('plan_image', ('horiz_position', 'vert_position'))}), )
         return fieldsets
 
 
