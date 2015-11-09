@@ -3,7 +3,9 @@
     {% for widget_type, page in widget_pages %}
         {% if widget_type == 'tiled' %}
             <div class='col-xs-4 col-sm-3 col-md-2 col-lg-2 placeholder'>
-                {% include page %}
+                <div class='panel panel-default widget'>
+                    {% include page %}
+                </div>
             </div>
         {% elif type == 'positioned' %}
             <div style='position: absolute; border:1px solid white;' id='th'>

@@ -1,17 +1,15 @@
-<div class='panel panel-default widget'>
-    <div class='list-group-item widget-padding'>
-        Сеть
-    </div>
-    <div class='panel-body widget-padding'>
-        <table class='tab_short table table-condensed' border='0'>
-            {%  for host, status, color in system_ping %}
-                <tr>
-                    <th>{{ host }}</th>
-                    <td>
-                        <span class='{{ status }}' style='color: {{ color }};'></span>
-                    </td>
-                </tr>
-            {%  endfor %}
-        </table>
-    </div>
+<div class='list-group-item widget-padding'>
+    Сеть
+</div>
+<div class='panel-body widget-padding'>
+    <table class='tab_short table table-condensed' border='0'>
+        {%  for host, status, color in system_ping %}
+            <tr>
+                <th>{{ host }}</th>
+                <td>
+                    <span class='{{ status }}' style='color: {{ color }};'></span>
+                </td>
+            </tr>
+        {%  endfor %}
+    </table>
 </div>
