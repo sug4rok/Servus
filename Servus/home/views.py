@@ -45,7 +45,7 @@ def summary(request):
                     widget_data = get_widget_data()
                 
                 # Если есть данные для виджета, добавляем его html-страницу к списку страниц виджетов
-                if widget_data:
+                if widget_data['data']:
                     params[app] = widget_data['data']
                     widget_pages.append((widget_data['widget_type'], app + '/widget.html'))
 
