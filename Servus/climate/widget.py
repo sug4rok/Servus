@@ -24,4 +24,4 @@ def get_widget_data():
     except IndexError:
         result = []
 
-    return {'widget_type': 'tiled', 'data': result}
+    return result

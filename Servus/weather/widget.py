@@ -82,5 +82,4 @@ def get_widget_data():
     :return: list Погодные данные
     """
 
-    result = common_forecast(datetime.today()), common_forecast(datetime.today() + timedelta(days=1))
-    return {'widget_type': 'tiled', 'data': result}
+    return common_forecast(datetime.today()), common_forecast(datetime.today() + timedelta(days=1))

@@ -10,6 +10,4 @@ def get_widget_data(current_session):
     :returns: dict Словарь с количеством и уровнем важности непросмотренных событий.
     """
     
-    result = get_amount_events(7, session_key=current_session)
-    return {'widget_type': 'tiled', 'data': result}
-
+    return get_amount_events(7, session_key=current_session)

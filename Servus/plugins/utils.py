@@ -54,12 +54,14 @@ def get_used_plugins_by(type=None, package=None):
         return []
 
         
-def get_widget_plugin_names():
+def get_widget_plugin_names(type):
     """
     Функция возвращает список названий модулей плагинов-виджетов.
+    
+    :param type: str Тип виджета 'tiled' или 'positioned'
     """
 
     plugins = sum(PLUGIN_MODELS.values(), [])
     if plugins:
-        return [p.PLUGIN_PACKAGE for p in plugins if p.WIDGET_TYPE is not None]
+        return [p.PLUGIN_PACKAGE for p in plugins if p.WIDGET_TYPE == type]
     return []

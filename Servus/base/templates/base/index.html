@@ -51,6 +51,16 @@
                 }
             });
         }
+        
+        function positioning_widget(plan_id, widget_id, posX, posY){
+            var planCanvasX = document.getElementById('plan_' + plan_id).clientWidth;
+            var planImgX = document.getElementById('img_' + plan_id).clientWidth;
+            var planImgY = document.getElementById('img_' + plan_id).clientHeight;
+            var x = planCanvasX / 2 - planImgX / 2 + planImgX * posX / 100;
+            var y = planImgY * posY / 100;
+            document.getElementById(widget_id).style.marginLeft = x.toString() + 'px';
+            document.getElementById(widget_id).style.marginTop = y.toString() + 'px';
+        }
     </script>
 </head>
 <body id='body'>

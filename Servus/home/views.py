@@ -10,24 +10,13 @@ from plugins.utils import get_widget_plugin_names
 logger = logging.getLogger(__name__)
 
 
-def summary(request):
-    """
-    Контроллер для ajax-запроса обновления информации на Главной странице.
-    Получаем список приложений, для которых создан виджет (т.е. поле is_widget=True).
-    :param request: django request
-    """
-
+def widgets_data(request, widget_apps, type='tiled', plan_id=0):
+    params = {}
+    widget_pages = []
+    
     request.session.save()
     current_session = request.session.session_key
     
-    params = {}
-    widget_pages = []
-
-    # Получаем данные с виджетов приложений
-    apps = Application.objects.filter(is_widget=1).values_list('name', flat=True)
-    plugins = get_widget_plugin_names()
-    widget_apps = list(apps) + plugins
-
     for app in widget_apps:
         try:
             widget = import_module(app + '.widget')
@@ -42,24 +31,64 @@ def summary(request):
                     # Получение списка событий для текущей сессии.
                     widget_data = get_widget_data(current_session)
                 else:
-                    widget_data = get_widget_data()
+                    widget_data = get_widget_data(plan_id) if plan_id else get_widget_data()
                 
                 # Если есть данные для виджета, добавляем его html-страницу к списку страниц виджетов
-                if widget_data['data']:
-                    params[app] = widget_data['data']
-                    widget_pages.append((widget_data['widget_type'], app + '/widget.html'))
+                if widget_data:
+                    params[app] = widget_data
+                    widget_pages.append(app + '/widget.html')
 
             except AttributeError:
                 logger.error(app + ': widget module hasn\'t get_widget_data function.')
         except ImportError:
             logger.error(app + ': widget module ImportError.')
+            
+    params[type] = widget_pages
     
-    params['widget_pages'] = widget_pages
+    return params
+
+    
+def positioned(request, plan_id=1):
+    """
+    Контроллер для ajax-запроса обновления информации на Главной странице.
+    Получаем список приложений, для которых создан позиционный виджет (т.е. поле is_widget=True).
+    :param request: django request
+    """
+    
+    WIDGET_TYPE = 'positioned'
+    
+    # Получаем данные с виджетов приложений
+    widget_apps = get_widget_plugin_names(WIDGET_TYPE)
+
+    params = widgets_data(request, widget_apps, type=WIDGET_TYPE, plan_id=int(plan_id))
 
     return call_template(
         request,
         params,
-        templ_path='home/summary.html'
+        templ_path='home/positioned.html'
+    )
+    
+    
+def tiled(request):
+    """
+    Контроллер для ajax-запроса обновления информации на Главной странице.
+    Получаем список приложений, для которых создан плиточный виджет (т.е. поле is_widget=True).
+    :param request: django request
+    """
+
+    WIDGET_TYPE = 'tiled'
+    
+    # Получаем данные с виджетов приложений
+    apps = Application.objects.filter(is_widget=1).values_list('name', flat=True)
+    plugins = get_widget_plugin_names(WIDGET_TYPE)
+    widget_apps = list(apps) + plugins
+
+    params = widgets_data(request, widget_apps, type=WIDGET_TYPE)
+
+    return call_template(
+        request,
+        params,
+        templ_path='home/tiled.html'
     )
 
 
@@ -70,7 +99,7 @@ def home(request):
     :param request: django request
     """
 
-    plans = [(p.name, p.image) for p in Plan.objects.filter(is_shown=True)]
+    plans = [(p.id, p.image, p.description) for p in Plan.objects.filter(is_shown=True)]
     params = {'active_app_name': 'home', 'house_plans': plans, }
     
     if len(plans):

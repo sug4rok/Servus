@@ -13,7 +13,5 @@ def get_widget_data():
 
     hosts = get_used_plugins_by(package='plugins.system_ping')
 
-    result = [(host.name, 'glyphicon glyphicon-ok', '#62bd4f') if host.online else (
+    return [(host.name, 'glyphicon glyphicon-ok', '#62bd4f') if host.online else (
         host.name, 'glyphicon glyphicon-remove', '#ed4d63') for host in hosts]
-
-    return {'widget_type': 'tiled', 'data': result}
