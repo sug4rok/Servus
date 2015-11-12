@@ -2,32 +2,25 @@
 
 {% block content %}
     {% if house_plans %}
-        <div class='panel panel-default'>
-            <div class='panel-body'>
-                <dl class='tab_short'>
-                    <dt class='tab_short'>
-                        Планировка дома
-                    </dt>
-                    <dd>
-                        {% for plan_id, plan_img, plan_descr in house_plans %}
-                            <div style='float:right; width:{{ width_plans }}%;' id='plan_{{ plan_id }}'>
-                                <div id='positioned-{{ plan_id }}'></div>
-                                
-                                <script async>
-                                    reload_div('positioned-{{ plan_id }}', 10000);
-                                </script>
-                                
-                                <img src='{{ MEDIA_URL }}{{ plan_img }}' class='img-responsive plan' id='img_{{ plan_id }}'>
-                                <br /><strong><small><em>Рис.</em></small> {{ plan_descr }}</strong>
-                            </div>
-                        {% endfor %}
-                    </dd>
-                </dl>
-            </div>
+        <div class='panel-body'>
+            {% for plan_id, plan_img, plan_descr in house_plans %}
+                <div style='float:right; width:{{ width_plans }}%;' id='plan_{{ plan_id }}'>
+                    <div id='positioned-{{ plan_id }}'></div>
+                    
+                    <script async>
+                        reload_div('positioned-{{ plan_id }}', 10000);
+                    </script>
+                    
+                    <img src='{{ MEDIA_URL }}{{ plan_img }}' class='img-responsive plan' id='img_{{ plan_id }}'>
+                    <br /><strong><small><em>Рис.</em></small> {{ plan_descr }}</strong>
+                </div>
+            {% endfor %}
         </div>
     {% endif %}
-
-    <div id='tiled'></div>
+    
+    <div class='panel-body'>
+        <div id='tiled'></div>
+    </div>
 
     <script async>
         reload_div('tiled', 10000);
