@@ -98,7 +98,7 @@ class Arduino(models.Model):
                         else:
                             self.state = (True, u'OK')
                     except Exception as e:
-                        self.state = (False, u'Датчик %s: e' % (self.obj.name, e))
+                        self.state = (False, u'Датчик %s: %s' % (self.obj.name, e))
                 else:
                     self.state = (False, u'COM-порт %s закрыт' % self.port)
             

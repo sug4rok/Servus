@@ -1,7 +1,8 @@
 ﻿# coding=utf-8
 from base.utils import CJB
 from plugins.utils import get_used_plugins_by
-from .utils import command, weather_db_cleaner
+from .models import WeatherValue
+from .utils import command
 
 
 class GetWeatherJob(CJB):
@@ -21,6 +22,8 @@ class GetWeatherJob(CJB):
         forecasts = get_used_plugins_by(type='Forecast')
         
         if forecasts:
-            weather_db_cleaner()
+            # Очищаем базу weather_weather перед заполнением свежими данными
+            WeatherValue.objects.all().delete()
+            
             for wp in forecasts:
                 command(wp, write_db=True)

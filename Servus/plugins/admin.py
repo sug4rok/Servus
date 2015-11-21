@@ -36,13 +36,18 @@ class PluginAdmin(object):
     Регистрация модели плагина в административной панели.
     """
 
-    def __init__(self, container, settings={}):
+    def __init__(self, container, settings=None):
         """
         :param container: str Название приложения-контейнера, в котором будет размещен плагин.
         :param settings: dict Настройки отображения плагина в административной модели.
         """        
+        
+        if settings == None:
+            self._settings = {}
+        else:
+            self._settings = settings
+            
         self._plugin_models = PLUGIN_MODELS[container]
-        self._settings = settings
         
     def _get_plugin_admin(self, plugin_model):
         return type(plugin_model.__name__ + 'Admin', (PreparePluginAdmin, ), self._settings)

@@ -100,18 +100,7 @@ class WG(object):
     def __str__(self):
         return 'Weather getter class for %s weather provider' % self.wp
 
-
-def weather_db_cleaner():
-    """
-    Очистка базы weather_weather перед заполнением свежими данными
-    """
-
-    try:
-        WeatherValue.objects.all().delete()
-    except Weather.DoesNotExist:
-        pass
-
-
+    
 def set_weather_events(dt, temp, wind_speed, falls_img):
     """
     Функция записи событий о прогнозируемых экстремальных погодных условиях.
