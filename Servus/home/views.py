@@ -10,7 +10,7 @@ from plugins.utils import get_widget_plugin_names
 logger = logging.getLogger(__name__)
 
 
-def widgets_data(request, widget_apps, type='tiled', plan_id=0):
+def widgets_data(request, widget_apps, widget_type='tiled', plan_id=0):
     params = {}
     widget_pages = []
     
@@ -43,7 +43,7 @@ def widgets_data(request, widget_apps, type='tiled', plan_id=0):
         except ImportError:
             logger.error(app + ': widget module ImportError.')
             
-    params[type] = widget_pages
+    params[widget_type] = widget_pages
     
     return params
 
@@ -60,7 +60,7 @@ def positioned(request, plan_id=1):
     # Получаем данные с виджетов приложений
     widget_apps = get_widget_plugin_names(WIDGET_TYPE)
 
-    params = widgets_data(request, widget_apps, type=WIDGET_TYPE, plan_id=int(plan_id))
+    params = widgets_data(request, widget_apps, widget_type=WIDGET_TYPE, plan_id=int(plan_id))
 
     return call_template(
         request,
@@ -83,7 +83,7 @@ def tiled(request):
     plugins = get_widget_plugin_names(WIDGET_TYPE)
     widget_apps = list(apps) + plugins
 
-    params = widgets_data(request, widget_apps, type=WIDGET_TYPE)
+    params = widgets_data(request, widget_apps, widget_type=WIDGET_TYPE)
 
     return call_template(
         request,
