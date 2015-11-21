@@ -97,13 +97,13 @@ class Arduino(models.Model):
                             self.state = (False, u'Датчик %s вернул неверные данные' % self.obj.name)
                         else:
                             self.state = (True, u'OK')
-                    except:
-                        self.state = (False, u'Ошибка получения данных от %s' % self.obj.name)
+                    except Exception as e:
+                        self.state = (False, u'Датчик %s: e' % (self.obj.name, e))
                 else:
                     self.state = (False, u'COM-порт %s закрыт' % self.port)
             
-            logger.debug('Controller %s: command has been received %s | result %s | state: %s ' % (
-                self.obj.controller, cmd, result, self.state[1]))
+            logger.debug('Controller %s: command has been received %s | result %s | state: %s ', 
+                self.obj.controller, cmd, result, self.state[1])
             
             if self.state[0] is not True:
                 event_setter('system', self.state[1], 3, delay=3)

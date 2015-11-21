@@ -70,13 +70,13 @@ class WG(object):
         try:
             url_sock = urlopen(self.wp_url)
         except HTTPError, err:
-            logger.warning(u'Weather %s: urllib2 HTTPError: %s (%s)' % (self.wp, err.code, err.msg))
+            logger.warning(u'Weather %s: urllib2 HTTPError: %s (%s)', self.wp, err.code, err.msg)
             return -1
         try:
             parsed_xml = minidom.parse(url_sock)
             return parsed_xml
         except:
-            logger.warning(u'Weather: Ошибка парсинга %s' % self.wp_url)
+            logger.warning(u'Weather: Ошибка парсинга %s', self.wp_url)
             return -1
         finally:
             url_sock.close()

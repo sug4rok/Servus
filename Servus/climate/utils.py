@@ -84,6 +84,6 @@ def command(s, write_db=False):
                         break
             c.close_port()
         except AttributeError:
-            logger.error(u'Объект %s не имеет атрибута controller' % s)
+            logger.error(u'Объект %s не имеет атрибута controller', s)
     else:
-        logger.error(u'Объект %s не является объектом типа TempHumidSensor' % s)
+        logger.error(u'Объект %s не является объектом типа TempHumidSensor', s)
