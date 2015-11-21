@@ -22,8 +22,8 @@ def events(request):
     current_session = request.session.session_key
 
     if request.POST.get('events'):
-        events = Event.objects.all().exclude(session_keys__session_key=current_session)
-        for e in events:
+        new_events = Event.objects.all().exclude(session_keys__session_key=current_session)
+        for e in new_events:
             e.session_keys.add(Session.objects.get(pk=current_session))
 
     return call_template(request, params)

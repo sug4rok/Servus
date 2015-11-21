@@ -125,7 +125,7 @@ class SMSSendJob(CJB):
         """
         
         recipients = get_used_plugins_by(plugin_type='SMS')
-        recipients_filled = filter(lambda r: r.phone is not None and r.sms_ru_id != '', recipients)
+        recipients_filled = [r for r in recipients if r.phone is not None and r.sms_ru_id != '']
 
         if recipients_filled:
             events = Event.objects.filter(level__gte=3).exclude(sms_sent=True).order_by('-level')

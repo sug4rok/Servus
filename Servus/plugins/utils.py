@@ -10,7 +10,7 @@ def get_plugins_by_type(plugin_type):
     :returns: list Плагины типа plugin_type.
     """
     
-    return filter(lambda p: p.TYPE == plugin_type, sum(PLUGIN_MODELS.values(), []))
+    return [p for p in sum(PLUGIN_MODELS.values(), []) if p.TYPE == plugin_type]
 
     
 def get_plugins_by_package(package):
@@ -20,8 +20,8 @@ def get_plugins_by_package(package):
     :param package: str Модуль плагина, например "plugins.system_ping".
     :returns: list Плагины модуля package.
     """
-    
-    return filter(lambda p: p.PLUGIN_PACKAGE == package, sum(PLUGIN_MODELS.values(), []))
+
+    return [p for p in sum(PLUGIN_MODELS.values(), []) if p.PLUGIN_PACKAGE == package]
     
 
 def get_used_plugins(plugins):
