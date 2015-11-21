@@ -27,7 +27,7 @@ def common_forecast(date):
     f_objs = get_used_plugins_by(plugin_type='Forecast')
 
     # Получаем кортеж объектов, учавствующих в усреднении (on_sidebar=True).
-    sidebar_objs = filter(lambda f: f.on_sidebar, f_objs)
+    sidebar_objs = (f for f in f_objs if f.on_sidebar)
 
     # Для каждого объекта forecast получаем последние данные из таблицы weather_weathervalue.
     w_objs = reduce(lambda res, f: res + tuple(WeatherValue.objects.filter(

@@ -6,7 +6,9 @@ from plugins.utils import get_used_plugins_by
 from .models import WeatherValue
 from .utils import CLOUDS_RANGE, FALLS_RANGE
 
-BG_STYLES = ()
+# Переменная для хранения названий классов css, меняющих фон ячеек
+# таблицы в зависимости от времени суток отображаемого прогноза.
+bg_styles = ()
 
 
 def list_field_values(wp, field):
@@ -47,7 +49,7 @@ def get_clouds(wp):
     cloud_imgs = list_field_values(wp, 'clouds_img')
     cloud_ranges = (CLOUDS_RANGE[i[2]] if i != 'na' else u'Нет данных' for i in cloud_imgs)
 
-    return zip(cloud_imgs, clouds, cloud_ranges, BG_STYLES)
+    return zip(cloud_imgs, clouds, cloud_ranges, bg_styles)
 
 
 def get_precipitation(wp):
@@ -63,7 +65,7 @@ def get_precipitation(wp):
     falls_imgs = list_field_values(wp, 'falls_img')
     falls_ranges = (FALLS_RANGE[i] for i in falls_imgs)
 
-    return zip(falls_imgs, precipitation, falls_ranges, BG_STYLES)
+    return zip(falls_imgs, precipitation, falls_ranges, bg_styles)
 
 
 def get_wind(wp):
@@ -77,11 +79,11 @@ def get_wind(wp):
     wind_speeds = list_field_values(wp, 'wind_speed')
     wind_directions = list_field_values(wp, 'wind_direction')
 
-    return zip(wind_speeds, wind_directions, BG_STYLES)
+    return zip(wind_speeds, wind_directions, bg_styles)
 
 
 def weather(request):
-    global BG_STYLES
+    global bg_styles
 
     params = {}
     forecast = []
@@ -101,13 +103,13 @@ def weather(request):
             if not forecast_times:  # Если нет ни одной записи о времени прогноза погоды, считаем,
                 continue  # что нет данных для данного прогнозного API и пропускаем данную итерацию.
 
-            BG_STYLES = get_bg_styles(forecast_times)  # Получаем кортеж названий классов css
+            bg_styles = get_bg_styles(forecast_times)  # Получаем кортеж названий классов css
             values = []
             for field_i in fields[3:-3]:
                 field_values = [field_i.name, field_i.verbose_name, field_i.help_text]
 
                 if field_i.name == 'datetime':
-                    field_values.append(zip(forecast_times, BG_STYLES))
+                    field_values.append(zip(forecast_times, bg_styles))
                 elif field_i.name == 'clouds':
                     field_values.append(get_clouds(wp))
                 elif field_i.name == 'precipitation':
@@ -115,7 +117,7 @@ def weather(request):
                 elif field_i.name == 'wind_speed':
                     field_values.append(get_wind(wp))
                 else:
-                    field_values.append(zip(list_field_values(wp, field_i.name), BG_STYLES))
+                    field_values.append(zip(list_field_values(wp, field_i.name), bg_styles))
 
                 values.append(field_values)
 

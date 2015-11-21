@@ -1,6 +1,6 @@
 doc-warnings: no
 test-warnings: no
-strictness: veryhigh
+strictness: high
 pep8:
     full: true
 uses:

@@ -8,28 +8,29 @@ from .models import Application, Location
 
 class UserAdmin(admin.ModelAdmin):
     list_display = ('username', 'email', 'is_staff', 'is_active')
-    fields = ('username', 'first_name', 'last_name', 'email', 'is_staff', 'is_active', 'password')
+    fields = ('username', 'first_name', 'last_name', 'email', 'is_staff',
+        'is_active', 'password')
     readonly_fields = ('password', )
 
-    
+
 class ApplicationAdmin(admin.ModelAdmin):
     list_display = ('name', 'is_tab', 'is_widget')
     base_fieldsets = (('', {'fields': ('name', 'is_tab', 'is_widget')}), )
-    
+
     def get_form(self, request, obj=None, **kwargs):
         """
-        Отображение полей в зависимости от значения is_widget и is_tab, чтобы не отображать
-        поля, в которых нет необходимости.
+        Отображение полей в зависимости от значения is_widget и is_tab, чтобы
+        не отображать поля, в которых нет необходимости.
         """
-        
+
         if obj is not None:
             self.fieldsets = self.base_fieldsets
             if obj.is_tab:
-                self.fieldsets += (('Настройки вкладки', 
+                self.fieldsets += (('Настройки вкладки',
                     {'fields': ('tab_name', 'title', 'sub_title')}), )
-                
+
             if obj.is_widget:
-                if obj.widget_type=='positioned':
+                if obj.widget_type=='positioned': 
                     self.fieldsets += (('Настройки виджета', 
                         {'fields': ('widget_type', 'plan_image', ('horiz_position', 'vert_position'))}), )
                 else:
