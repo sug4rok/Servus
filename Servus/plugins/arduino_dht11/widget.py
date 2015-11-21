@@ -19,7 +19,8 @@ def get_widget_data(plan_id):
         th_values = [TempHumidValue.objects.filter(content_type_id=ContentType.objects.get_for_model(s).id,
             object_id=s.id).order_by('-datetime')[0] for s in th_sensors]
             
-        result = [(plan_id, th_v.content_object.name, th_v.content_object.horiz_position, th_v.content_object.vert_position, th_v.temperature, th_v.humidity) for th_v in th_values]
+        result = [(plan_id, th_v.content_object.name, th_v.content_object.horiz_position,
+            th_v.content_object.vert_position, th_v.temperature, th_v.humidity) for th_v in th_values]
                 
     except IndexError:
         result = []

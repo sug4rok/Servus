@@ -1,0 +1,18 @@
+doc-warnings: yes
+test-warnings: no
+strictness: veryhigh
+pep8:
+    full: true
+uses:
+    - django
+    - django-cron
+    - Pillow
+autodetect: yes
+ignore-paths:
+    - SCREENSHOTS
+    - Servus/manage.py
+    - Servus/logs
+    - Servus/media
+ignore-patterns:
+    - (^|/)migrations(/|$)
+    - (^|/)static(/|$)
