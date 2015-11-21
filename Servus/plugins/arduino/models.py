@@ -97,8 +97,8 @@ class Arduino(models.Model):
                             self.state = (False, u'Датчик %s вернул неверные данные' % self.obj.name)
                         else:
                             self.state = (True, u'OK')
-                    except Exception as e:
-                        self.state = (False, u'Датчик %s: %s' % (self.obj.name, e))
+                    except Exception as err:
+                        self.state = (False, u'Датчик %s: %s' % (self.obj.name, err))
                 else:
                     self.state = (False, u'COM-порт %s закрыт' % self.port)
             

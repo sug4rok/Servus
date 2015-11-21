@@ -89,8 +89,8 @@ class EmailsSendJob(CJB):
                     msg.send()
 
                     events.update(email_sent=True)
-                except smtplib.SMTPException as e:
-                    event_setter('system', u'Ошибка отправки письма: %s' % e, 3, delay=3, email=False)
+                except smtplib.SMTPException as err:
+                    event_setter('system', u'Ошибка отправки письма: %s' % err, 3, delay=3, email=False)
 
         emails = User.objects.filter(is_active=True).exclude(email='')
         
@@ -154,8 +154,8 @@ class SMSSendJob(CJB):
                             sms_were_sent.append(False)
                         else:
                             sms_were_sent.append(True)
-                    except URLError as e:
-                        event_setter('system', u'Ошибка отправки СМС: %s' % e, 3, delay=3, sms=False)
+                    except URLError as err:
+                        event_setter('system', u'Ошибка отправки СМС: %s' % err, 3, delay=3, sms=False)
                         sms_were_sent.append(False)
             
             # Если все сообщения отправлены всем получателям, меняем параметр sms_sent сообщений
