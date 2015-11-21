@@ -42,7 +42,7 @@ class PluginAdmin(object):
         :param settings: dict Настройки отображения плагина в административной модели.
         """        
         
-        if settings == None:
+        if settings is None:
             self._settings = {}
         else:
             self._settings = settings

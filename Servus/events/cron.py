@@ -110,8 +110,7 @@ class SMSSendJob(CJB):
     """
     CronJobBase класс для отправки SMS-сообщений с наиболее важными событиями.
     Для отправки используются возможность отправки бесплатных сообщений для разработчиков
-    на сайте sms.ru. Затем, меняет флаг sms_sent у каждого события,
-    которое блыо отправлено.
+    на сайте sms.ru.
     """
 
     RUN_EVERY_MINS = 10
@@ -121,7 +120,7 @@ class SMSSendJob(CJB):
         """
         Функция проверяет наличие сообщений с важностью 'warning' и 'error' и
         формирует SMS-сообщение для отправлки по расписанию на все api_id из таблицы base_userprofile БД.
-        Затем, меняет флаг email_sent у каждого события, которое
+        Затем, меняет флаг sms_sent у каждого события, которое
         блыо отправлено.
         """
         
@@ -139,6 +138,8 @@ class SMSSendJob(CJB):
                 sms_msgs.append(txt_msg[:69])
                 txt_msg = txt_msg[69:]
         
+            sms_were_sent = []
+            
             for r in recipients_filled:
                 for m in sms_msgs:
                     url = 'http://sms.ru/sms/send?api_id=%s&to=%s&text=%s' % (r.sms_ru_id, r.phone, m)
@@ -150,8 +151,13 @@ class SMSSendJob(CJB):
                         if res is not None and int(res[0]) != 100:
                             event_setter('system', u'Ошибка отправки СМС: %s' % SERVICECODES[int(res[0])], 3, delay=3,
                                          sms=False)
+                            sms_were_sent.append(False)
                         else:
-                            e.sms_sent = True
-                            e.save()
+                            sms_were_sent.append(True)
                     except URLError as e:
                         event_setter('system', u'Ошибка отправки СМС: %s' % e, 3, delay=3, sms=False)
+                        sms_were_sent.append(False)
+            
+            # Если все сообщения отправлены всем получателям, меняем параметр sms_sent сообщений
+            if all(sms_were_sent):
+                events.update(sms_sent=True)
