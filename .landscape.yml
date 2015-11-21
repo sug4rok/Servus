@@ -5,8 +5,6 @@ pep8:
     full: true
 uses:
     - django
-    - django-cron
-    - Pillow
 autodetect: yes
 ignore-paths:
     - SCREENSHOTS

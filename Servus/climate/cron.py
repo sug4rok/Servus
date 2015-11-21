@@ -13,7 +13,7 @@ class GetTempHumid(CJB):
 
     def do(self):
 
-        th_sensors = get_used_plugins_by(type='TempHumidSensor')
+        th_sensors = get_used_plugins_by(plugin_type='TempHumidSensor')
 
         if th_sensors:
             for s in th_sensors:

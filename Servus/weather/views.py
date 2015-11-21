@@ -87,7 +87,7 @@ def weather(request):
     forecast = []
 
     # Получаем все модели плагинов типа 'Forecast'
-    forecasts = get_used_plugins_by(type='Forecast')
+    forecasts = get_used_plugins_by(plugin_type='Forecast')
 
     # Если хотябы один прогнозный API добавлен, собираем список данных для передачи в шаблон.    
     if forecasts:

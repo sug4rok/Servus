@@ -19,7 +19,7 @@ class GetWeatherJob(CJB):
         и запись полученных результатов с помощью функции weather_setter в таблицу БД Weather.
         """
         
-        forecasts = get_used_plugins_by(type='Forecast')
+        forecasts = get_used_plugins_by(plugin_type='Forecast')
         
         if forecasts:
             # Очищаем базу weather_weather перед заполнением свежими данными

@@ -24,7 +24,7 @@ def common_forecast(date):
     dt2 = datetime(date.year, date.month, date.day, 16)
     
     # Получаем все используемые модели плагинов типа 'Forecast'
-    f_objs = get_used_plugins_by(type='Forecast')
+    f_objs = get_used_plugins_by(plugin_type='Forecast')
 
     # Получаем кортеж объектов, учавствующих в усреднении (on_sidebar=True).
     sidebar_objs = filter(lambda f: f.on_sidebar, f_objs)

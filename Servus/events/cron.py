@@ -124,7 +124,7 @@ class SMSSendJob(CJB):
         блыо отправлено.
         """
         
-        recipients = get_used_plugins_by(type='SMS')
+        recipients = get_used_plugins_by(plugin_type='SMS')
         recipients_filled = filter(lambda r: r.phone is not None and r.sms_ru_id != '', recipients)
 
         if recipients_filled:

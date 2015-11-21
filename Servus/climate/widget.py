@@ -11,7 +11,7 @@ def get_widget_data():
     :returns: список кортежей вида [(<полное имя датчика>, влажность, тепмпература), ...]
     """
 
-    th_sensors = get_used_plugins_by(type='TempHumidSensor')
+    th_sensors = get_used_plugins_by(plugin_type='TempHumidSensor')
 
     # Для каждого объекта-сенсора получаем последние данные из таблицы climate_temphumidvalue.
     # Вся сложность в определении в этой таблице пренадлежности данных конкретному сенсору, т.к.
