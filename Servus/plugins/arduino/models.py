@@ -16,10 +16,10 @@ class Arduino(models.Model):
     """
     Модель для описания подключенного контроллера Arduino
     """
-    
+
     CONTAINER = 'system'
     TYPE = 'Controller'
-    
+
     name = models.CharField(
         max_length=50,
         verbose_name='Модель',
@@ -34,19 +34,19 @@ class Arduino(models.Model):
                   В Windows порт = № порта - 1;<br>\
                   В Linux   порт = /dev/ttyACM0'
     )
-    
+
     class Meta(object):
         verbose_name = 'Контроллер Arduino'
         verbose_name_plural = 'Контроллеры Arduino'
 
     def __unicode__(self):
         return '%s: %s' % (self.name, self.port)
-        
+
     class Command(object):
         """
         Класс для работы с контроллером arduino, подключенного к последовательному порту.
         """
-        
+
         def __init__(self, obj):
             """
             Инициализация подключения к последовательному порту. Пытаемся подключиться к порту для 
@@ -54,26 +54,26 @@ class Arduino(models.Model):
             
             :param obj: object Объект, подключенный к данному контроллеру (датчик, сервопривод и пр.).
             """
-            
+
             self.state = (True, '')
             self.obj = obj
-            
+
             try:
                 self.port = obj.controller.port
-                
+
                 try:
                     self.ser = serial.Serial(self.port)
                     time.sleep(2)
                 except serial.SerialException:
                     self.state = (False, u'Не могу открыть COM-порт %s' % self.port)
-                    
+
             except AttributeError:
                 self.state = (False, u'Переданный контроллеру объект %s не имеет атрибута port' % self.obj)
-            
+
             if self.state[0] is not True:
                 event_setter('system', self.state[1], 4, delay=3, email=True)
                 logger.error(self.state[1])
-  
+
         def send(self, cmd):
             """
             Передача команды arduino и запись возвращаемых от нее результатов.
@@ -82,7 +82,7 @@ class Arduino(models.Model):
             температуры; 10 - номер вывода (pin) arduino, к которому подключе датчик
             :returns: результат работы переданной arduino команды
             """
-            
+
             result = ''
 
             if self.state[0]:
@@ -101,19 +101,19 @@ class Arduino(models.Model):
                         self.state = (False, u'Датчик %s: %s' % (self.obj.name, err))
                 else:
                     self.state = (False, u'COM-порт %s закрыт' % self.port)
-            
-            logger.debug('Controller %s: command has been received %s | result %s | state: %s ', 
-                self.obj.controller, cmd, result, self.state[1])
-            
+
+            logger.debug('Controller %s: command has been received %s | result %s | state: %s ',
+                         self.obj.controller, cmd, result, self.state[1])
+
             if self.state[0] is not True:
                 event_setter('system', self.state[1], 3, delay=3)
                 logger.warning(self.state[1])
-            
+
             return result
-        
+
         def close_port(self):
             """
             Завершение работы с последовательным портом
             """
-            
+
             self.ser.close()

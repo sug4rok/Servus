@@ -53,15 +53,15 @@ def command(s, write_db=False):
     :param s: object Датчик температы/влажности
     :param write_db: boolean Переменная, для переключения вывода информации - запись в базу данных / вывод в лог
     """
-    
+
     if s.TYPE == 'TempHumidSensor':
         try:
             c = s.controller.Command(s)
-            
+
             if c.state[0]:
                 cmd = 't%d\n' % s.controller_pin
                 counter = 3
-                while counter:                        
+                while counter:
                     result = c.send(cmd)
 
                     if c.state[0]:

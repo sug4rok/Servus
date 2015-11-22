@@ -27,8 +27,6 @@ class YandexRU(models.Model):
         help_text='Пятизначный ID населенного пункта. Узнать ID своего города можно\
         <a href="https://pogoda.yandex.ru/static/cities.xml" target="_blank">здесь</a>',
         unique=True,
-        blank=False,
-        null=False,
         validators=[
             MaxValueValidator(99999),
             MinValueValidator(00000)

@@ -27,8 +27,6 @@ class OpenWeatherMap(models.Model):
         help_text='Узнать ID своего города можно\
         <a href="http://bulk.openweathermap.org/sample/city.list.json.gz" target="_blank">здесь</a>',
         unique=True,
-        blank=False,
-        null=False,
         validators=[
             MaxValueValidator(9999999),
             MinValueValidator(00000)
@@ -37,7 +35,7 @@ class OpenWeatherMap(models.Model):
     api_key = models.CharField(
         max_length=32,
         verbose_name='Ключ API',
-        help_text='Ваш ключ API (с 9 октября требуется регистрация).',    
+        help_text='Ваш ключ API (с 9 октября требуется регистрация).',
     )
     on_sidebar = models.BooleanField(
         default=False,
@@ -46,11 +44,11 @@ class OpenWeatherMap(models.Model):
             прогноза погоды в виде виджета на Главной странице.<br>\
            (Отмечать, по понятным причинам, имеет смысл прогнозы для одного и того же города)'
     )
-    
+
     def get_url(self):
-        return 'http://api.openweathermap.org/data/2.5/forecast/daily?id=%s&mode=xml&units=metric&cnt=4&appid=%s'\
-        % (self.city_id, self.api_key)
-        
+        return 'http://api.openweathermap.org/data/2.5/forecast/daily?id=%s&mode=xml&units=metric&cnt=4&appid=%s' \
+               % (self.city_id, self.api_key)
+
     def __unicode__(self):
         return self.city
 
@@ -59,7 +57,7 @@ class OpenWeatherMap(models.Model):
         verbose_name_plural = 'Прогнозы погоды от openweathermap.org'
 
     class Forecast(WG):
-    
+
         def __init__(self, wp):
             WG.__init__(self, wp)
 

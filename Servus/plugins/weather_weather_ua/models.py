@@ -27,8 +27,6 @@ class WeatherUa(models.Model):
         help_text='Узнать ID своего города можно поиском по базе городов,\
         например, так: http://xml.weather.ua/1.2/city/?search=<font color="#5577cc">Санкт-Петербург</font>',
         unique=True,
-        blank=False,
-        null=False,
         validators=[
             MaxValueValidator(99999),
             MinValueValidator(0)

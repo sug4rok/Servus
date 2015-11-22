@@ -23,8 +23,6 @@ class SMSRu(models.Model):
         help_text='Номер телефона для отправки сообщений через сервис sms.ru.<br>\
             Диапазон номеров ограничен 1*e10 - 9,(9)*e12 (подробности на sms.ru).<br>\
             Формат для РФ 7xxxyyyyyyy, где xxx - код оператора, yyyyyyy - номер телефона.<br>',
-        blank=False,
-        null=False,
         validators=[
             MaxValueValidator(9999999999999),
             MinValueValidator(10000000000)

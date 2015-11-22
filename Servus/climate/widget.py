@@ -18,8 +18,8 @@ def get_widget_data():
     # для обезличивания сенсоров мы использовали GenericForeignKey.
     try:
         th_values = [TempHumidValue.objects.filter(content_type_id=ContentType.objects.get_for_model(s).id,
-            object_id=s.id).order_by('-datetime')[0] for s in th_sensors]
-                
+                                                   object_id=s.id).order_by('-datetime')[0] for s in th_sensors]
+
         result = [(th_v.content_object.location, th_v.humidity, th_v.temperature) for th_v in th_values]
     except IndexError:
         result = []
