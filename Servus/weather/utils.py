@@ -100,7 +100,7 @@ class WG(object):
     def __str__(self):
         return 'Weather getter class for %s weather provider' % self.wp
 
-    
+
 def set_weather_events(dt, temp, wind_speed, falls_img):
     """
     Функция записи событий о прогнозируемых экстремальных погодных условиях.

@@ -68,7 +68,7 @@ class Application(models.Model):
         null=True
     )
     is_widget = models.BooleanField(
-        verbose_name='Виджет',    
+        verbose_name='Виджет',
         help_text='Имеет собственный виджет на Главной странице',
         default=False
     )

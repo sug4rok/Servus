@@ -10,10 +10,10 @@ class SMSRu(models.Model):
     """
     Модель для настройки отправки сообщений через сайт sms.ru
     """
-    
+
     CONTAINER = 'system'
     TYPE = 'SMS'
-    
+
     name = models.ForeignKey(
         User,
         verbose_name='Пользователь',
@@ -34,7 +34,7 @@ class SMSRu(models.Model):
         blank=True,
         null=True
     )
-    
+
     class Meta(object):
         verbose_name = 'sms.ru id'
         verbose_name_plural = 'sms.ru id'

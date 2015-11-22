@@ -24,15 +24,15 @@ class CJB(CronJobBase):
         elif self.RUN_AT_TIMES:
             self.schedule = Schedule(run_at_times=self.RUN_AT_TIMES)
         self.code = type(self).__name__
-        
+
 
 def fill_base_applications(container_apps):
     """
     If in the database there is a table fill the table base_application.
-    
+
     :param container_apps: tuple CONTAINER_APPS from settings file.
     """
-    
+
     from django.db.utils import OperationalError, ProgrammingError
     try:
         from base.models import Application

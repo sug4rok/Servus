@@ -12,7 +12,7 @@ class SlideshowChanges(models.Model):
     mtime = models.FloatField(
         default=0.0
     )
-    
+
     def __unicode__(self):
         return 'Slideshow modification time %s' % self.mtime
 

@@ -22,7 +22,7 @@ def common_forecast(date):
     # (будем считать, что день у нас с 12 до 16 часов ;)).
     dt1 = datetime(date.year, date.month, date.day, 12)
     dt2 = datetime(date.year, date.month, date.day, 16)
-    
+
     # Получаем все используемые модели плагинов типа 'Forecast'
     f_objs = get_used_plugins_by(plugin_type='Forecast')
 
@@ -37,7 +37,7 @@ def common_forecast(date):
     amount_data = len(w_objs)
     if amount_data:
         forecast = {'temperature': [], 'wind_speed': [], 'clouds_img': [], 'falls_img': [], 'wind_direction': []}
-        
+
         for f in forecast:
             for o in w_objs:
                 forecast[f].append(getattr(o, f))

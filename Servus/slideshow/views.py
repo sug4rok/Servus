@@ -13,8 +13,8 @@ class NotImageError(Exception):
     """
     Обработка исключения, возникающего при открытии файлов,
     не являющихся файлми изображений.
-    """ 
-    
+    """
+
     def __init__(self, file_type):
         Exception.__init__(self, file_type)
         self.file_type = file_type
@@ -27,8 +27,8 @@ class PathNotFound(Exception):
     """
     Обработка исключения ошибочного пути до папки с файлми
     изображений.
-    """ 
-    
+    """
+
     def __init__(self, broken_path):
         Exception.__init__(self, broken_path)
         self.broken_path = broken_path

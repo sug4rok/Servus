@@ -10,7 +10,7 @@ ALERTS = {0: 'default', 1: 'success', 2: 'info', 3: 'warning', 4: 'danger'}
 def get_events(days):
     """
     События за последние days дней.
-    
+
     :param days: int Количество дней, за которые нужно вывести произошедшие события.
     :returns: list Непросмотренные пользователем события за последнии days дней.
     """
@@ -63,7 +63,7 @@ def event_setter(source, message, level, delay=24, sms=False, email=False):
     events = Event.objects.filter(datetime__gte=datetime.now() - timedelta(hours=delay))
 
     if message not in events.values_list('message', flat=True):
-    
+
         if source not in INSTALLED_APPS:
             source = 'system'
 

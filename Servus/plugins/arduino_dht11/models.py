@@ -16,11 +16,11 @@ class SensorDHT11(models.Model):
     """
     Модель для добавления новых датчиков влажности и температуры DHT11
     """
-    
+
     CONTAINER = 'climate'
     TYPE = 'TempHumidSensor'
     WIDGET_TYPE = 'positioned'
-    
+
     name = models.SlugField(
         max_length=10,
         verbose_name='Системное имя',

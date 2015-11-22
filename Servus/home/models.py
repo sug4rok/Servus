@@ -11,7 +11,7 @@ class Plan(models.Model):
         upload_to='plans',
         verbose_name='Файл с планировкой',
         help_text='Выберите файл с планировкой помещения',
-    )    
+    )
     description = models.CharField(
         max_length=20,
         verbose_name='Название',

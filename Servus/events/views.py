@@ -17,7 +17,7 @@ def events(request):
 
     days = 14
     params = {'active_app_name': 'events', 'events': get_events(days), 'alerts': ALERTS}
-    
+
     request.session.save()
     current_session = request.session.session_key
 

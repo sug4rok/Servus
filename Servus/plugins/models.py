@@ -17,9 +17,9 @@ class Plugins(object):
     @staticmethod
     def _get_plugin_model(plugin_package):
         """
-        Метод возвращает модель плагина, указанный в переменной 
+        Метод возвращает модель плагина, указанный в переменной
         <some_plugin>.models.MODEL
-        
+
         :param plugin_package: module  Пакет плагина
         :returns: <class 'django.db.models.base.ModelBase'> Модель плагина
         """
@@ -35,7 +35,7 @@ class Plugins(object):
             model_type = model_object.TYPE
         except AttributeError:
             model_type = None
-            
+
         try:
             model_widget_type = model_object.WIDGET_TYPE
         except AttributeError:
@@ -49,12 +49,12 @@ class Plugins(object):
         """
         Метод возвращает новую модель плагина, основанную на ранее подгруженной.
         В новую модель добавлены обязательные для всех плагинов атрибуты.
-        
+
         :param plugin_model: <class 'django.db.models.base.ModelBase'> Модель плагина.
         :param plugin_package: str Название/относительный путь до модуля плагина.
         :returns: <class 'django.db.models.base.ModelBase'> Новая модель плагина.
         """
-        
+
         params = {
             'CONTAINER': plugin_model['container'],
             'TYPE': plugin_model['type'],
@@ -72,14 +72,14 @@ class Plugins(object):
             'parent': models.OneToOneField(plugin_model['object'], parent_link=True),
             '__module__': plugin_model['container'] + '.models',  # Меняем имя модуля, содержащего новый класс
         }
-        
+
         if plugin_model.get('widget_type') is not None:
             params['is_widget'] = models.BooleanField(
-                verbose_name='Виджет',    
+                verbose_name='Виджет',
                 help_text='Имеет собственный виджет на Главной странице',
                 default=False
             )
-            
+
             if plugin_model['widget_type'] == 'positioned':
                 params.update({
                     'plan_image': models.ForeignKey(
@@ -113,7 +113,7 @@ class Plugins(object):
         """
         Метод возвращает словарь, в котором ключи - названия контейнеров плагинов,
         а значения ключей - списки моделей плагинов, относящихся к данным контейнерам.
-        
+
         :returns: dict Словарь, вида {'container1': [model_object1, model_object2,..],..}
         """
 

@@ -91,7 +91,7 @@ def weather(request):
     # Получаем все модели плагинов типа 'Forecast'
     forecasts = get_used_plugins_by(plugin_type='Forecast')
 
-    # Если хотябы один прогнозный API добавлен, собираем список данных для передачи в шаблон.    
+    # Если хотябы один прогнозный API добавлен, собираем список данных для передачи в шаблон.
     if forecasts:
 
         fields = WeatherValue._meta.fields

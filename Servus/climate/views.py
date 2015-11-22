@@ -16,7 +16,7 @@ def climate(request):
     """
 
     th_sensors = get_used_plugins_by(plugin_type='TempHumidSensor')
-    
+
     values = TempHumidValue.objects.filter(datetime__gte=datetime.today() - timedelta(days=3)).order_by('datetime')
 
     temps, humids = [], []

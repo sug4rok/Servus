@@ -13,7 +13,7 @@ class YandexRU(models.Model):
     """
     Модель для храннения ссылок API для выбранных населенных пунктов
     """
-    
+
     CONTAINER = 'weather'
     TYPE = 'Forecast'
 
@@ -39,22 +39,22 @@ class YandexRU(models.Model):
             прогноза погоды в виде виджета на Главной странице.<br>\
            (Отмечать, по понятным причинам, имеет смысл прогнозы для одного и того же города)'
     )
-    
+
     def get_url(self):
         return 'http://export.yandex.ru/weather-ng/forecasts/%s.xml' % self.city_id
-        
+
     def __unicode__(self):
         return self.city
 
     class Meta(object):
         verbose_name = 'прогноз yandex.ru'
         verbose_name_plural = 'Прогнозы погоды от yandex.ru'
-        
+
     class Forecast(WG):
-        
+
         def __init__(self, wp):
             WG.__init__(self, wp)
-        
+
         def parse_to_dict(self):
             weather_data = []
 

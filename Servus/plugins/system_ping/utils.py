@@ -12,20 +12,20 @@ def ping(host, write_db=False):
     :param host: str Сетевое имя или ip-адрес устройство.
     :returns: bool Состояние (online/offline) сетевого устройства.
     """
-    
+
     if host.TYPE == 'Ping':
-    
+
         response = -1
         if 'linux' in platform:
             response = system('ping -c 1 ' + host.ip_address)
         elif 'win' in platform:
             response = system('ping -n 1 -4 ' + host.ip_address)
-        
+
         result = response == 0
         msg = u'%s %s' % (host.name, u'снова доступен' if result else u'больше не доступен')
-        
+
         if write_db:
-            if host.online != result:              
+            if host.online != result:
                 host.online = result
                 host.last_changed = datetime.now()
                 host.save()

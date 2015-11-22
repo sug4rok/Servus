@@ -39,10 +39,10 @@ class WeatherUa(models.Model):
             прогноза погоды в виде виджета на Главной странице.<br>\
            (Отмечать, по понятным причинам, имеет смысл прогнозы для одного и того же города)'
     )
-    
+
     def get_url(self):
         return 'http://xml.weather.ua/1.2/forecast/%s?dayf=4?lang=ru' % self.city_id
-        
+
     def __unicode__(self):
         return self.city
 
@@ -51,7 +51,7 @@ class WeatherUa(models.Model):
         verbose_name_plural = 'Прогнозы погоды от weather.ua'
 
     class Forecast(WG):
-    
+
         def __init__(self, wp):
             WG.__init__(self, wp)
 

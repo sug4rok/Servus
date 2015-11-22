@@ -9,11 +9,11 @@ class PingHost(models.Model):
     Модель для хранения информации о сетевых устройствах и их доступности
     в сети.
     """
-    
+
     CONTAINER = 'system'
     TYPE = 'Ping'
     WIDGET_TYPE = 'tiled'
-    
+
     name = models.CharField(
         max_length=50,
         verbose_name='Имя/название хоста',
@@ -32,7 +32,7 @@ class PingHost(models.Model):
         auto_now_add=True,
         verbose_name='Время последней смены статуса'
     )
-    
+
     class Meta(object):
         verbose_name = 'хост'
         verbose_name_plural = 'Сетевые устройства'
