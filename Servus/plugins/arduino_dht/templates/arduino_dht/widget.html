@@ -1,5 +1,5 @@
 <div class='widget'>
-{% for id, name, horiz, vert, temp, humid in arduino_dht11 %}
+{% for id, name, horiz, vert, temp, humid in arduino_dht %}
     <div class='positioned' id='{{ name }}'>
         <img src='{{ STATIC_URL }}img/temp.png' width='20' height='20'/>{{ temp }}<small><em> °C</em></small><br>
         <img src='{{ STATIC_URL }}img/humid.png' width='20' height='20'/>{{ humid }}<small><em> %</em></small>

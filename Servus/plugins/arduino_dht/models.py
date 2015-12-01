@@ -3,7 +3,13 @@ from django.db import models
 
 from plugins.arduino.models import Arduino
 
-MODEL = 'SensorDHT11'
+MODEL = 'SensorDHT'
+
+DHT_TYPES = (
+    ('dht11', 'DHT11'),
+    ('dht21', 'DHT21'),
+    ('dht22', 'DHT22'),
+)
 
 LOCATION_TYPES = (
     ('inside', 'В помещении'),
@@ -12,9 +18,10 @@ LOCATION_TYPES = (
 )
 
 
-class SensorDHT11(models.Model):
+class SensorDHT(models.Model):
     """
-    Модель для добавления новых датчиков влажности и температуры DHT11
+    Модель для добавления новых датчиков влажности и температуры DHT
+    (DHT11, DHT21 и DHT22).
     """
 
     CONTAINER = 'climate'
@@ -25,6 +32,11 @@ class SensorDHT11(models.Model):
         max_length=10,
         verbose_name='Системное имя',
         unique=True
+    )
+    type = models.SlugField(
+        choices=DHT_TYPES,
+        default='dht11',
+        verbose_name='Тип датчика',
     )
     controller = models.ForeignKey(
         Arduino,
@@ -41,8 +53,8 @@ class SensorDHT11(models.Model):
     )
 
     class Meta(object):
-        verbose_name = 'Датчик DHT11'
-        verbose_name_plural = 'Датчики DHT11'
+        verbose_name = 'Датчик DHT'
+        verbose_name_plural = 'Датчики DHT'
 
     def __unicode__(self):
         return self.name

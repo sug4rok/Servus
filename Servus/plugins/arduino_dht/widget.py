@@ -7,13 +7,13 @@ from climate.models import TempHumidValue
 
 def get_widget_data(plan_id):
     """
-    Функция, предоставляющая данные температуры и влажности для каждого добавленого датчика DHT11
+    Функция, предоставляющая данные температуры и влажности для каждого добавленого датчика DHT
 
     :returns: dict Словарь,где ключ 'data' содержит список с именами сетевых устройст и
     их состояниями (online/offline).
     """
 
-    th_sensors = get_used_plugins_by(package='plugins.arduino_dht11')
+    th_sensors = get_used_plugins_by(package='plugins.arduino_dht')
     th_sensors = [s for s in th_sensors if s.plan_image_id == plan_id]
     try:
         th_values = [TempHumidValue.objects.filter(content_type_id=ContentType.objects.get_for_model(s).id,
