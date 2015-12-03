@@ -1,7 +1,7 @@
 ﻿# coding=utf-8
 from base.utils import CJB
 from plugins.utils import get_used_plugins_by
-from .utils import command
+from .utils import get_temp_humid
 
 
 class GetTempHumid(CJB):
@@ -17,4 +17,4 @@ class GetTempHumid(CJB):
 
         if th_sensors:
             for s in th_sensors:
-                command(s, write_db=True)
+                get_temp_humid(s, write_db=True)

@@ -2,7 +2,7 @@
 from base.utils import CJB
 from plugins.utils import get_used_plugins_by
 from .models import WeatherValue
-from .utils import command
+from .utils import get_weather
 
 
 class GetWeatherJob(CJB):
@@ -26,4 +26,4 @@ class GetWeatherJob(CJB):
             WeatherValue.objects.all().delete()
 
             for wp in forecasts:
-                command(wp, write_db=True)
+                get_weather(wp, write_db=True)

@@ -177,7 +177,7 @@ def weather_setter(weather_data):
             set_weather_events(dt, temp, wind_speed, falls_img)
 
 
-def command(wp, write_db=False):
+def get_weather(wp, write_db=False):
     """
     Функция получения прогноза погоды.
     :param wp: object Поставщик прогноза погоды

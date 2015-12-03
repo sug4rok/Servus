@@ -8,19 +8,25 @@ from .models import TempHumidValue
 logger = logging.getLogger(__name__)
 
 
-def check_bad_conditions(t, h):
+def check_bad_conditions(t, h, dht_type):
     """
     Проверка показаний датчика температуры и влажности на определенные условия.
     Функция нужна для многократной проверки показаний, если они превысили некоторые
     пороговые значения, т.к. датчики иногда врут, а повторный опрос происходит раз
     в 15 мин (см. RUN_EVERY_MINS).
+    - для DHT11 и DHT21 0<t<50 +-2C, 20<h<80 +-5%;
+    - для DHT22 -40<t<125 +-0.5C, 0<h<100 +-5%
 
     :param t: int Значение температуры
     :param h: int Значение влажности
+    :param dht_type: str Тип датчика DHT (DHT11, DHT21 или DHT22)
     :returns: возвращает True, если показания попали за границы "нормальных"
     """
 
-    return t > 50 or t < 0 or h < 20 or h > 90
+    if dht_type == 'dht11' or dht_type == 'dht21':
+        return t > 50 or t < 0 or h < 20 or h > 80
+    else:
+        return t > 125 or t < -40 or h < 0 or h > 100
 
 
 def set_climate_event(s, h, t):
@@ -47,7 +53,7 @@ def set_climate_event(s, h, t):
             event_setter('climate', u'%s: Температура на улице менее -15 С' % s.verbose_name, 2)
 
 
-def command(s, write_db=False):
+def get_temp_humid(s, write_db=False):
     """
     Функция получения данных с датчиков температуры и влажности.
     :param s: object Датчик температы/влажности
@@ -59,23 +65,25 @@ def command(s, write_db=False):
             c = s.controller.Command(s)
 
             if c.state[0]:
-                cmd = 't%d\n' % s.controller_pin
+                cmd = '%s:%d\n' % (s.type, s.controller_pin)
                 counter = 3
                 while counter:
-                    result = c.send(cmd)
+                    result = c.send(str(cmd))
 
                     if c.state[0]:
-                        h, t = map(int, result.split(':'))
+                        h, t = map(float, result.split(':'))
 
                         # Проверяем полученные данные на возможные ошибки показаний.
                         # Делаем три измерения подряд с 5 секундной паузой, чтобы удостоверится, что
                         # "запредельные" значения - это не ошибка датчика
-                        if check_bad_conditions(t, h):
+                        if check_bad_conditions(t, h, s.type):
                             counter -= 1
                             time.sleep(5)
                         else:
                             if write_db:
-                                TempHumidValue.objects.create(content_object=s, temperature=t, humidity=h)
+                                TempHumidValue.objects.create(content_object=s, 
+                                                              temperature=round(t, 0), 
+                                                              humidity=round(h, 0))
                                 set_climate_event(s, h, t)
                             else:
                                 print u'Sensor %s: temperature = %s, humidity = %s' % (s, t, h)
