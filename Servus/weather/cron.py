@@ -26,4 +26,4 @@ class GetWeatherJob(CJB):
             WeatherValue.objects.all().delete()
 
             for wp in forecasts:
-                get_weather(wp, write_db=True)
+                get_weather(wp)

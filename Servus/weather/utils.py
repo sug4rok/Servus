@@ -177,17 +177,12 @@ def weather_setter(weather_data):
             set_weather_events(dt, temp, wind_speed, falls_img)
 
 
-def get_weather(wp, write_db=False):
+def get_weather(wp):
     """
     Функция получения прогноза погоды.
     :param wp: object Поставщик прогноза погоды
-    :param write_db: boolean Переменная, для переключения вывода информации - запись в базу данных / вывод в лог
     """
 
     if wp.TYPE == 'Forecast':
         weather_data = wp.Forecast(wp).parse_to_dict()
-
-        if write_db:
-            weather_setter(weather_data)
-        else:
-            print u'Forecast %s: result = %s' % (wp, weather_data)
+        weather_setter(weather_data)

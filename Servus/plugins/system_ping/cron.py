@@ -17,4 +17,4 @@ class GetPingStatus(CJB):
 
         if hosts:
             for host in hosts:
-                ping(host, write_db=True)
+                ping(host)
