@@ -46,7 +46,7 @@ class PluginAdmin(object):
         else:
             self._settings = settings
 
-        self._plugin_models = PLUGIN_MODELS[container]
+        self._plugin_models = PLUGIN_MODELS.get(container)
 
     def _get_plugin_admin(self, plugin_model):
         return type(plugin_model.__name__ + 'Admin', (PreparePluginAdmin,), self._settings)
@@ -56,5 +56,6 @@ class PluginAdmin(object):
         admin.site.register(plugin_model, plugin_admin)
 
     def register(self):
-        for plugin_model in self._plugin_models:
-            self._plugin_register(plugin_model, self._get_plugin_admin(plugin_model))
+        if self._plugin_models is not None:
+            for plugin_model in self._plugin_models:
+                self._plugin_register(plugin_model, self._get_plugin_admin(plugin_model))

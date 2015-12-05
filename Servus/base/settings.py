@@ -27,18 +27,18 @@ CONTAINER_APPS = (
     'system',  # System application. Don't delete it!
     'home',  # System application. Don't delete it!
     'events',  # System application. Don't delete it!
-    'climate',
-    'weather',
+    # 'climate',
+    # 'weather',
 )
 
 PLUGINS = (
-    'plugins.user_sms_ru',  # Sending sms through the website sms.ru
-    'plugins.arduino',  # Arduino controller
-    'plugins.arduino_dht',  # for connecting a DHT sensor (DHT11, DHT22) to the Arduino
-    'plugins.weather_yandex_ru',  # weather forecast from yandex.ru
-    'plugins.weather_openweathermap',  # weather forecast from openweathermap.org
-    'plugins.weather_weather_ua',  # weather from weather.ua
-    'plugins.system_ping',  # ping utility
+    # 'plugins.user_sms_ru',  # Sending sms through the website sms.ru
+    # 'plugins.arduino',  # Arduino controller
+    # 'plugins.arduino_dht',  # for connecting a DHT sensor (DHT11, DHT22) to the Arduino
+    # 'plugins.weather_yandex_ru',  # weather forecast from yandex.ru
+    # 'plugins.weather_openweathermap',  # weather forecast from openweathermap.org
+    # 'plugins.weather_weather_ua',  # weather from weather.ua
+    # 'plugins.system_ping',  # ping utility
 )
 
 INSTALLED_APPS += (PLUGINS + CONTAINER_APPS)
