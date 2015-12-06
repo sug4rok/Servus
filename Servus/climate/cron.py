@@ -16,5 +16,5 @@ class GetTempHumid(CJB):
         th_sensors = get_used_plugins_by(plugin_type='TempHumidSensor')
 
         if th_sensors:
-            for th_sensors in th_sensors:
+            for th_sensor in th_sensors:
                 get_temp_humid(th_sensor)

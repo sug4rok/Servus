@@ -63,15 +63,15 @@ def get_temp_humid(sensor):
 
     if sensor.TYPE == 'TempHumidSensor':
         try:
-            c = sensor.controller.Command(sensor)
+            command = sensor.controller.Command(sensor)
 
-            if c.state[0]:
+            if command.state[0]:
                 cmd = '%s:%d\n' % (sensor.type, sensor.controller_pin)
                 counter = 3
                 while counter:
-                    result = c.send(str(cmd))
+                    result = command.send(str(cmd))
 
-                    if c.state[0]:
+                    if command.state[0]:
                         humid, temp = map(float, result.split(':'))
 
                         # Проверяем полученные данные на возможные ошибки показаний.
@@ -88,7 +88,7 @@ def get_temp_humid(sensor):
                             break
                     else:
                         break
-            c.close_port()
+            command.close_port()
         except AttributeError:
             logger.error(u'Объект %s не имеет атрибута controller', sensor)
     else:

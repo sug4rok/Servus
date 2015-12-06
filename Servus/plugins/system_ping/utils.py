@@ -18,28 +18,28 @@ def ping(host):
     """
 
     if host.TYPE == 'Ping':
-    
+
         counter = 3
         result = True
-        
+
         if 'linux' in platform:
             command = 'ping -c 1 ' + host.ip_address
         elif 'win' in platform:
             command = 'ping -n 1 -4 ' + host.ip_address
         else:
-            logger.error(u'Ping: Неподдерживаемая операционная система %s' % platform)
-        
+            logger.error(u'Ping: Неподдерживаемая операционная система %s', platform)
+
         # Делаем три пинга с 5 секундным перерывом.
         # Если все три совпадения совпадают, считаем результат окончательным.
         while counter:
             response = system(command) == 0
-            
+
             if result == response:
                 counter -= 1
             else:
                 result = response
                 counter = 2
-                
+
             time.sleep(5)
 
         if host.online != result:
