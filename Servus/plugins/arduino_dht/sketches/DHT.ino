@@ -1,30 +1,28 @@
-#include "DHT.h"
+#include <DHT.h>  //https://github.com/adafruit/DHT-sensor-library
 
-boolean pin_read = false;
 boolean stringComplete = false;
 String command = "";   // Тип выполняемой операции
-String sensor_pin = "";  // Номер ввода/вывода Arduino
+String param = "";  // Параметр, передаваемый функции
+boolean param_read = false;
 
 void setup() {
   Serial.begin(9600);
   command.reserve(8);
-  sensor_pin.reserve(2);
+  param.reserve(8);
 }
 
 void loop() {
   serialEvent();
 
   if (stringComplete) {
-    if (sensor_pin != "") {
-      if (command.substring(0, 3) == "dht") {
-        dht_get(sensor_pin.toInt(), command.substring(3).toInt());
-      }
-      else Serial.println("Wrong data receive!");
-
-      command = "";
-      sensor_pin = "";
-      stringComplete = false;
+    if (command.substring(0, 3) == "dht") {
+      dht_get(param.toInt(), command.substring(3).toInt());
     }
+    else Serial.println("Wrong data receive!");
+
+    command = "";
+    param = "";
+    stringComplete = false;
   }
 }
 
@@ -40,9 +38,9 @@ void serialEvent() {
     char inChar = (char)Serial.read();
 
     if (inChar == '\n') stringComplete = true;
-    else if (inChar == ':') pin_read = true;
+    else if (inChar == ':') param_read = true;
     else {
-      if (pin_read) sensor_pin += inChar;
+      if (param_read) param += inChar;
       else command += inChar;
     }
   }
@@ -56,8 +54,8 @@ void dht_get(int pin, int dht_type) {
     На входе: pin - номер ввода/вывода Arduino, к которому подключен датчик и
     dht_type - тип датчика.
     Функция генерирует текстовые данные, вида "h:t", где:
-    h - значение влажности;
-    t - значение температуры.
+    h - значение относительной влажности в %;
+    t - значение температуры в градусах Цельсия.
   */
 
   // Инициализация DHT сенсора

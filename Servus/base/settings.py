@@ -35,6 +35,7 @@ PLUGINS = (
     # 'plugins.user_sms_ru',  # Sending sms through the website sms.ru
     # 'plugins.arduino',  # Arduino controller
     # 'plugins.arduino_dht',  # for connecting a DHT sensor (DHT11, DHT22) to the Arduino
+    # 'plugins.arduino_bmp085',  # for connecting a BMP085/BMP180 sensor to the Arduino
     # 'plugins.weather_yandex_ru',  # weather forecast from yandex.ru
     # 'plugins.weather_openweathermap',  # weather forecast from openweathermap.org
     # 'plugins.weather_weather_ua',  # weather from weather.ua

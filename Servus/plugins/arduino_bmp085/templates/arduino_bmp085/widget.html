@@ -1,0 +1,12 @@
+<div class='widget'>
+{% for id, name, horiz, vert, press in arduino_bmp085 %}
+    <div class='positioned' id='{{ name }}'>
+        {{ press }} мм<br/>
+        <small><em> рт.ст.</em></small><br>
+    </div>
+    
+    <script>
+        positioning_widget({{ id }}, '{{ name }}', {{ horiz }}, {{ vert }});
+    </script>
+{% endfor %}
+</div>

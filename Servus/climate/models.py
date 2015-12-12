@@ -27,3 +27,24 @@ class TempHumidValue(models.Model):
 
     def __unicode__(self):
         return '%s' % self.content_object
+
+
+class PressureValue(models.Model):
+    """
+    Модель для хранения данных, полученных с датчиков атмосферного давления.
+    """
+
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey()
+    pressure = models.SmallIntegerField(
+        verbose_name='Атмосферное давление',
+        default=0
+    )
+    datetime = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Время замера давления'
+    )
+
+    def __unicode__(self):
+        return '%s' % self.content_object
