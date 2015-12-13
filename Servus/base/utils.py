@@ -37,7 +37,7 @@ def fill_base_applications(container_apps):
     try:
         from base.models import Application
         for c_app in container_apps:
-            app, created = Application.objects.get_or_create(name=c_app)
+            app = Application.objects.get_or_create(name=c_app)[0]
             if app.name == 'home':
                 app.is_tab = True
             if app.tab_name == '':

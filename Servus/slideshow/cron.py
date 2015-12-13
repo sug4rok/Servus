@@ -26,7 +26,7 @@ class SlideshowJob(CJB):
         # Преобразование в list необходимо, т.к. в противном случае мы получим объект типа:
         # <class 'django.db.models.query.ValuesListQuerySet'>
         was_excluded = list(Slideshow.objects.filter(is_shown=False).values_list('album_path', flat=True))
-        obj_ssch, created = SlideshowChanges.objects.get_or_create(id=1)
+        obj_ssch = SlideshowChanges.objects.get_or_create(id=1)[0]
         mtime = obj_ssch.mtime
         dir_changed = False
 

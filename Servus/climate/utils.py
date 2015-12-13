@@ -8,7 +8,7 @@ from .models import TempHumidValue, PressureValue
 logger = logging.getLogger(__name__)
 
 
-def check_DHT_data(temp, humid, dht_type):
+def check_dht_data(temp, humid, dht_type):
     """
     Проверка показаний датчика температуры и влажности на определенные условия.
     Функция нужна для многократной проверки показаний, если они превысили некоторые
@@ -54,7 +54,7 @@ def set_climate_event(sensor, humid, temp):
         elif temp < -15:
             event_setter('climate', u'%s: Температура на улице менее -15 С' % sensor.verbose_name, 2)
 
-  
+
 def get_temp_humid(command, sensor):
     cmd = '%s:%d\n' % (sensor.type, sensor.controller_pin)
 
@@ -68,7 +68,7 @@ def get_temp_humid(command, sensor):
             # Проверяем полученные данные на возможные ошибки показаний.
             # Делаем три измерения подряд с 5 секундной паузой, чтобы удостоверится, что
             # "запредельные" значения - это не ошибка датчика
-            if check_DHT_data(temp, humid, sensor.type):
+            if check_dht_data(temp, humid, sensor.type):
                 counter -= 1
                 time.sleep(5)
             else:
@@ -78,8 +78,8 @@ def get_temp_humid(command, sensor):
                 set_climate_event(sensor, humid, temp)
                 break
         else:
-            break  
-   
+            break
+
 
 def get_pressure(command, sensor):
     cmd = 'bmp:%d\n' % sensor.height_sealevel
@@ -87,8 +87,8 @@ def get_pressure(command, sensor):
     result = command.send(str(cmd))
     # TODO: Проверка на корректность полученных данных
     if command.state[0]:
-        press, temp = map(float, result.split(':'))
-        
+        press = map(float, result.split(':'))[0]
+
         PressureValue.objects.create(content_object=sensor, pressure=round(press, 0))
         # TODO: Создать функцию событий атм. давления  set_pressure_event(sensor, press)
 

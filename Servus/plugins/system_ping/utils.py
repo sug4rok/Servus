@@ -28,6 +28,7 @@ def ping(host):
             command = 'ping -n 1 -4 ' + host.ip_address
         else:
             logger.error(u'Ping: Неподдерживаемая операционная система %s', platform)
+            return None
 
         # Делаем три пинга с 5 секундным перерывом.
         # Если все три совпадения совпадают, считаем результат окончательным.
