@@ -4,9 +4,9 @@
 
     <script src='{{ STATIC_URL }}js/highcharts.js' type='text/javascript'></script>
 
-    {% for chart_title, measure, rooms in charts %}
+    {% for container, chart_title, measure, rooms in charts %}
         {% if rooms %}
-            <div id='{{ chart_title }}' class='charts'></div>
+            <div id='{{ container }}' class='charts'></div>
 
             <script type='text/javascript'>
                 Highcharts.setOptions({
@@ -16,7 +16,7 @@
                     }
                 });
                 $(function () {
-                    $('#{{ chart_title }}').highcharts({
+                    $('#{{ container }}').highcharts({
                         chart: {
                             type: 'spline',
                             marginBottom: 120,
@@ -57,7 +57,7 @@
                             borderRadius: 3,
                             borderWidth: 1,
                             title: {
-                                text: 'Помещения:',
+                                text: 'Расположение:',
                                 style: {
                                     color: '#5bc0de',
                                     fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif',
@@ -95,7 +95,7 @@
                             gridLineDashStyle: 'Dash',
                             tickPixelInterval: 10,
                             labels: {
-                                format: '{value}{{ measure }}',
+                                format: '{value} {{ measure }}',
                                 style: {
                                     color: '#a7a7a7',
                                     fontWeight: 'bold'
