@@ -6,4 +6,4 @@ from plugins.admin import PluginAdmin
 CONTAINER = __name__.split('.')[0]
 SETTINGS = {'list_display': ('name', 'location', 'is_used'),
             'ordering': ('name',)}
-PluginAdmin(container, settings).register()
+PluginAdmin(CONTAINER, SETTINGS).register()
