@@ -8,25 +8,26 @@ from plugins.utils import get_used_plugins_by
 from climate.models import TempHumidValue, PressureValue
 
 
-def get_climate_data(sensors, ValueModel, attr):
+def get_climate_data(sensors, value_model, attr):
     """
     Функция представляет определенные (параметр attr) климатические данные за последние
     трое суток в нужном формате.
-    
+
     :param sensors: list Список объектов климатических сенсоров.
-    :param ValueModel: object Модель для хранения климатических данных.
+    :param value_model: object Модель для хранения климатических данных.
     :param attr: str Атрибут объекта данных ('temperature', 'humidity', etc.)
     :returns: list Список данных для отображения в виде графика на вкладке
     Климат. Формат: [('расположение', ((дата1, значение1), (дата2, значение2), ...)]
     """
 
-    values = ValueModel.objects.filter(datetime__gte=datetime.today() - timedelta(days=3)).order_by('datetime')
+    values = value_model.objects.filter(datetime__gte=datetime.today() - timedelta(days=3)).order_by('datetime')
 
     lst = []
 
-    for s in sensors:
-        s_v = values.filter(content_type_id=ContentType.objects.get_for_model(s).id, object_id=s.id)
-        lst.append((s.location, ((i.datetime, getattr(i, attr)) for i in s_v)))
+    for sensor in sensors:
+        s_v = values.filter(content_type_id=ContentType.objects.get_for_model(sensor).id,
+                            object_id=sensor.id)
+        lst.append((sensor.location, ((i.datetime, getattr(i, attr)) for i in s_v)))
 
     return lst
 

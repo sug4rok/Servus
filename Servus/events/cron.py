@@ -62,13 +62,13 @@ class EmailsSendJob(CJB):
             txt_msg = u'\tДата\t\t\tТекст сообщения\n-----------------------------------\n'
             html_msg = u'<table cellpadding=3px><tr><th>Дата</th><th>Текст сообщения</th></tr>'
 
-            for e in events:
-                if e.level == 4:
+            for event in events:
+                if event.level == 4:
                     subj = 'Важное сообщение от %s' % SITE_NAME
 
-                txt_msg += '%s\t%s\n' % (e.datetime.strftime('%Y.%m.%d %H:%M'), e.message)
+                txt_msg += '%s\t%s\n' % (event.datetime.strftime('%Y.%m.%d %H:%M'), event.message)
                 html_msg += '<tr bgcolor=%s><td>%s</font></td><td>%s</td></tr>' \
-                            % (bgcolors[e.level], e.datetime.strftime('%Y.%m.%d %H:%M'), e.message)
+                            % (bgcolors[event.level], event.datetime.strftime('%Y.%m.%d %H:%M'), event.message)
 
             html_msg += '</table>'
 
@@ -141,9 +141,10 @@ class SMSSendJob(CJB):
 
             sms_were_sent = []
 
-            for r in recipients_filled:
-                for m in sms_msgs:
-                    url = 'http://sms.ru/sms/send?api_id=%s&to=%s&text=%s' % (r.sms_ru_id, r.phone, m)
+            for recipient in recipients_filled:
+                for msg in sms_msgs:
+                    url = 'http://sms.ru/sms/send?api_id=%s&to=%s&text=%s' % (recipient.sms_ru_id,
+                                                                              recipient.phone, msg)
                     # В API sms.ru  в тексте сообщения использутся знаки "+" в качестве пробела
                     url = url.replace(' ', '+')
                     try:
