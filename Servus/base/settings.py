@@ -6,7 +6,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'ky-kr37p8k^qdos0dk(ijv9m%*8(zre2+s@yct%+w(2(z1$2h2'
 
-DEBUG = True
+DEBUG = False
 ALLOWED_HOSTS = ['localhost', ]
 
 INSTALLED_APPS = (

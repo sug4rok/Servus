@@ -93,7 +93,10 @@ class WG(object):
                 except KeyError:
                     return -1
             else:
-                return subnodes[subnode_num].childNodes[0].nodeValue
+                try:
+                    return subnodes[subnode_num].childNodes[0].nodeValue
+                except IndexError:
+                    return -1
         else:
             return subnodes
 

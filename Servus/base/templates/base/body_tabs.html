@@ -1,26 +1,25 @@
 {% extends 'base/index.html' %}
-
 {% block body_tabs %}
-    <style>
-        body {
-            padding-top:40px;
-        }
-    </style>
-
-    {% include 'base/navbar.html' %}
-
     <div class='container'>
-        <div class='panel panel-default'>
-            <div class='panel-body'>
-                <div class='row row-offcanvas row-offcanvas-right'>
-                    <div class='col-sm-12 col-md-12 col-lg-12'>
-                        <h4 class='text-info'>{{ active_title }}
-                            {%  if active_sub_title %}<small>{{ active_sub_title }}</small>{% endif %}
+        <div class='row'>
+            <div class='col-sm-3 col-md-2 col-lg-2' style='padding-left:0'>
+                {% include 'base/navbar.html' %}
+            </div>
+            <div class='col-sm-9 col-md-10 col-lg-10 main nopadding'>
+                <div class='panel panel-default'>
+                    <div class='panel-heading padding5px'>
+                        <h4 class='text-info nopadding'>{{ active_title }}
+                        {%  if active_sub_title %}<small>{{ active_sub_title }}</small>{% endif %}
                         </h4>
+                    </div>
+                    <div class='panel-body padding5px'>
                         {% block content %}{% endblock %}
                     </div>
                 </div>
             </div>
+        </div>
+        <div class='row'>
+            {% block tiled_widgets %}{% endblock %}
         </div>
     </div>
 {% endblock %}

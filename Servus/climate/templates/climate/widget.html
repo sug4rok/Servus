@@ -1,9 +1,9 @@
-<a href='/climate' class='list-group-item widget-padding'>
+<a href='/climate' class='btn btn-primary btn-sm btn-block'>
     Климат
 </a>
-<div class='panel-body widget-padding'>
+<div class='panel-body widget tiled'>
     <table class='tab_short table table-striped table-condensed'>
-        {%  for sensor, humid, temp in climate %}       
+        {%  for sensor, humid, temp in climate %}
             <tr>
                 <th colspan=2>{{ sensor }}</th>
             </tr>

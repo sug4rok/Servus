@@ -1,17 +1,8 @@
 /* Переопределение стилей bootstrap */
-.row{
-    margin: 0 -13px 0 -15px;
+.panel{
+    margin-bottom: 10px;
 }
-.placeholder{
-    padding: 0 0 0 5px;
-}
-
 /* Стили Servus */
-html, body{
-    width: 100%;
-    height: 100%;
-    margin: 0;
-}
 caption{
     color: #2288bb;
     font-weight: bold;
@@ -21,10 +12,17 @@ caption{
 .height100{
     height:100%;
 }
-.pad5{
+.nopadding{
+    padding: 0 !important;
+    margin: 0 !important;
+}
+.padding7px{
+    padding: 0 7px 0 7px !important;
+    margin: 0 !important;
+}
+.padding5px{
     padding: 5px;
 }
-
 /*Slideshow*/
 .fullscreen_img{
     background-size: contain;
@@ -45,17 +43,20 @@ caption{
     font-weight: bold;
     font-size: 90%;
 }
-.widget-padding {
-    padding: 3px;
+.tiled{
+    padding: 5px;
+    margin: 0 auto;
+}
+.positioned{
+    position: absolute;
+    border:2px solid #5bc0de;
+    background: #272b30
 }
 .plan{
     margin: 0 auto;
 }
 table.tab_short{
     margin: 0 auto;
-}
-.cross_up{
-    margin-top: -2px;
 }
 .event_src{
     float:left;

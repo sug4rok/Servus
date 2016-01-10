@@ -1,7 +1,7 @@
-<a href='/events' class='list-group-item widget-padding'>
+<a href='/events' class='btn btn-primary btn-sm btn-block'>
     Уведомления
 </a>
-<div class='panel-body'>
+<div class='panel-body widget tiled'>
     <attr title='Перейти к сообщениям'>
         <form action='/events/' method='post'>{% csrf_token %}
             <button class='btn btn-default btn-lg btn-{{ events.level }}' name='events' value=1>
