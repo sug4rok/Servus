@@ -1,8 +1,8 @@
 ﻿{% extends 'base/body_tabs.html' %}
 
 {% block content %}
-    {% if house_plans %}
-        <div class='panel-body padding7px'>
+    <div class='panel-body padding7px'>
+        {% if house_plans %}
             {% for plan_id, plan_img, plan_descr in house_plans %}
                 <div style='float:right; width:{{ width_plans }}%;' id='plan_{{ plan_id }}'>
                     <div id='positioned-{{ plan_id }}'></div>
@@ -11,12 +11,15 @@
                         reload_div('positioned-{{ plan_id }}', 10000);
                     </script>
 
-                    <img src='{{ MEDIA_URL }}{{ plan_img }}' class='img-responsive plan' id='img_{{ plan_id }}'>
+                    <img src='{{ MEDIA_URL }}{{ plan_img }}' class='img-responsive plan' id='img_{{ plan_id }}' />
                     <strong><small><em>Рис.</em></small> {{ plan_descr }}</strong>
                 </div>
             {% endfor %}
-        </div>
-    {% endif %}
+        {% else %}
+            <img src='{{ STATIC_URL }}/img/na.png' class='img-responsive plan' style='width: 250px' />
+            <strong><small><em>Рис.</em></small> Планировка еще не добавлена</strong>
+        {% endif %}
+    </div>
 {% endblock %}
 
 {% block tiled_widgets %}
