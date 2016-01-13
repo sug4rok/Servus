@@ -94,7 +94,7 @@ class WeatherUa(models.Model):
                     't3d1': xrange(92, 94),
                     't3d2': xrange(94, 96),
                     't3d3': xrange(96, 98),
-                    't3d4': xrange(98, 100),
+                    't3d4': xrange(98, 101),
                 }
                 for r in falls_ranges:
                     if clouds in falls_ranges[r]:

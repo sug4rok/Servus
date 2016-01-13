@@ -48,7 +48,7 @@ def common_forecast(date):
     temperature = round(float(sum(forecast['temperature'])) / amount_data, 0)
     for f_k, f_v in forecast.iteritems():
         if f_k == 'falls_img':
-            tmp_data1 = sum([float(f[1]) for f in f_v]) / amount_data
+            tmp_data1 = sum([float(f[1]) for f in f_v if f != 'na']) / amount_data
 
             if tmp_data1 > 0.5:
                 if temperature > 2:
@@ -57,14 +57,14 @@ def common_forecast(date):
                     tmp_data1 = '3'
                 else:
                     tmp_data1 = '2'
-                tmp_data2 = sum([float(f[3]) for f in f_v]) / amount_data
+                tmp_data2 = sum([float(f[3]) for f in f_v if f != 'na']) / amount_data
             else:
                 tmp_data1, tmp_data2 = '0', 0.0
 
             file_img = 't%sd%.0f' % (tmp_data1, tmp_data2)
             forecast[f_k] = [(file_img, FALLS_RANGE[file_img])]
         elif f_k == 'clouds_img':
-            tmp_data1 = sum([float(f[2]) for f in f_v]) / amount_data
+            tmp_data1 = sum([float(f[2]) for f in f_v if f != 'na']) / amount_data
             file_img = 'cd%.0f' % tmp_data1
             forecast[f_k] = [(file_img, CLOUDS_RANGE[file_img[2]])]
         elif f_k == 'temperature':
