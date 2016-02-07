@@ -14,8 +14,7 @@ class GetClimate(CJB):
 
     def do(self):
 
-        sensors = (get_used_plugins_by(plugin_type='TempHumidSensor') +
-                   get_used_plugins_by(plugin_type='PressureSensor'))
+        sensors = get_used_plugins_by(container='climate')
 
         if sensors:
             for sensor in sensors:

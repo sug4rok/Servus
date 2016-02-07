@@ -24,6 +24,17 @@ def get_plugins_by_package(package):
     return [p for p in sum(PLUGIN_MODELS.values(), []) if p.PLUGIN_PACKAGE == package]
 
 
+def get_plugins_by_container(plugin_container):
+    """
+    Функция возвращает список плагинов, принадлежащих определенному контейнеру.
+
+    :param plugin_container: str Контейнер плагинов, напремер "climate".
+    :returns: list Список плагинов для указанного контейнера.
+    """
+
+    return [p for p in sum(PLUGIN_MODELS.values(), []) if p.CONTAINER == plugin_container]
+
+
 def get_used_plugins(plugins):
     """
     Функция возвращает список объектов переданных плагинов, атрибут is_used
@@ -36,7 +47,7 @@ def get_used_plugins(plugins):
     return reduce(lambda res, p: res + tuple(p.objects.filter(is_used=True)), plugins, ())
 
 
-def get_used_plugins_by(plugin_type=None, package=None):
+def get_used_plugins_by(plugin_type=None, package=None, container=None):
     """
     Функция возвращает список плагинов с указанным типом или названим модуля, атрибут is_used
     которых равен True.
@@ -50,6 +61,8 @@ def get_used_plugins_by(plugin_type=None, package=None):
         return get_used_plugins(get_plugins_by_type(plugin_type))
     elif package is not None:
         return get_used_plugins(get_plugins_by_package(package))
+    elif container is not None:
+        return get_used_plugins(get_plugins_by_container(container))
     else:
         return []
 
