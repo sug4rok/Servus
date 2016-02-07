@@ -75,7 +75,7 @@ class Arduino(models.Model):
                     self.port = self.obj.controller.port
 
                 try:
-                    self.ser = serial.Serial(self.port)
+                    self.ser = serial.Serial(self.port, 9600, timeout=8)
                     time.sleep(2)
                 except serial.SerialException:
                     self.state = (False, u'Не могу открыть COM-порт %s' % self.port)
@@ -104,7 +104,7 @@ class Arduino(models.Model):
                     # Если контроллер вторичный, модифицируем пересылаемую команду
                     if self.master:
                         cmd = 'ser%s:%s' % (self.obj.controller.port, cmd)
-                        
+
                     self.ser.write(str(cmd))
                     time.sleep(1)
                     try:
@@ -137,3 +137,4 @@ class Arduino(models.Model):
             """
 
             self.ser.close()
+            self.state = (True, '')

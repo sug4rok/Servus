@@ -63,20 +63,24 @@ def get_temp_humid(command, sensor):
         result = command.send(cmd)
 
         if command.state[0]:
-            humid, temp = map(float, result.split(':'))
+            try:
+                humid, temp = map(float, result.split(':'))
 
-            # Проверяем полученные данные на возможные ошибки показаний.
-            # Делаем три измерения подряд с 5 секундной паузой, чтобы удостоверится, что
-            # "запредельные" значения - это не ошибка датчика
-            if check_dht_data(temp, humid, sensor.type):
+                # Проверяем полученные данные на возможные ошибки показаний.
+                # Делаем три измерения подряд с 5 секундной паузой, чтобы удостоверится, что
+                # "запредельные" значения - это не ошибка датчика
+                if check_dht_data(temp, humid, sensor.type):
+                    counter -= 1
+                    time.sleep(2)
+                else:
+                    TempHumidValue.objects.create(content_object=sensor,
+                                                  temperature=round(temp, 0),
+                                                  humidity=round(humid, 0))
+                    set_climate_event(sensor, humid, temp)
+                    break
+            except ValueError:
                 counter -= 1
-                time.sleep(5)
-            else:
-                TempHumidValue.objects.create(content_object=sensor,
-                                              temperature=round(temp, 0),
-                                              humidity=round(humid, 0))
-                set_climate_event(sensor, humid, temp)
-                break
+                time.sleep(2)
         else:
             break
 
