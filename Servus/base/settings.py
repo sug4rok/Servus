@@ -153,7 +153,7 @@ CRON_CLASSES = [
     'base.cron.DelOutdatedTHData',
     'events.cron.EmailsSendJob',
     'events.cron.SMSSendJob',
-    'climate.cron.GetTempHumid',
+    'climate.cron.GetClimate',
     'weather.cron.GetWeatherJob',
     'slideshow.cron.SlideshowJob',
     'plugins.system_ping.cron.GetPingStatus',

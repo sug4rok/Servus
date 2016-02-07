@@ -4,7 +4,7 @@ from plugins.utils import get_used_plugins_by
 from .utils import get_sensor_data
 
 
-class GetTempHumid(CJB):
+class GetClimate(CJB):
     """
     CronJobBase класс для опроса датчиков температуры/влажности, атмосферного давления и др.,
     подключенных к контроллеру.

@@ -60,7 +60,7 @@ def get_temp_humid(command, sensor):
 
     counter = 3
     while counter:
-        result = command.send(str(cmd))
+        result = command.send(cmd)
 
         if command.state[0]:
             humid, temp = map(float, result.split(':'))
@@ -84,7 +84,7 @@ def get_temp_humid(command, sensor):
 def get_pressure(command, sensor):
     cmd = 'bmp:%d\n' % sensor.height_sealevel
 
-    result = command.send(str(cmd))
+    result = command.send(cmd)
     # TODO: Проверка на корректность полученных данных
     if command.state[0]:
         press = map(float, result.split(':'))[0]

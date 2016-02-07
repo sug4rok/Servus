@@ -25,14 +25,22 @@ class Arduino(models.Model):
         verbose_name='Модель',
         unique=True
     )
+    master = models.ForeignKey(
+        'self',
+        related_name='arduino_master',
+        verbose_name='Основной контроллер',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
     port = models.CharField(
         default=1,
         max_length=20,
-        verbose_name='COM-порт',
-        help_text='COM-порт, к которому подключен контроллер.<br>\
-                  Например:<br>\
-                  В Windows порт = № порта - 1;<br>\
-                  В Linux   порт = /dev/ttyACM0'
+        verbose_name='Serial-порт',
+        help_text='Serial-порт, к которому подключен контроллер. Например:<br>\
+                  для Windows порт = № порта - 1;<br>\
+                  для Linux   порт = /dev/ttyACM0<br>\
+                  Если выбран основной контроллер, выбираем номер UART, к которому подключен вторичный контроллер (для mega2560 это 1, 2 или 3'
     )
 
     class Meta(object):
@@ -57,9 +65,14 @@ class Arduino(models.Model):
 
             self.state = (True, '')
             self.obj = obj
+            self.master = self.obj.controller.master
+            self.port = ''
 
             try:
-                self.port = obj.controller.port
+                if self.master:
+                    self.port = self.master.port
+                else:
+                    self.port = self.obj.controller.port
 
                 try:
                     self.ser = serial.Serial(self.port)
@@ -87,14 +100,21 @@ class Arduino(models.Model):
 
             if self.state[0]:
                 if self.ser.isOpen:
-                    self.ser.write(cmd)
+                
+                    # Если контроллер вторичный, модифицируем пересылаемую команду
+                    if self.master:
+                        cmd = 'ser%s:%s' % (self.obj.controller.port, cmd)
+                        
+                    self.ser.write(str(cmd))
                     time.sleep(1)
                     try:
                         result = self.ser.readline()
                         # Отсекаем от результата последние два служебных символа
                         result = result[:-2]
-                        if 'e' in result:
-                            self.state = (False, u'Датчик %s вернул неверные данные' % self.obj.name)
+                        if 'Error' in result:
+                            self.state = (False, u'Датчик %s вернул ошибку: %s' % (self.obj.name,
+                                                                                   result.split('Error: ')[1]))
+                            result = ''
                         else:
                             self.state = (True, u'OK')
                     except Exception as err:
@@ -102,8 +122,8 @@ class Arduino(models.Model):
                 else:
                     self.state = (False, u'COM-порт %s закрыт' % self.port)
 
-            logger.debug('Controller %s: command has been received %s | result %s | state: %s ',
-                         self.obj.controller, cmd, result, self.state[1])
+            logger.debug('Controller %s: command has been received %s | state: %s ',
+                         self.obj.controller, cmd, self.state[1])
 
             if self.state[0] is not True:
                 event_setter('system', self.state[1], 3, delay=3)
