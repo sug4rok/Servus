@@ -150,13 +150,12 @@ CRON_CLASSES = [
     # 'django_cron.cron.FailedRunsNotificationCronJob',
     'base.cron.DelOutdatedDCLogs',
     'base.cron.DelOutdatedEvents',
-    'base.cron.DelOutdatedTHData',
-    'events.cron.EmailsSendJob',
-    'events.cron.SMSSendJob',
-    'climate.cron.GetClimate',
-    'weather.cron.GetWeatherJob',
     'slideshow.cron.SlideshowJob',
-    'plugins.system_ping.cron.GetPingStatus',
+    'events.cron.EmailsSendJob',
+    # 'events.cron.SMSSendJob',
+    # 'climate.cron.GetClimate',
+    # 'weather.cron.GetWeatherJob',
+    # 'plugins.system_ping.cron.GetPingStatus',
 ]
 
 LOGGING = {

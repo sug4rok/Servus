@@ -1,11 +1,6 @@
 ﻿# coding=utf-8
-import time
-import logging
-
 from events.utils import event_setter
-from .models import TempHumidValue, PressureValue
-
-logger = logging.getLogger(__name__)
+from .models import TempHumidValue
 
 
 def check_dht_data(temp, humid, dht_type):
@@ -53,67 +48,3 @@ def set_climate_event(sensor, humid, temp):
             event_setter('climate', u'%s: Температура на улице более 35 С' % sensor.verbose_name, 2)
         elif temp < -15:
             event_setter('climate', u'%s: Температура на улице менее -15 С' % sensor.verbose_name, 2)
-
-
-def get_temp_humid(command, sensor):
-    cmd = '%s:%d\n' % (sensor.type, sensor.controller_pin)
-
-    counter = 3
-    while counter:
-        result = command.send(cmd)
-
-        if command.state[0]:
-            try:
-                humid, temp = map(float, result.split(':'))
-
-                # Проверяем полученные данные на возможные ошибки показаний.
-                # Делаем три измерения подряд с 5 секундной паузой, чтобы удостоверится, что
-                # "запредельные" значения - это не ошибка датчика
-                if check_dht_data(temp, humid, sensor.type):
-                    counter -= 1
-                    time.sleep(2)
-                else:
-                    TempHumidValue.objects.create(content_object=sensor,
-                                                  temperature=round(temp, 0),
-                                                  humidity=round(humid, 0))
-                    set_climate_event(sensor, humid, temp)
-                    break
-            except ValueError:
-                counter -= 1
-                time.sleep(2)
-        else:
-            break
-
-
-def get_pressure(command, sensor):
-    cmd = 'bmp:%d\n' % sensor.height_sealevel
-
-    result = command.send(cmd)
-    # TODO: Проверка на корректность полученных данных
-    if command.state[0]:
-        press = map(float, result.split(':'))[0]
-
-        PressureValue.objects.create(content_object=sensor, pressure=round(press, 0))
-        # TODO: Создать функцию событий атм. давления  set_pressure_event(sensor, press)
-
-
-def get_sensor_data(sensor):
-    """
-    Функция получения данных с климатических.
-    :param sensor: object Климатический датчик.
-    """
-
-    try:
-        command = sensor.controller.Command(sensor)
-
-        if command.state[0]:
-            if sensor.TYPE == 'TempHumidSensor':
-                get_temp_humid(command, sensor)
-            elif sensor.TYPE == 'PressureSensor':
-                get_pressure(command, sensor)
-            else:
-                logger.error(u'Объект %s не является объектом допустимого типа', sensor)
-
-        command.close_port()
-    except AttributeError:
-        logger.error(u'Объект %s не имеет атрибута controller', sensor)

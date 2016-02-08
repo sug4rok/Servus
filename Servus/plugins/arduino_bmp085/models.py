@@ -1,6 +1,7 @@
 ﻿# coding=utf-8
 from django.db import models
 
+from climate.models import PressureValue
 from plugins.arduino.models import Arduino
 
 MODEL = 'SensorBMP'
@@ -37,3 +38,19 @@ class SensorBMP(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def get_data(self):
+        cmd = 'bmp:%d\n' % self.height_sealevel
+        
+        controller = self.controller.Command(self)       
+        
+        if controller.state[0]:
+            result = controller.send(cmd)
+            # TODO: Проверка на корректность полученных данных
+            if controller.state[0]:
+                press = map(float, result.split(':'))[0]
+
+                PressureValue.objects.create(content_object=self, pressure=round(press, 0))
+                # TODO: Создать функцию событий атм. давления  set_pressure_event(sensor, press)
+
+            controller.close_port()

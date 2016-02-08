@@ -1,7 +1,10 @@
 ﻿# coding=utf-8
+import time
 from django.db import models
 
+from climate.models import TempHumidValue
 from plugins.arduino.models import Arduino
+from .utils import check_dht_data, set_climate_event
 
 MODEL = 'SensorDHT'
 
@@ -58,3 +61,37 @@ class SensorDHT(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def get_data(self):
+        cmd = '%s:%d\n' % (self.type, self.controller_pin)
+        
+        controller = self.controller.Command(self)       
+        
+        if controller.state[0]:
+            counter = 3
+            while counter:
+                result = controller.send(cmd)
+
+                if controller.state[0]:
+                    try:
+                        humid, temp = map(float, result.split(':'))
+
+                        # Проверяем полученные данные на возможные ошибки показаний.
+                        # Делаем три измерения подряд с 5 секундной паузой, чтобы удостоверится, что
+                        # "запредельные" значения - это не ошибка датчика
+                        if check_dht_data(temp, humid, self.type):
+                            counter -= 1
+                            time.sleep(2)
+                        else:
+                            TempHumidValue.objects.create(content_object=self,
+                                                          temperature=round(temp, 0),
+                                                          humidity=round(humid, 0))
+                            set_climate_event(self, humid, temp)
+                            break
+                    except ValueError:
+                        counter -= 1
+                        time.sleep(2)
+                else:
+                    break
+
+            controller.close_port()

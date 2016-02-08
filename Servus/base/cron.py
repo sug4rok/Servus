@@ -17,19 +17,10 @@ class DelOutdatedDCLogs(CJB):
         CronJobLog.objects.filter(end_time__lte=datetime.today() - timedelta(days=32)).delete()
 
 
-class DelOutdatedTHData(CJB):
-    """Удаление устаревший данных температуры и влажности"""
-
-    RUN_AT_TIMES = ['05:00', ]
-
-    def do(self):
-        TempHumidValue.objects.filter(datetime__lte=datetime.today() - timedelta(days=15)).delete()
-
-
 class DelOutdatedEvents(CJB):
     """Удаление устаревший событий"""
 
     RUN_AT_TIMES = ['05:00', ]
 
     def do(self):
-        Event.objects.filter(datetime__lte=datetime.today() - timedelta(days=32)).delete()
+        Event.objects.filter(datetime__lte=datetime.today() - timedelta(days=366)).delete()

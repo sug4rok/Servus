@@ -1,7 +1,6 @@
 ﻿# coding=utf-8
 from base.utils import CJB
 from plugins.utils import get_used_plugins_by
-from .utils import get_sensor_data
 
 
 class GetClimate(CJB):
@@ -18,4 +17,4 @@ class GetClimate(CJB):
 
         if sensors:
             for sensor in sensors:
-                get_sensor_data(sensor)
+                sensor.get_data()
