@@ -1,0 +1,48 @@
+﻿# coding=utf-8
+from django.db import models
+
+from climate.models import AmbientLightValue
+from plugins.arduino.models import Arduino
+
+MODEL = 'SensorBH1750'
+
+
+class SensorBH1750(models.Model):
+    """
+    Модель датчиков атмосферного давления BMP085/BMP180 (GY-68).
+    """
+
+    CONTAINER = 'climate'
+    TYPE = 'AmbientLightSensor'
+    WIDGET_TYPE = 'positioned'
+
+    name = models.SlugField(
+        max_length=20,
+        verbose_name='Системное имя',
+        unique=True
+    )
+    controller = models.ForeignKey(
+        Arduino,
+        verbose_name='Контроллер Arduino',
+    )
+
+    class Meta(object):
+        verbose_name = 'Датчик BH1750'
+        verbose_name_plural = 'Датчики BH1750'
+
+    def __unicode__(self):
+        return self.name
+
+    def get_data(self):
+        cmd = 'bh1750:\n'
+        
+        controller = self.controller.Command(self)       
+        
+        if controller.state[0]:
+            result = controller.send(cmd)
+            
+            # TODO: Проверка на корректность полученных данных
+            if controller.state[0]:
+                AmbientLightValue.objects.create(content_object=self, ambient_light=round(int(result), 0))
+
+            controller.close_port()
