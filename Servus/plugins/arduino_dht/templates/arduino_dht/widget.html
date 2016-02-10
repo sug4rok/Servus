@@ -1,10 +1,15 @@
 <div class='widget'>
 {% for id, name, horiz, vert, temp, humid in arduino_dht %}
-    <div class='positioned' id='{{ name }}'>
-        <img src='{{ STATIC_URL }}img/temp.png' width='20' height='20'/>{{ temp }}<small><em> °C</em></small><br>
-        <img src='{{ STATIC_URL }}img/humid.png' width='20' height='20'/>{{ humid }}<small><em> %</em></small>
-    </div>
 
+    <div style='position: absolute;' id='{{ name }}'>
+        <div style='position: relative;'>
+            <img class='positioned_img' src='{{ STATIC_URL }}img/temp_humid_{{ theme }}.png' />
+            <div class='positioned_text' style='left: 5px; top: 5px; line-height: 1.5;'>
+                {{ temp }}<small><em> °C</em></small><br>
+                {{ humid }}<small><em> %</em></small>
+            </div>
+        </div>
+    </div>
     <script>
         positioning_widget({{ id }}, '{{ name }}', {{ horiz }}, {{ vert }});
     </script>
