@@ -22,9 +22,9 @@ def rain_level(number):
     elif 300 <= number < 500:
         return 2
     elif number < 300:
-        return = 3
+        return 3
     else:
-        return = 0
+        return 0
 
 
 def get_widget_data(plan_id):
