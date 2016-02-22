@@ -10,19 +10,21 @@ def rain_level(number):
     Функция, определяющая 4 уровня осадков.
     Необходимо подстройка с учетом расположения, исполнения, угола наклона
     и пр. датчика дождя.
-    
+
     :param number: int Число от 0 до 1023 - результат работы датчик дождя, где
     0 - полное погружение в воду, 1023 - абсолютно сухая поверхность.
-    :returns: int Число от 0 до 3 - четыре уровня осадков, где 0 - осадков нет, 
+    :returns: int Число от 0 до 3 - четыре уровня осадков, где 0 - осадков нет,
     3 - ливень.
     """
 
-    if 500 <= number < 900: raindrop = 1
-    elif 300 <= number < 500: raindrop = 2
-    elif number < 300: raindrop = 3
-    else: raindrop = 0
-
-    return raindrop
+    if 500 <= number < 900:
+        return 1
+    elif 300 <= number < 500:
+        return 2
+    elif number < 300:
+        return = 3
+    else:
+        return = 0
 
 
 def get_widget_data(plan_id):

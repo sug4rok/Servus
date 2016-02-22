@@ -5,7 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from base.views import call_template
 from plugins.utils import get_used_plugins_by
-from climate.models import *
+from climate.models import TempHumidValue, PressureValue, AmbientLightValue
 
 
 def get_climate_data(sensors, value_model, attr):
@@ -21,11 +21,11 @@ def get_climate_data(sensors, value_model, attr):
     """
 
     result = []
-    NUMBER_OF_DAYS = 3  # Количество дней, за которые выводятся данные
-    NUMBER_OF_RESULTS = 300  # Не более 300 результатов на графике для каждого сенсора
+    number_of_days = 3  # Количество дней, за которые выводятся данные
+    number_of_results = 300  # Не более 300 результатов на графике для каждого сенсора
 
     # Создаем запрос на все данные не старше трех дней
-    last_days = datetime.today() - timedelta(days=NUMBER_OF_DAYS)
+    last_days = datetime.today() - timedelta(days=number_of_days)
     qs = value_model.objects.filter(datetime__gte=last_days).order_by('datetime')
 
     for sensor in sensors:
@@ -34,7 +34,7 @@ def get_climate_data(sensors, value_model, attr):
                          object_id=sensor.id)
 
         # Расчитываем шаг для сокращения количества результатов и урезаем запрос
-        step = int(round(len(qs_s) / float(NUMBER_OF_RESULTS), 0))
+        step = int(round(len(qs_s) / float(number_of_results), 0))
         qs_s = qs_s[::step]
 
         result.append((sensor.location, ((i.datetime, getattr(i, attr)) for i in qs_s)))

@@ -1,13 +1,12 @@
 <div class='widget'>
 {% for id, name, horiz, vert, ambient_light in arduino_bh1750 %}
-    
     <div style='position: absolute;' id='{{ name }}'>
         <div style='position: relative;'>
             <img class='positioned_img' src='{{ STATIC_URL }}img/ambient_light_{{ theme }}_info.png' />
             <div class='positioned_text' style='top: 26px;'>{{ ambient_light }}<sub> лк</sub></div>
         </div>
     </div>
-    
+
     <script>
         positioning_widget({{ id }}, '{{ name }}', {{ horiz }}, {{ vert }});
     </script>
