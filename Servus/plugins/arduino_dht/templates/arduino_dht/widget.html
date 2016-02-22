@@ -3,10 +3,10 @@
 
     <div style='position: absolute;' id='{{ name }}'>
         <div style='position: relative;'>
-            <img class='positioned_img' src='{{ STATIC_URL }}img/temp_humid_{{ theme }}.png' />
+            <img class='positioned_img' src='{{ STATIC_URL }}img/temp_humid_{{ theme }}_info.png' />
             <div class='positioned_text' style='left: 5px; top: 5px; line-height: 1.5;'>
-                {{ temp }}<small><em> °C</em></small><br>
-                {{ humid }}<small><em> %</em></small>
+                {{ temp }}<sub> °C</sub><br>
+                {{ humid }}<sub> %</sub>
             </div>
         </div>
     </div>

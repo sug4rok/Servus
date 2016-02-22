@@ -1,10 +1,10 @@
-<div class='widget'>
+﻿<div class='widget'>
 {% for id, name, horiz, vert, press in arduino_bmp085 %}
     <div style='position: absolute;' id='{{ name }}'>
         <div style='position: relative;'>
-            <img class='positioned_img' src='{{ STATIC_URL }}img/pressure_{{ theme }}.png' />
+            <img class='positioned_img' src='{{ STATIC_URL }}img/pressure_{{ theme }}_info.png' />
             <div class='positioned_text' style='top: 2px;'>
-                {{ press }} <small><em>мм рт.ст.</em></small>
+                {{ press }}<sub> мм рт.ст.</sub>
             </div>
         </div>
     </div>

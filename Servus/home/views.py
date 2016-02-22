@@ -55,12 +55,10 @@ def positioned(request, plan_id=1):
     :param request: django request
     """
 
-    WIDGET_TYPE = 'positioned'
-
     # Получаем данные с виджетов приложений
-    widget_apps = get_widget_plugin_names(WIDGET_TYPE)
+    widget_apps = get_widget_plugin_names('positioned')
 
-    params = widgets_data(request, widget_apps, widget_type=WIDGET_TYPE, plan_id=int(plan_id))
+    params = widgets_data(request, widget_apps, widget_type='positioned', plan_id=int(plan_id))
 
     return call_template(
         request,
@@ -76,14 +74,12 @@ def tiled(request):
     :param request: django request
     """
 
-    WIDGET_TYPE = 'tiled'
-
     # Получаем данные с виджетов приложений
     apps = Application.objects.filter(is_widget=1).values_list('name', flat=True)
-    plugins = get_widget_plugin_names(WIDGET_TYPE)
+    plugins = get_widget_plugin_names('tiled')
     widget_apps = list(apps) + plugins
 
-    params = widgets_data(request, widget_apps, widget_type=WIDGET_TYPE)
+    params = widgets_data(request, widget_apps, widget_type='tiled')
 
     return call_template(
         request,

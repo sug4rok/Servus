@@ -9,9 +9,6 @@ caption{
     font-size: 90%;
     padding-bottom: 5px;
 }
-.height100{
-    height:100%;
-}
 .nopadding{
     padding: 0 !important;
     margin: 0 !important;
@@ -46,10 +43,16 @@ caption{
     padding: 5px;
     margin: 0 auto;
 }
-.positioned{
-    position: absolute;
-    border:2px solid #5bc0de;
-    background: #272b30
+.positioned_img{
+    position:absolute;
+    width:48px;
+    height:48px;
+}
+.positioned_text{
+    position:absolute;
+    width:48px;
+    padding: 2px;
+    line-height: 1;
 }
 .plan{
     margin: 0 auto;

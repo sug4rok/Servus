@@ -40,7 +40,8 @@ class Arduino(models.Model):
         help_text='Serial-порт, к которому подключен контроллер. Например:<br>\
                   для Windows порт = № порта - 1;<br>\
                   для Linux   порт = /dev/ttyACM0<br>\
-                  Если выбран основной контроллер, выбираем номер UART, к которому подключен вторичный контроллер (для mega2560 это 1, 2 или 3'
+                  Если выбран основной контроллер, выбираем номер UART, к которому подключен вторичный контроллер\
+                  (для mega2560 это 1, 2 или 3'
     )
 
     class Meta(object):
@@ -100,7 +101,7 @@ class Arduino(models.Model):
 
             if self.state[0]:
                 if self.ser.isOpen:
-                
+
                     # Если контроллер вторичный, модифицируем пересылаемую команду
                     if self.master:
                         cmd = 'ser%s:%s' % (self.obj.controller.port, cmd)

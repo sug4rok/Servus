@@ -41,9 +41,9 @@ class SensorBMP(models.Model):
 
     def get_data(self):
         cmd = 'bmp:%d\n' % self.height_sealevel
-        
-        controller = self.controller.Command(self)       
-        
+
+        controller = self.controller.Command(self)
+
         if controller.state[0]:
             result = controller.send(cmd)
             # TODO: Проверка на корректность полученных данных

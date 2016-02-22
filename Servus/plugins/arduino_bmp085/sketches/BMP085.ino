@@ -1,8 +1,8 @@
 #include <Wire.h>
 #include <Adafruit_BMP085.h>  // https://github.com/adafruit/Adafruit-BMP085-Library
 
-boolean stringComplete = false;
-String command = "";   // Тип выполняемой операции
+boolean stringComplete = false;  // Данные c Serial прочитаны
+String command = "";  // Тип выполняемой операции
 String param = "";  // Параметр, передаваемый функции
 boolean param_read = false;
 
@@ -19,32 +19,39 @@ void loop() {
     if (command == "bmp") {
       bmp085_get(param.toFloat());
     }
-    else Serial.println("Wrong data receive!");
+    else errorPrint("bad command " + command);
 
+    stringComplete = false;
     command = "";
     param = "";
-    stringComplete = false;
+    param_read = false;
   }
 }
 
 void serialEvent() {
   /*
-    Входная срока состоит из типа операции и номер вывода
-    Например, t11:
-    t - получить данные с датчика температуры;
-    11 - датчик подключен к 11 выводу.
+    Входная срока состоит из команды и параметра
+    Например, dht22:10:
+    dht22 - получить данные с датчика температуры DHT22;
+    10 - датчик подключен к 10 выводу.
   */
-
+ 
   while (Serial.available()) {
     char inChar = (char)Serial.read();
 
     if (inChar == '\n') stringComplete = true;
-    else if (inChar == ':') param_read = true;
+    else if (!param_read && inChar == ':') param_read = true;
     else {
       if (param_read) param += inChar;
       else command += inChar;
     }
   }
+}
+
+void errorPrint(String err) {
+  /* Функция вывода ошибки */
+  
+  Serial.println("Error: " + err);
 }
 
 void bmp085_get(int alt) {
@@ -58,16 +65,16 @@ void bmp085_get(int alt) {
 
   // Инициализация датчика давления
   Adafruit_BMP085 bmp;
-
-  if (!bmp.begin()) Serial.println("Could not find a valid BMP085 sensor!");
+  
+  if (!bmp.begin()) errorPrint("could not find a valid BMP085 sensor!");
   else {
     char buff_press[10], buff_temp[10];
     float pressure, temp;
-
+    
     temp = bmp.readTemperature();
-    pressure = (bmp.readSealevelPressure(alt) / 133.3);
+    pressure = (bmp.readSealevelPressure(alt)/133.3);
 
-    if (isnan(temp) || isnan(pressure)) Serial.println("Failed to read from BMP sensor!");
+    if (isnan(temp) || isnan(pressure)) errorPrint("failed to read from BMP sensor!");
 
     dtostrf(temp, 3, 1, buff_temp);
     dtostrf(pressure, 3, 1, buff_press);

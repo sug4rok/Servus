@@ -5,7 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from base.views import call_template
 from plugins.utils import get_used_plugins_by
-from climate.models import TempHumidValue, PressureValue
+from climate.models import *
 
 
 def get_climate_data(sensors, value_model, attr):
@@ -20,16 +20,26 @@ def get_climate_data(sensors, value_model, attr):
     Климат. Формат: [('расположение', ((дата1, значение1), (дата2, значение2), ...)]
     """
 
-    values = value_model.objects.filter(datetime__gte=datetime.today() - timedelta(days=3)).order_by('datetime')
+    result = []
+    NUMBER_OF_DAYS = 3  # Количество дней, за которые выводятся данные
+    NUMBER_OF_RESULTS = 300  # Не более 300 результатов на графике для каждого сенсора
 
-    lst = []
+    # Создаем запрос на все данные не старше трех дней
+    last_days = datetime.today() - timedelta(days=NUMBER_OF_DAYS)
+    qs = value_model.objects.filter(datetime__gte=last_days).order_by('datetime')
 
     for sensor in sensors:
-        s_v = values.filter(content_type_id=ContentType.objects.get_for_model(sensor).id,
-                            object_id=sensor.id)
-        lst.append((sensor.location, ((i.datetime, getattr(i, attr)) for i in s_v)))
+        # Отфильтровываем результаты по каждому сенсору
+        qs_s = qs.filter(content_type_id=ContentType.objects.get_for_model(sensor).id,
+                         object_id=sensor.id)
 
-    return lst
+        # Расчитываем шаг для сокращения количества результатов и урезаем запрос
+        step = int(round(len(qs_s) / float(NUMBER_OF_RESULTS), 0))
+        qs_s = qs_s[::step]
+
+        result.append((sensor.location, ((i.datetime, getattr(i, attr)) for i in qs_s)))
+
+    return result
 
 
 def climate(request):
@@ -40,15 +50,32 @@ def climate(request):
     :param request: django request
     """
 
+    charts = []
+
+    # Данные для графиков температуры и влажности
     th_sensors = get_used_plugins_by(plugin_type='TempHumidSensor')
-    temps = get_climate_data(th_sensors, TempHumidValue, 'temperature')
-    humids = get_climate_data(th_sensors, TempHumidValue, 'humidity')
+    if th_sensors:
+        temps = get_climate_data(th_sensors, TempHumidValue, 'temperature')
+        humids = get_climate_data(th_sensors, TempHumidValue, 'humidity')
+        if temps:
+            charts.append(('temp_div', 'температуры', '°C', temps))
+        if humids:
+            charts.append(('hum_div', 'влажности', '%', humids))
 
+    # Данные для графика атмосферного давления
     p_sensors = get_used_plugins_by(plugin_type='PressureSensor')
-    pressures = get_climate_data(p_sensors, PressureValue, 'pressure')
+    if p_sensors:
+        pressures = get_climate_data(p_sensors, PressureValue, 'pressure')
+        if pressures:
+            charts.append(('press_div', 'атмосферного давления', 'мм рт.ст.', pressures))
 
-    params = {'active_app_name': 'climate', 'charts': (('temp_div', 'температуры', '°C', temps),
-                                                       ('hum_div', 'влажности', '%', humids),
-                                                       ('press_div', 'атмосферного давления', 'мм рт.ст.', pressures))}
+    # Данные для графиков освещенности
+    al_sensors = get_used_plugins_by(plugin_type='AmbientLightSensor')
+    if al_sensors:
+        ambient_lights = get_climate_data(al_sensors, AmbientLightValue, 'ambient_light')
+        if ambient_lights:
+            charts.append(('ambl_div', 'освещенности', 'лк', ambient_lights))
+
+    params = {'active_app_name': 'climate', 'charts': charts}
 
     return call_template(request, params)

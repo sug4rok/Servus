@@ -35,12 +35,12 @@ class SensorBH1750(models.Model):
 
     def get_data(self):
         cmd = 'bh1750:\n'
-        
-        controller = self.controller.Command(self)       
-        
+
+        controller = self.controller.Command(self)
+
         if controller.state[0]:
             result = controller.send(cmd)
-            
+
             # TODO: Проверка на корректность полученных данных
             if controller.state[0]:
                 AmbientLightValue.objects.create(content_object=self, ambient_light=round(int(result), 0))

@@ -5,7 +5,6 @@ from django_cron.models import CronJobLog
 
 from base.utils import CJB
 from events.models import Event
-from climate.models import TempHumidValue
 
 
 class DelOutdatedDCLogs(CJB):

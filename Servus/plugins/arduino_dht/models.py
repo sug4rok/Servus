@@ -32,7 +32,7 @@ class SensorDHT(models.Model):
     WIDGET_TYPE = 'positioned'
 
     name = models.SlugField(
-        max_length=10,
+        max_length=20,
         verbose_name='Системное имя',
         unique=True
     )
@@ -64,9 +64,9 @@ class SensorDHT(models.Model):
 
     def get_data(self):
         cmd = '%s:%d\n' % (self.type, self.controller_pin)
-        
-        controller = self.controller.Command(self)       
-        
+
+        controller = self.controller.Command(self)
+
         if controller.state[0]:
             counter = 3
             while counter:

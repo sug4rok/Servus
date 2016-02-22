@@ -1,6 +1,5 @@
 ﻿# coding=utf-8
 from events.utils import event_setter
-from .models import TempHumidValue
 
 
 def check_dht_data(temp, humid, dht_type):

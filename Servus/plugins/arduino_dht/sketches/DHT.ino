@@ -1,7 +1,7 @@
 #include <DHT.h>  //https://github.com/adafruit/DHT-sensor-library
 
-boolean stringComplete = false;
-String command = "";   // Тип выполняемой операции
+boolean stringComplete = false;  // Данные c Serial прочитаны
+String command = "";  // Тип выполняемой операции
 String param = "";  // Параметр, передаваемый функции
 boolean param_read = false;
 
@@ -18,32 +18,39 @@ void loop() {
     if (command.substring(0, 3) == "dht") {
       dht_get(param.toInt(), command.substring(3).toInt());
     }
-    else Serial.println("Wrong data receive!");
+    else errorPrint("bad command " + command);
 
+    stringComplete = false;
     command = "";
     param = "";
-    stringComplete = false;
+    param_read = false;
   }
 }
 
 void serialEvent() {
   /*
-    Входная срока состоит из типа операции и номер вывода
-    Например, t11:
-    t - получить данные с датчика температуры;
-    11 - датчик подключен к 11 выводу.
+    Входная срока состоит из команды и параметра
+    Например, dht22:10:
+    dht22 - получить данные с датчика температуры DHT22;
+    10 - датчик подключен к 10 выводу.
   */
 
   while (Serial.available()) {
     char inChar = (char)Serial.read();
 
     if (inChar == '\n') stringComplete = true;
-    else if (inChar == ':') param_read = true;
+    else if (!param_read && inChar == ':') param_read = true;
     else {
       if (param_read) param += inChar;
       else command += inChar;
     }
   }
+}
+
+void errorPrint(String err) {
+  /* Функция вывода ошибки */
+
+  Serial.println("Error: " + err);
 }
 
 void dht_get(int pin, int dht_type) {
@@ -65,15 +72,16 @@ void dht_get(int pin, int dht_type) {
   char buff_hum[10], buff_temp[10];
   float hum, temp;
 
-  delay(2000);
+  delay(1000);
   hum = dht.readHumidity();
   temp = dht.readTemperature();
 
-  if (isnan(temp) || isnan(hum)) Serial.println("Failed to read from DHT sensor!");
-
-  dtostrf(hum, 3, 0, buff_hum);
-  dtostrf(temp, 3, 1, buff_temp);
-  Serial.print(buff_hum);
-  Serial.print(":");
-  Serial.println(buff_temp);
+  if (isnan(temp) || isnan(hum)) errorPrint("failed to read from DHT sensor!");
+  else {
+    dtostrf(hum, 3, 0, buff_hum);
+    dtostrf(temp, 3, 1, buff_temp);
+    Serial.print(buff_hum);
+    Serial.print(":");
+    Serial.println(buff_temp);
+  }
 }

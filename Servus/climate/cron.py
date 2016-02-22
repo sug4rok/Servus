@@ -9,7 +9,7 @@ class GetClimate(CJB):
     подключенных к контроллеру.
     """
 
-    RUN_EVERY_MINS = 15
+    RUN_EVERY_MINS = 1
 
     def do(self):
 

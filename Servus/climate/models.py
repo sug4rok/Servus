@@ -69,3 +69,24 @@ class AmbientLightValue(models.Model):
 
     def __unicode__(self):
         return '%s' % self.content_object
+
+
+class RaindropValue(models.Model):
+    """
+    Модель для хранения данных, полученных с датчиков дождя
+    """
+
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey()
+    raindrop = models.IntegerField(
+        verbose_name='Дождь',
+        default=1023
+    )
+    datetime = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Время получения даанных'
+    )
+
+    def __unicode__(self):
+        return '%s' % self.content_object
