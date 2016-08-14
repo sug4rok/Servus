@@ -46,7 +46,22 @@ class SensorYL83(models.Model):
             result = controller.send(cmd)
 
             # TODO: Проверка на корректность полученных данных
+            
             if controller.state[0]:
-                RaindropValue.objects.create(content_object=self, raindrop=int(result))
+                raindrop = int(result)
+            
+                # Добавляем данные датчика в таблицу БД только, если они отличаются от
+                # предыдущего показания, иначе обновляем время у предыдущего показания.
+                # Это сделано для более быстрой выгрузки данных для графиков, т.к.
+                # количество точек существенно сокращается.
+                try:
+                    value = RaindropValue.objects.filter(object_id=self.id).latest('id')
+                except RaindropValue.DoesNotExist:
+                    value = None
+                if value is not None and value.raindrop == raindrop:
+                    value.datetime=datetime.now()
+                    value.save()
+                else:
+                    RaindropValue.objects.create(content_object=self, raindrop=raindrop)
 
             controller.close_port()

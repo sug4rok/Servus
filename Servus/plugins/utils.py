@@ -1,4 +1,6 @@
 ﻿# coding=utf-8
+from django.contrib.contenttypes.models import ContentType
+
 from .models import PLUGIN_MODELS
 
 
@@ -78,3 +80,22 @@ def get_widget_plugin_names(widget_type):
     if plugins:
         return [p.PLUGIN_PACKAGE for p in plugins if p.WIDGET_TYPE == widget_type]
     return []
+
+
+def get_latest_sensor_value(value_model, sensor):
+    """
+    Функция возвращает последние значение для конкретного сенсора из таблицы
+    значений value_model. Вся сложность в определении в этой таблице пренадлежности данных
+    конкретному сенсору, т.к. для обезличивания сенсоров мы использовали GenericForeignKey.
+
+    :param value_model: модель, хранящая значеня для сенсоров данного типа,
+        например, TempHumidValue - значеня температуры и влажности.
+    :param sensor: конкретный сенсор, для которого нужно получить последние данные
+    """
+
+    try:
+        return value_model.objects.filter(
+            content_type_id=ContentType.objects.get_for_model(sensor).id,
+            object_id=sensor.id).latest('id')
+    except value_model.DoesNotExist:
+        return None

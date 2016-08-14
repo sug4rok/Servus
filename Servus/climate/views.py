@@ -5,7 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from base.views import call_template
 from plugins.utils import get_used_plugins_by
-from climate.models import TempHumidValue, PressureValue, AmbientLightValue
+from climate.models import TempHumidValue, PressureValue, AmbientLightValue, RaindropValue
 
 
 def get_climate_data(sensors, value_model, attr):
@@ -35,7 +35,7 @@ def get_climate_data(sensors, value_model, attr):
 
         # Расчитываем шаг для сокращения количества результатов и урезаем запрос
         step = int(round(len(qs_s) / float(number_of_results), 0))
-        qs_s = qs_s[::step]
+        qs_s = qs_s[::step if step else 1]
 
         result.append((sensor.location, ((i.datetime, getattr(i, attr)) for i in qs_s)))
 
@@ -75,6 +75,13 @@ def climate(request):
         ambient_lights = get_climate_data(al_sensors, AmbientLightValue, 'ambient_light')
         if ambient_lights:
             charts.append(('ambl_div', 'освещенности', 'лк', ambient_lights))
+
+    # Данные для графиков выпадения осадков
+    rd_sensors = get_used_plugins_by(plugin_type='RaindropSensor')
+    if rd_sensors:
+        raindrops = get_climate_data(rd_sensors, RaindropValue, 'raindrop')
+        if raindrops:
+            charts.append(('rd_div', 'выпадения осадков', 'ед', raindrops))
 
     params = {'active_app_name': 'climate', 'charts': charts}
 

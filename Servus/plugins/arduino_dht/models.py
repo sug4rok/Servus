@@ -1,5 +1,6 @@
 ﻿# coding=utf-8
 import time
+from datetime import datetime
 from django.db import models
 
 from climate.models import TempHumidValue
@@ -75,6 +76,7 @@ class SensorDHT(models.Model):
                 if controller.state[0]:
                     try:
                         humid, temp = map(float, result.split(':'))
+                        humid, temp = map(lambda x: int(round(x)), [humid, temp])
 
                         # Проверяем полученные данные на возможные ошибки показаний.
                         # Делаем три измерения подряд с 5 секундной паузой, чтобы удостоверится, что
@@ -83,9 +85,22 @@ class SensorDHT(models.Model):
                             counter -= 1
                             time.sleep(2)
                         else:
-                            TempHumidValue.objects.create(content_object=self,
-                                                          temperature=round(temp, 0),
-                                                          humidity=round(humid, 0))
+                            # Добавляем данные датчика в таблицу БД только, если они отличаются от
+                            # предыдущего показания, иначе обновляем время у предыдущего показания.
+                            # Это сделано для более быстрой выгрузки данных для графиков, т.к.
+                            # количество точек существенно сокращается.
+                            try:
+                                value = TempHumidValue.objects.filter(object_id=self.id).latest('id')
+                            except TempHumidValue.DoesNotExist:
+                                value = None
+                            if value is not None and value.temperature == temp and value.humidity == humid:
+                                value.datetime=datetime.now()
+                                value.save()
+                            else:
+                                TempHumidValue.objects.create(content_object=self,
+                                                              temperature=temp,
+                                                              humidity=humid)
+                                                              
                             set_climate_event(self, humid, temp)
                             break
                     except ValueError:

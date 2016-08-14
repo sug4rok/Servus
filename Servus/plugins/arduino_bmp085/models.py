@@ -1,4 +1,5 @@
 ﻿# coding=utf-8
+from datetime import datetime
 from django.db import models
 
 from climate.models import PressureValue
@@ -47,10 +48,25 @@ class SensorBMP(models.Model):
         if controller.state[0]:
             result = controller.send(cmd)
             # TODO: Проверка на корректность полученных данных
+            
             if controller.state[0]:
                 press = map(float, result.split(':'))[0]
+                press = int(round(press))
 
-                PressureValue.objects.create(content_object=self, pressure=round(press, 0))
+                # Добавляем данные датчика в таблицу БД только, если они отличаются от
+                # предыдущего показания, иначе обновляем время у предыдущего показания.
+                # Это сделано для более быстрой выгрузки данных для графиков, т.к.
+                # количество точек существенно сокращается.
+                try:
+                    value = PressureValue.objects.filter(object_id=self.id).latest('id')
+                except PressureValue.DoesNotExist:
+                    value = None
+                if value is not None and value.pressure == press:
+                    value.datetime=datetime.now()
+                    value.save()
+                else:
+                    PressureValue.objects.create(content_object=self, pressure=press)
+                
                 # TODO: Создать функцию событий атм. давления  set_pressure_event(sensor, press)
 
             controller.close_port()

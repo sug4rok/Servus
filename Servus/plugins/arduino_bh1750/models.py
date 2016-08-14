@@ -43,6 +43,20 @@ class SensorBH1750(models.Model):
 
             # TODO: Проверка на корректность полученных данных
             if controller.state[0]:
-                AmbientLightValue.objects.create(content_object=self, ambient_light=round(int(result), 0))
+                light = int(result)
+                
+                # Добавляем данные датчика в таблицу БД только, если они отличаются от
+                # предыдущего показания, иначе обновляем время у предыдущего показания.
+                # Это сделано для более быстрой выгрузки данных для графиков, т.к.
+                # количество точек существенно сокращается.
+                try:
+                    value = AmbientLightValue.objects.filter(object_id=self.id).latest('id')
+                except AmbientLightValue.DoesNotExist:
+                    value = None
+                if value is not None and value.ambient_light == light:
+                    value.datetime=datetime.now()
+                    value.save()
+                else:
+                    AmbientLightValue.objects.create(content_object=self, ambient_light=light)
 
             controller.close_port()

@@ -1,7 +1,5 @@
 ﻿# coding=utf-8
-from django.contrib.contenttypes.models import ContentType
-
-from plugins.utils import get_used_plugins_by
+from plugins.utils import get_used_plugins_by, get_latest_sensor_value
 from climate.models import RaindropValue
 
 
@@ -17,11 +15,11 @@ def rain_level(number):
     3 - ливень.
     """
 
-    if 500 <= number < 900:
+    if 500 <= number < 1000:
         return 1
-    elif 300 <= number < 500:
+    elif 100 <= number < 500:
         return 2
-    elif number < 300:
+    elif number < 100:
         return 3
     else:
         return 0
@@ -37,14 +35,8 @@ def get_widget_data(plan_id):
 
     sensors = get_used_plugins_by(package='plugins.arduino_yl83')
     sensors = [s for s in sensors if s.plan_image_id == plan_id]
-    try:
-        values = [RaindropValue.objects.filter(content_type_id=ContentType.objects.get_for_model(s).id,
-                                               object_id=s.id).order_by('-datetime')[0] for s in sensors]
-
-        result = [(plan_id, v.content_object.name, v.content_object.horiz_position,
-                   v.content_object.vert_position, rain_level(v.raindrop)) for v in values]
-
-    except IndexError:
-        result = []
-
-    return result
+    
+    values = [get_latest_sensor_value(RaindropValue, sensor) for sensor in sensors]
+        
+    return [(plan_id, v.content_object.name, v.content_object.horiz_position,
+             v.content_object.vert_position, rain_level(v.raindrop)) for v in values if v is not None]
