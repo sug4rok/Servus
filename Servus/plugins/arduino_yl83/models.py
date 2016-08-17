@@ -22,6 +22,18 @@ class SensorYL83(models.Model):
         verbose_name='Системное имя',
         unique=True
     )
+    # Максимальное и минимальное значения показаний датчика. В идеальных условиях равны соответсвенно 1023 и 0.
+    # Ставим соотвественно изначально 0 и 1023 для для дальнейшей cамонастройки.
+    max_value = models.PositiveSmallIntegerField(
+        default=0,
+        verbose_name='max значение',
+        editable=False
+    )
+    min_value = models.PositiveSmallIntegerField(
+        default=1023,
+        verbose_name='min значение',
+        editable=False
+    )
     controller = models.ForeignKey(
         Arduino,
         verbose_name='Контроллер Arduino',
@@ -64,5 +76,13 @@ class SensorYL83(models.Model):
                     value.save()
                 else:
                     RaindropValue.objects.create(content_object=self, raindrop=raindrop)
+                    
+                    # Самонастройка крайних диапазонов измерений датчика.
+                    if raindrop < self.min_value:
+                        self.min_value = raindrop
+                        self.save()
+                    if raindrop > self.max_value:
+                        self.max_value = raindrop
+                        self.save()
 
             controller.close_port()
