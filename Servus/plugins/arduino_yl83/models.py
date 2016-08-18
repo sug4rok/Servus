@@ -27,12 +27,10 @@ class SensorYL83(models.Model):
     max_value = models.PositiveSmallIntegerField(
         default=0,
         verbose_name='max значение',
-        editable=False
     )
     min_value = models.PositiveSmallIntegerField(
         default=1023,
         verbose_name='min значение',
-        editable=False
     )
     controller = models.ForeignKey(
         Arduino,

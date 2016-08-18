@@ -28,6 +28,19 @@ class PreparePluginAdmin(admin.ModelAdmin):
                 fieldsets += (('Настройки виджета',
                                {'fields': ('plan_image', ('horiz_position', 'vert_position'))}),)
         return fieldsets
+    
+    def get_readonly_fields(self, request, obj=None):
+        readonly_fields = super(PreparePluginAdmin, self).get_readonly_fields(request, obj)
+        print '-------------', readonly_fields
+        
+        if obj is not None:
+            if hasattr(obj, 'max_value'):
+                readonly_fields += ('max_value', )
+
+            if hasattr(obj, 'min_value'):
+                readonly_fields += ('min_value', )
+        
+        return readonly_fields
 
 
 class PluginAdmin(object):
