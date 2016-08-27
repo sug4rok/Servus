@@ -1,0 +1,14 @@
+<div class='widget'>
+{% for id, name, horiz, vert, location_type, state in arduino_reed_switch %}
+
+    <div style='position: absolute;' id='{{ name }}'>
+        <div style='position: relative;'>
+            <img class='positioned_img' src='{{ STATIC_URL }}img/{{ state }}_{{ location_type }}_{{ theme }}_info.png' />
+        </div>
+    </div>
+
+    <script>
+        positioning_widget({{ id }}, '{{ name }}', {{ horiz }}, {{ vert }});
+    </script>
+{% endfor %}
+</div>

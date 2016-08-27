@@ -29,7 +29,7 @@ class PingHost(models.Model):
         editable=False,
     )
     last_changed = models.DateTimeField(
-        auto_now_add=True,
+        auto_now=True,
         verbose_name='Время последней смены статуса'
     )
 

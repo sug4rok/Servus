@@ -38,6 +38,8 @@ PLUGINS = (
     # 'plugins.arduino_bmp085',  # for connecting a BMP085/BMP180 sensor to the Arduino
     # 'plugins.arduino_bh1750',  # for connecting a BH1750 sensors (ambient light measurement) to the Arduino
     # 'plugins.arduino_yl83',  # for connecting a YL-83 raindrop sensors
+    # 'plugins.arduino_reed_switch',  # on/off switch states
+    # 'plugins.arduino_reed_switch',  # reed switch sensors
     # 'plugins.weather_yandex_ru',  # weather forecast from yandex.ru
     # 'plugins.weather_openweathermap',  # weather forecast from openweathermap.org
     # 'plugins.weather_weather_ua',  # weather from weather.ua
@@ -153,8 +155,9 @@ CRON_CLASSES = [
     'base.cron.DelOutdatedDCLogs',
     'base.cron.DelOutdatedEvents',
     'slideshow.cron.SlideshowJob',
-    'events.cron.EmailsSendJob',
+    # 'events.cron.EmailsSendJob',
     # 'events.cron.SMSSendJob',
+    # 'home.cron.GetOnOffSwitchState',
     # 'climate.cron.GetClimate',
     # 'weather.cron.GetWeatherJob',
     # 'plugins.system_ping.cron.GetPingStatus',

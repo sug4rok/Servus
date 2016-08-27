@@ -45,7 +45,6 @@ def ping(host):
 
         if host.online != result:
             host.online = result
-            host.last_changed = datetime.now()
             host.save()
 
             msg = u'%s %s' % (host.name, u'снова доступен' if result else u'больше не доступен')
