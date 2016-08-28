@@ -31,7 +31,6 @@ class OnOffSwitch(models.Model):
     )
     controller_pin = models.PositiveSmallIntegerField(
         verbose_name='Вывод (pin) на Arduino',
-        unique=False,
     )
     state = models.BooleanField(
         default=False,

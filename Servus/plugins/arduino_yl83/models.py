@@ -38,7 +38,6 @@ class SensorYL83(models.Model):
     )
     controller_pin = models.PositiveSmallIntegerField(
         verbose_name='Вывод (pin) на Arduino',
-        unique=False,
     )
 
     class Meta(object):
@@ -57,10 +56,10 @@ class SensorYL83(models.Model):
             result = controller.send(cmd)
 
             # TODO: Проверка на корректность полученных данных
-            
+
             if controller.state[0]:
                 raindrop = int(result)
-            
+
                 # Добавляем данные датчика в таблицу БД только, если они отличаются от
                 # предыдущего показания, иначе обновляем время у предыдущего показания.
                 # Это сделано для более быстрой выгрузки данных для графиков, т.к.
@@ -70,11 +69,11 @@ class SensorYL83(models.Model):
                 except RaindropValue.DoesNotExist:
                     value = None
                 if value is not None and value.raindrop == raindrop:
-                    value.datetime=datetime.now()
+                    value.datetime = datetime.now()
                     value.save()
                 else:
                     RaindropValue.objects.create(content_object=self, raindrop=raindrop)
-                    
+
                     # Самонастройка крайних диапазонов измерений датчика.
                     if raindrop < self.min_value:
                         self.min_value = raindrop

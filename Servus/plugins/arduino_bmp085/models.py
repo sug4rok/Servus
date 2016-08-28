@@ -48,7 +48,7 @@ class SensorBMP(models.Model):
         if controller.state[0]:
             result = controller.send(cmd)
             # TODO: Проверка на корректность полученных данных
-            
+
             if controller.state[0]:
                 press = map(float, result.split(':'))[0]
                 press = int(round(press))
@@ -62,11 +62,11 @@ class SensorBMP(models.Model):
                 except PressureValue.DoesNotExist:
                     value = None
                 if value is not None and value.pressure == press:
-                    value.datetime=datetime.now()
+                    value.datetime = datetime.now()
                     value.save()
                 else:
                     PressureValue.objects.create(content_object=self, pressure=press)
-                
-                # TODO: Создать функцию событий атм. давления  set_pressure_event(sensor, press)
+
+                    # TODO: Создать функцию событий атм. давления  set_pressure_event(sensor, press)
 
             controller.close_port()

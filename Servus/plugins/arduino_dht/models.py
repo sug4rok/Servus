@@ -48,7 +48,6 @@ class SensorDHT(models.Model):
     )
     controller_pin = models.PositiveSmallIntegerField(
         verbose_name='Вывод (pin) на Arduino',
-        unique=False,
     )
     location_type = models.SlugField(
         choices=LOCATION_TYPES,
@@ -94,13 +93,13 @@ class SensorDHT(models.Model):
                             except TempHumidValue.DoesNotExist:
                                 value = None
                             if value is not None and value.temperature == temp and value.humidity == humid:
-                                value.datetime=datetime.now()
+                                value.datetime = datetime.now()
                                 value.save()
                             else:
                                 TempHumidValue.objects.create(content_object=self,
                                                               temperature=temp,
                                                               humidity=humid)
-                                                              
+
                             set_climate_event(self, humid, temp)
                             break
                     except ValueError:

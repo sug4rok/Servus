@@ -5,7 +5,7 @@ from plugins.utils import get_used_plugins_by
 def get_state(state):
     return 'opened' if state else 'closed'
 
-    
+
 def get_widget_data(plan_id):
     """
     Функция, предоставляющая данные с герконов
@@ -14,9 +14,8 @@ def get_widget_data(plan_id):
     координатами расположения виджетов.
     """
 
-
     switches = get_used_plugins_by(package='plugins.arduino_reed_switch')
     switches = [sw for sw in switches if sw.plan_image_id == plan_id]
 
     return [(plan_id, sw.name, sw.horiz_position, sw.vert_position,
-        sw.location_type, get_state(sw.state)) for sw in switches]
+             sw.location_type, get_state(sw.state)) for sw in switches]

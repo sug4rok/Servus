@@ -45,7 +45,7 @@ class SensorBH1750(models.Model):
             # TODO: Проверка на корректность полученных данных
             if controller.state[0]:
                 light = int(result)
-                
+
                 # Добавляем данные датчика в таблицу БД только, если они отличаются от
                 # предыдущего показания, иначе обновляем время у предыдущего показания.
                 # Это сделано для более быстрой выгрузки данных для графиков, т.к.
@@ -55,7 +55,7 @@ class SensorBH1750(models.Model):
                 except AmbientLightValue.DoesNotExist:
                     value = None
                 if value is not None and value.ambient_light == light:
-                    value.datetime=datetime.now()
+                    value.datetime = datetime.now()
                     value.save()
                 else:
                     AmbientLightValue.objects.create(content_object=self, ambient_light=light)
