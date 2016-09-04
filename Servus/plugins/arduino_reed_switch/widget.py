@@ -3,7 +3,7 @@ from plugins.utils import get_used_plugins_by
 
 
 def get_state(state):
-    return 'opened' if state else 'closed'
+    return 'closed' if state else 'opened'
 
 
 def get_widget_data(plan_id):

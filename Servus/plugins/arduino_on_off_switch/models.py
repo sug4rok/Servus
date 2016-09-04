@@ -56,14 +56,12 @@ class OnOffSwitch(models.Model):
         if controller.state[0]:
             result = controller.send(cmd)
 
-            try:
+            if result.isdigit():
                 result = int(result)
                 if controller.state[0] and (result == 0 or result == 1):
                     result = bool(result)
                     if self.state != result:
                         self.state = result
                         self.save()
-            except ValueError:
-                logger.error(u'OnOffSwitch: Ошибка получения данных от %s', self.name)
 
             controller.close_port()
