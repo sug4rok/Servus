@@ -3,7 +3,7 @@ from datetime import datetime
 from django.db import models
 
 from climate.models import AmbientLightValue
-from plugins.arduino.models import Arduino
+from plugins.arduino.models import Arduino, set_command
 
 MODEL = 'SensorBH1750'
 
@@ -34,30 +34,24 @@ class SensorBH1750(models.Model):
     def __unicode__(self):
         return self.name
 
-    def get_data(self):
+    def set_command(self):
         cmd = 'bh1750:\n'
+        set_command(self, cmd)
 
-        controller = self.controller.Command(self)
+    def set_result(self, result):
+        if type(result) is str and result.isdigit():
+            light = int(result)
 
-        if controller.state[0]:
-            result = controller.send(cmd)
-
-            # TODO: Проверка на корректность полученных данных
-            if controller.state[0]:
-                light = int(result)
-
-                # Добавляем данные датчика в таблицу БД только, если они отличаются от
-                # предыдущего показания, иначе обновляем время у предыдущего показания.
-                # Это сделано для более быстрой выгрузки данных для графиков, т.к.
-                # количество точек существенно сокращается.
-                try:
-                    value = AmbientLightValue.objects.filter(object_id=self.id).latest('id')
-                except AmbientLightValue.DoesNotExist:
-                    value = None
-                if value is not None and value.ambient_light == light:
-                    value.datetime = datetime.now()
-                    value.save()
-                else:
-                    AmbientLightValue.objects.create(content_object=self, ambient_light=light)
-
-            controller.close_port()
+            # Добавляем данные датчика в таблицу БД только, если они отличаются от
+            # предыдущего показания, иначе обновляем время у предыдущего показания.
+            # Это сделано для более быстрой выгрузки данных для графиков, т.к.
+            # количество точек существенно сокращается.
+            try:
+                value = AmbientLightValue.objects.filter(object_id=self.id).latest('id')
+            except AmbientLightValue.DoesNotExist:
+                value = None
+            if value is not None and value.ambient_light == light:
+                value.datetime = datetime.now()
+                value.save()
+            else:
+                AmbientLightValue.objects.create(content_object=self, ambient_light=light)

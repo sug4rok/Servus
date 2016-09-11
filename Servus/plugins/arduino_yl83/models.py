@@ -3,7 +3,7 @@ from datetime import datetime
 from django.db import models
 
 from climate.models import RaindropValue
-from plugins.arduino.models import Arduino
+from plugins.arduino.models import Arduino, set_command
 
 MODEL = 'SensorYL83'
 
@@ -47,39 +47,32 @@ class SensorYL83(models.Model):
     def __unicode__(self):
         return self.name
 
-    def get_data(self):
+    def set_command(self):
         cmd = 'rain:%d\n' % self.controller_pin
+        set_command(self, cmd)
 
-        controller = self.controller.Command(self)
+    def set_result(self, result):
+        if type(result) is str and result.isdigit():
+            raindrop = int(result)
 
-        if controller.state[0]:
-            result = controller.send(cmd)
+            # Добавляем данные датчика в таблицу БД только, если они отличаются от
+            # предыдущего показания, иначе обновляем время у предыдущего показания.
+            # Это сделано для более быстрой выгрузки данных для графиков, т.к.
+            # количество точек существенно сокращается.
+            try:
+                value = RaindropValue.objects.filter(object_id=self.id).latest('id')
+            except RaindropValue.DoesNotExist:
+                value = None
+            if value is not None and value.raindrop == raindrop:
+                value.datetime = datetime.now()
+                value.save()
+            else:
+                RaindropValue.objects.create(content_object=self, raindrop=raindrop)
 
-            # TODO: Проверка на корректность полученных данных
-
-            if controller.state[0]:
-                raindrop = int(result)
-
-                # Добавляем данные датчика в таблицу БД только, если они отличаются от
-                # предыдущего показания, иначе обновляем время у предыдущего показания.
-                # Это сделано для более быстрой выгрузки данных для графиков, т.к.
-                # количество точек существенно сокращается.
-                try:
-                    value = RaindropValue.objects.filter(object_id=self.id).latest('id')
-                except RaindropValue.DoesNotExist:
-                    value = None
-                if value is not None and value.raindrop == raindrop:
-                    value.datetime = datetime.now()
-                    value.save()
-                else:
-                    RaindropValue.objects.create(content_object=self, raindrop=raindrop)
-
-                    # Самонастройка крайних диапазонов измерений датчика.
-                    if raindrop < self.min_value:
-                        self.min_value = raindrop
-                        self.save()
-                    if raindrop > self.max_value:
-                        self.max_value = raindrop
-                        self.save()
-
-            controller.close_port()
+                # Самонастройка крайних диапазонов измерений датчика.
+                if raindrop < self.min_value:
+                    self.min_value = raindrop
+                    self.save()
+                if raindrop > self.max_value:
+                    self.max_value = raindrop
+                    self.save()

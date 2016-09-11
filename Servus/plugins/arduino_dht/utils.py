@@ -18,9 +18,9 @@ def check_dht_data(temp, humid, dht_type):
     """
 
     if dht_type == 'dht11' or dht_type == 'dht21':
-        return temp > 50 or temp < 0 or humid < 20 or humid > 80
+        return temp < 50 or temp > 0 or humid > 20 or humid < 80
     else:
-        return temp > 125 or temp < -40 or humid < 0 or humid > 100
+        return temp < 125 or temp > -40 or humid > 0 or humid < 100
 
 
 def set_climate_event(sensor, humid, temp):

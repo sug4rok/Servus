@@ -12,9 +12,8 @@ class GetOnOffSwitchState(CJB):
     RUN_EVERY_MINS = 1
 
     def do(self):
-
         sensors = get_used_plugins_by(plugin_type='OnOffSwitch')
 
         if sensors:
             for sensor in sensors:
-                sensor.get_data()
+                sensor.set_command()

@@ -1,12 +1,9 @@
 ﻿# coding=utf-8
 from datetime import datetime
-import logging
 
 from django.db import models
 
-from plugins.arduino.models import Arduino
-
-logger = logging.getLogger(__name__)
+from plugins.arduino.models import Arduino, set_command
 
 MODEL = 'OnOffSwitch'
 
@@ -48,20 +45,14 @@ class OnOffSwitch(models.Model):
     def __unicode__(self):
         return self.name
 
-    def get_data(self):
+    def set_command(self):
         cmd = 'sw_state:%d\n' % self.controller_pin
+        set_command(self, cmd)
 
-        controller = self.controller.Command(self)
+    def set_result(self, result):
 
-        if controller.state[0]:
-            result = controller.send(cmd)
-
-            if result.isdigit():
-                result = int(result)
-                if controller.state[0] and (result == 0 or result == 1):
-                    result = bool(result)
-                    if self.state != result:
-                        self.state = result
-                        self.save()
-
-            controller.close_port()
+        if result == '0' or result == '1':
+            result = bool(int(result))
+            if self.state != result:
+                self.state = result
+                self.save()

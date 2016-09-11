@@ -3,7 +3,7 @@ from datetime import datetime
 from django.db import models
 
 from climate.models import PressureValue
-from plugins.arduino.models import Arduino
+from plugins.arduino.models import Arduino, set_command
 
 MODEL = 'SensorBMP'
 
@@ -40,33 +40,31 @@ class SensorBMP(models.Model):
     def __unicode__(self):
         return self.name
 
-    def get_data(self):
+    def set_command(self):
         cmd = 'bmp:%d\n' % self.height_sealevel
+        set_command(self, cmd)
 
-        controller = self.controller.Command(self)
+    def set_result(self, result):
+        if type(result) is str:
 
-        if controller.state[0]:
-            result = controller.send(cmd)
             # TODO: Проверка на корректность полученных данных
 
-            if controller.state[0]:
-                press = map(float, result.split(':'))[0]
-                press = int(round(press))
+            press = map(float, result.split(':'))[0]
+            press = int(round(press))
 
-                # Добавляем данные датчика в таблицу БД только, если они отличаются от
-                # предыдущего показания, иначе обновляем время у предыдущего показания.
-                # Это сделано для более быстрой выгрузки данных для графиков, т.к.
-                # количество точек существенно сокращается.
-                try:
-                    value = PressureValue.objects.filter(object_id=self.id).latest('id')
-                except PressureValue.DoesNotExist:
-                    value = None
-                if value is not None and value.pressure == press:
-                    value.datetime = datetime.now()
-                    value.save()
-                else:
-                    PressureValue.objects.create(content_object=self, pressure=press)
+            # Добавляем данные датчика в таблицу БД только, если они отличаются от
+            # предыдущего показания, иначе обновляем время у предыдущего показания.
+            # Это сделано для более быстрой выгрузки данных для графиков, т.к.
+            # количество точек существенно сокращается.
+            try:
+                value = PressureValue.objects.filter(object_id=self.id).latest('id')
+            except PressureValue.DoesNotExist:
+                value = None
+            if value is not None and value.pressure == press:
+                value.datetime = datetime.now()
+                value.save()
+            else:
+                PressureValue.objects.create(content_object=self, pressure=press)
 
-                    # TODO: Создать функцию событий атм. давления  set_pressure_event(sensor, press)
+                # TODO: Создать функцию событий атм. давления  set_pressure_event(sensor, press)
 
-            controller.close_port()
