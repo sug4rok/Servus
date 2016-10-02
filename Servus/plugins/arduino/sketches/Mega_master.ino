@@ -26,7 +26,7 @@ void loop() {
     if (command.substring(0, 3) == "ser") {
       serialCommunicate(command.substring(3, 4));
       if (portStringComplete) {
-        Serial.println(portResult);
+        Serial.println(portResult.substring(0, portResult.length() - 1));
       }
     }
     // else if (command == "your_command") {
@@ -83,7 +83,9 @@ void serialCommunicate(String port_number) {
   if (port) {
     String str = "aa" + param;  // Два символа добавлены, т.к. при коммуникации Mega и Mini Pro где-то
     port->println(param);       // теряются первые два символы. На стенде повторить баг не удалось.
-    delay(2000);
+    if (param.substring(0, 3) == "dht") { 
+      delay(300);
+    }
 
     while (Serial1.available()) {
       char inChar = (char)port->read();

@@ -27,8 +27,8 @@ CONTAINER_APPS = (
     'system',  # System application. Don't delete it!
     'home',  # System application. Don't delete it!
     'events',  # System application. Don't delete it!
-    # 'climate',
-    # 'weather',
+    'climate',
+    'weather',
 )
 
 PLUGINS = (
@@ -115,10 +115,6 @@ LANGUAGE_CODE = 'ru-ru'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = False
-
-# If in the database there is a table fill the table base_application
-from base.utils import fill_base_applications
-fill_base_applications(CONTAINER_APPS)
 
 
 # =================== #

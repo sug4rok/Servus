@@ -1,0 +1,100 @@
+[
+{
+  "model": "base.application",
+  "pk": 1,
+  "fields": {
+    "name": "home",
+    "is_tab": true,
+    "tab_name": "\u0413\u043b\u0430\u0432\u043d\u0430\u044f",
+    "title": "\u0413\u043b\u0430\u0432\u043d\u0430\u044f \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0430",
+    "sub_title": "",
+    "is_widget": false,
+    "widget_type": "",
+    "plan_image": null,
+    "horiz_position": 0,
+    "vert_position": 0
+  }
+},
+{
+  "model": "base.application",
+  "pk": 2,
+  "fields": {
+    "name": "events",
+    "is_tab": true,
+    "tab_name": "\u0421\u043e\u0431\u044b\u0442\u0438\u044f",
+    "title": "\u0418\u0441\u0442\u043e\u0440\u0438\u044f \u0441\u043e\u0431\u044b\u0442\u0438\u0439",
+    "sub_title": "\u043f\u043e\u0441\u043b\u0435\u0434\u043d\u0438\u0435 \u0434\u0432\u0435 \u043d\u0435\u0434\u0435\u043b\u0438",
+    "is_widget": true,
+    "widget_type": "",
+    "plan_image": null,
+    "horiz_position": 0,
+    "vert_position": 0
+  }
+},
+{
+  "model": "base.application",
+  "pk": 3,
+  "fields": {
+    "name": "system",
+    "is_tab": false,
+    "tab_name": "System",
+    "title": "",
+    "sub_title": null,
+    "is_widget": false,
+    "widget_type": "",
+    "plan_image": null,
+    "horiz_position": 0,
+    "vert_position": 0
+  }
+},
+{
+  "model": "base.application",
+  "pk": 4,
+  "fields": {
+    "name": "climate",
+    "is_tab": false,
+    "tab_name": "\u041a\u043b\u0438\u043c\u0430\u0442",
+    "title": "\u0418\u043d\u0444\u043e\u0440\u043c\u0430\u0446\u0438\u044f \u0441 \u043a\u043b\u0438\u043c\u0430\u0442\u0438\u0447\u0435\u0441\u043a\u0438\u0445 \u0434\u0430\u0442\u0447\u0438\u043a\u043e\u0432",
+    "sub_title": null,
+    "is_widget": false,
+    "widget_type": "",
+    "plan_image": null,
+    "horiz_position": 0,
+    "vert_position": 0
+  }
+},
+{
+  "model": "base.application",
+  "pk": 5,
+  "fields": {
+    "name": "weather",
+    "is_tab": false,
+    "tab_name": "\u041f\u0440\u043e\u0433\u043d\u043e\u0437",
+    "title": "\u041f\u0440\u043e\u0433\u043d\u043e\u0437 \u043f\u043e\u0433\u043e\u0434\u044b",
+    "sub_title": "",
+    "is_widget": false,
+    "widget_type": "",
+    "plan_image": null,
+    "horiz_position": 0,
+    "vert_position": 0
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$24000$WnWmii4aXgBh$ytqTPlWv0XwKEnKnD7siuF25zLP5Elr2WXhUtWXVhew=",
+    "last_login": null,
+    "is_superuser": true,
+    "username": "root",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2016-10-02T10:20:45.187",
+    "groups": [],
+    "user_permissions": []
+  }
+}
+]

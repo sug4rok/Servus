@@ -68,11 +68,11 @@ void dht_get(int pin, int dht_type) {
   // Инициализация DHT сенсора
   DHT dht(pin, dht_type);
   dht.begin();
+  delay(250);
 
   char buff_hum[10], buff_temp[10];
   float hum, temp;
 
-  delay(1000);
   hum = dht.readHumidity();
   temp = dht.readTemperature();
 
