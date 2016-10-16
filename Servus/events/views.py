@@ -16,14 +16,13 @@ def events(request):
     """
 
     days = 14
-    params = {'active_app_name': 'events', 'events': get_events(days), 'alerts': ALERTS}
+    params = {'active_app_name': 'events', 'events_list': get_events(days), 'alerts': ALERTS}
 
     request.session.save()
     current_session = request.session.session_key
 
-    if request.POST.get('events'):
-        new_events = Event.objects.all().exclude(session_keys__session_key=current_session)
-        for event in new_events:
-            event.session_keys.add(Session.objects.get(pk=current_session))
+    new_events = Event.objects.all().exclude(session_keys__session_key=current_session)
+    for event in new_events:
+        event.session_keys.add(Session.objects.get(pk=current_session))
 
     return call_template(request, params)

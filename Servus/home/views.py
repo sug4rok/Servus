@@ -14,9 +14,6 @@ def widgets_data(request, widget_apps, widget_type='tiled', plan_id=0):
     params = {}
     widget_pages = []
 
-    request.session.save()
-    current_session = request.session.session_key
-
     for app in widget_apps:
         try:
             widget = import_module(app + '.widget')
@@ -26,12 +23,7 @@ def widgets_data(request, widget_apps, widget_type='tiled', plan_id=0):
             try:
                 widget_data = {}
                 get_widget_data = getattr(widget, 'get_widget_data')
-
-                if app == 'events':
-                    # Получение списка событий для текущей сессии.
-                    widget_data = get_widget_data(current_session)
-                else:
-                    widget_data = get_widget_data(plan_id) if plan_id else get_widget_data()
+                widget_data = get_widget_data(plan_id) if plan_id else get_widget_data()
 
                 # Если есть данные для виджета, добавляем его html-страницу к списку страниц виджетов
                 if widget_data:

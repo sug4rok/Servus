@@ -15,7 +15,13 @@
             {% if tab.name == active_app_name %}
                 <li class='active'><a href='/{{ tab.name }}/'>{{ tab.tab_name }}</a></li>
             {% else %}
-                <li><a href='/{{ tab.name }}/'>{{ tab.tab_name }}</a></li>
+                <li>
+                    <a href='/{{ tab.name }}/'>{{ tab.tab_name }}
+                        {% if tab.name == 'events' %}
+                            <span class='badge alert-{{ unviewed_events.level }}'>{{ unviewed_events.amount }}</span>
+                        {% endif %}
+                    </a>
+                </li>
             {% endif %}
         {% endfor %}
 

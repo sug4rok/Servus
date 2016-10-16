@@ -62,20 +62,13 @@ table.tab_short{
 }
 .event_src{
     float:left;
-    margin-right: 5px;
-    font-style: italic;
-    font-size: 80%;
-}
-.event_msg{
-    font-size: 90%;
-}
-.event_img{
-   margin-top: -5px;
+    margin-right: 10px;
+    font-size: 90%;    
 }
 .event_lvl{
     padding: 5px;
     margin: 5px;
-    font-weight: normal;
+    font-size: 90%;
 }
 
 /*Weather*/

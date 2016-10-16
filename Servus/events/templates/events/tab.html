@@ -2,22 +2,15 @@
 {% load events_tags %}
 
 {% block content %}
-    <div class='widget'>
-    {% for event in events %}
+    {% for event in events_list %}
         <div class='alert alert-{{ alerts|get_alert:event.level }} event_lvl'>
-
-            <div class='event_src event_img'>
-                <img src='{{ STATIC_URL }}img/{{ event.source }}.png' width='24' height='24'/>
-            </div>
             <div class='event_src'>
-                {{ event.datetime|date:'M-d H:m' }}
+                <img src='{{ STATIC_URL }}img/{{ event.source }}.png' width='20' height='20'/>&nbsp;
+                [{{ event.datetime|date:'M-d H:m' }}]
             </div>
-            <div class='event_msg'>
-                {{ event.message }}
-            </div>
+            {{ event.message }}
         </div>
     {%  empty %}
         <small>отсутствуют :)</small>
     {% endfor %}
-    </div>
 {% endblock %}

@@ -4,6 +4,7 @@ from django.shortcuts import render
 
 from base.settings import SITE_NAME, THEME
 from .models import Application
+from events.utils import get_amount_events
 
 
 def get_tab_options(active_app_name):
@@ -31,6 +32,10 @@ def call_template(request, *args, **kwargs):
 
     # Словарь для передачи параметров в render
     params = {'site_name': SITE_NAME, 'theme': THEME, 'tabs': Application.objects.filter(is_tab=1)}
+    
+    request.session.save()
+    current_session = request.session.session_key
+    params['unviewed_events'] = get_amount_events(7, session_key=current_session)
 
     if args:
         params.update(args[0])
@@ -38,7 +43,6 @@ def call_template(request, *args, **kwargs):
     if 'active_app_name' in params:
         aan = params['active_app_name']
         params.update(get_tab_options(aan))
-
         return render(request, '%s/tab.html' % aan, params)
 
     templ_path = kwargs.pop('templ_path', None)
