@@ -15,7 +15,7 @@ class PerfomArduinoCommands(CJB):
     def do(self):
         t_start = time.time()
         controllers = get_used_plugins_by(plugin_type='Controller')
-        
-        if controllers:                           
+
+        if controllers:
             for controller in controllers:
                 controller.perform_commands()

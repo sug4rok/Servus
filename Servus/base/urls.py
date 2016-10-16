@@ -8,10 +8,10 @@ from django.conf import settings
 admin.autodiscover()
 
 urlpatterns = [
+    url(r'^admin/', include(admin.site.urls)),
     url(r'^', include('home.urls')),
     url(r'^', include('slideshow.urls')),
-    url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),    
 ]
 
 for app in settings.CONTAINER_APPS:

@@ -74,17 +74,23 @@
     {% endspaceless %}
 
     <script async>
-        // Записываем состояния всех checkbox'ов в json-cookie
+        // Если сменилось состояние какого-либо checkbox'а, записываем состояние в cookie
         $(':checkbox').on('change', function(){
-            var checkboxValues = {};
+            setCheckboxCookie()
+        });
+        // Записываем состояния всех checkbox'ов в json-cookie
+        function setCheckboxCookie(){
+            var checkboxValues = Cookies.getJSON('Servus_checkboxValues');
+            if (checkboxValues === undefined) checkboxValues = {};
+
             $(':checkbox').each(function(){
                 checkboxValues[this.id] = this.checked;
             });
-            Cookies.set('checkboxValues', checkboxValues, {expires: 999, path: '/'})
-        });
+            Cookies.set('Servus_checkboxValues', checkboxValues, {expires: 999, path: '/'})
+        }
         // Подгружаем и устанавливаем состояния checkbox'ов ранее записанные в json-cookie
         function repopulateCheckboxes(){
-            var checkboxValues = Cookies.getJSON('checkboxValues');
+            var checkboxValues = Cookies.getJSON('Servus_checkboxValues');
             if(checkboxValues){
                 Object.keys(checkboxValues).forEach(function(element) {
                     var checked = checkboxValues[element];
@@ -93,19 +99,11 @@
             }
         }
         // Смена страниц с текущей на slideshow и обратно,если установлен соответствующий checkbox
-        function changePages(){
+        function changePages(auto_slideshow){
             if (window.location.pathname === '/slideshow/'){
-                setTimeout(function(){
-                    if (Cookies.getJSON('checkboxValues')['slideshow']){
-                        window.location.href = '/home/';
-                    }
-                }, 60000);
+                return setTimeout(function(){window.location.href = '/home/'}, 60000);
             } else {
-                setTimeout(function(){
-                    if (Cookies.getJSON('checkboxValues')['slideshow']){
-                        window.location.href = '/slideshow/';
-                    }
-                }, 20000);
+                return setTimeout(function(){window.location.href = '/slideshow/'}, 20000);
             }
         }
 
@@ -114,8 +112,26 @@
 
         // Когда документ полностью подгружен, начинаем переключать страницы slideshow<-->anyPage
         $(document).ready(function(){
+            var auto_slideshow  = false;
+            var changePages_was_called = false;
+            var changePages_timerId = null;
+            
+            setCheckboxCookie();
+            
             setInterval(function(){
-                if (Cookies.getJSON('checkboxValues')['slideshow']) changePages();
+                auto_slideshow = Cookies.getJSON('Servus_checkboxValues')['slideshow'];
+                if (auto_slideshow) {
+                    if (!changePages_was_called) {
+                        changePages_timerId = changePages();
+                        changePages_was_called = true;
+                    }
+                } else {
+                    if (changePages_timerId) {
+                        changePages_was_called = false;
+                        clearTimeout(changePages_timerId);
+                        changePages_timerId = null;
+                    }
+                }
             }, 1000);
         });
     </script>
