@@ -35,14 +35,7 @@ class OpenWeatherMap(models.Model):
     api_key = models.CharField(
         max_length=32,
         verbose_name='Ключ API',
-        help_text='Ваш ключ API (с 9 октября требуется регистрация).',
-    )
-    on_sidebar = models.BooleanField(
-        default=False,
-        verbose_name='Участвует в усреднении',
-        help_text='Отметьте, если данный прогноз должен учитываться при расчете усредненной оценки \
-            прогноза погоды в виде виджета на Главной странице.<br>\
-           (Отмечать, по понятным причинам, имеет смысл прогнозы для одного и того же города)'
+        help_text='Ваш ключ API (с 9 октября 2015г требуется регистрация).',
     )
 
     def get_url(self):

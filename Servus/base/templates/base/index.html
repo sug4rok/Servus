@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang='ru'>
 <head>
-    <meta charset='utf-8'>    
+    <meta charset='utf-8'>
     <meta http-equiv='Content-Type' content='text/html'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'>
     <link rel='shortcut icon' href='{{ STATIC_URL }}img/favicon.ico'>
@@ -115,9 +115,9 @@
             var auto_slideshow  = false;
             var changePages_was_called = false;
             var changePages_timerId = null;
-            
+
             setCheckboxCookie();
-            
+
             setInterval(function(){
                 auto_slideshow = Cookies.getJSON('Servus_checkboxValues')['slideshow'];
                 if (auto_slideshow) {

@@ -60,7 +60,7 @@ class WeatherValue(models.Model):
     )
 
     def __unicode__(self):
-        return '%s' % self.content_object
+        return '%s: %s' % (self.content_object.city, self.datetime)
 
     class Meta(object):
         ordering = ('content_type', 'datetime')

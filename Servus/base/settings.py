@@ -7,7 +7,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = 'ky-kr37p8k^qdos0dk(ijv9m%*8(zre2+s@yct%+w(2(z1$2h2'
 
 DEBUG = True
-ALLOWED_HOSTS = ['localhost', ]
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -40,7 +40,6 @@ PLUGINS = (
     # 'plugins.arduino_yl83',  # for connecting a YL-83 raindrop sensors
     # 'plugins.arduino_on_off_switch',  # on/off switch states
     # 'plugins.arduino_reed_switch',  # reed switch sensors
-    # 'plugins.weather_yandex_ru',  # weather forecast from yandex.ru
     # 'plugins.weather_openweathermap',  # weather forecast from openweathermap.org
     # 'plugins.weather_weather_ua',  # weather from weather.ua
     # 'plugins.system_ping',  # ping utility

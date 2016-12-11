@@ -202,10 +202,11 @@ def set_command(sensor, command):
 
         if state[0] and is_correct_input_string(command):
             command_obj, created = Command.objects.get_or_create(object_id=sensor.id,
-                content_type_id=ContentType.objects.get_for_model(sensor).id,
-                controller=sensor.controller,
-                command=command,
-                is_done=False)
+                                                                 content_type_id=ContentType.objects.get_for_model(
+                                                                     sensor).id,
+                                                                 controller=sensor.controller,
+                                                                 command=command,
+                                                                 is_done=False)
         else:
             state = (False, 'Параметр command пустой или неверного типа')
 

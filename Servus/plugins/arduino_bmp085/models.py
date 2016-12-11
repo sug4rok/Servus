@@ -67,4 +67,3 @@ class SensorBMP(models.Model):
                 PressureValue.objects.create(content_object=self, pressure=press)
 
                 # TODO: Создать функцию событий атм. давления  set_pressure_event(sensor, press)
-

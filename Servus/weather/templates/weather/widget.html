@@ -2,43 +2,46 @@
     Погода
 </a>
 <div class='panel-body widget tiled'>
-    <table class='tab_short table table-striped table-condensed'>
-        {% for forecast in weather %}
-            {%  if forecast %}
-                <tr>
-                    <th colspan=2>{{ forecast.day }}</th>
+    {% for plugin, forecast in weather %}
+        <h5 class='text-left'><strong>{{ plugin }}</strong></h5>
+        <table class='tab_short table-condensed'>
+
+            <tr>
+                {% for day, data in forecast %}
+                <td colspan='2'>{{ day }}</td>
+                {% endfor %}
+            </tr>
+            <tr>
+                {% for day, data in forecast %}
+                    {% for d in data %}
+                        <td>
+                        {% if d %}
+                            <img src='{{ STATIC_URL }}img/{{ d.clouds_img }}.png' width='30' height='25'/>
+                            <br/>
+                            <img src='{{ STATIC_URL }}img/{{ d.falls_img }}.png' width='18' height='27'/>
+                            <img style='
+                                    -moz-transform: rotate({{ d.wind_direction }}deg);
+                                    -ms-transform: rotate({{ d.wind_direction }}deg);
+                                    -webkit-transform:rotate({{ d.wind_direction }}deg);
+                                    -o-transform: rotate({{ d.wind_direction }}deg);
+                                    transform: rotate({{ d.wind_direction }}deg);
+                                '
+                                src='{{ STATIC_URL }}img/wd.png'
+                                width='24'
+                                height='24'
+                            />
+                            <br/>
+                            <small>
+                                {{ d.temperature }}<sub> °C</sub>
+                                {{ d.wind_speed }}<sub> м/с</sub>
+                            </small>
+                        {% else %}
+                            <img src='{{ STATIC_URL }}img/na.png' width='24' height='24'/>
+                        {% endif %}
+                        </td>
+                    {% endfor %}
+                {% endfor %}
                 </tr>
-                <tr>
-                    <td>
-                        <table class='tab_short'>
-                            <tr>
-                                <td>
-                                    {% for file_img, descr in forecast.clouds_img %}
-                                        <attr title='{{ descr }}'>
-                                            <img src='{{ STATIC_URL }}img/{{ file_img }}.png' width='30' height='25'/>
-                                        </attr>
-                                    {% endfor %}
-                                </td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    {% for file_img, descr in forecast.falls_img %}
-                                        <attr title='{{ descr }}'>
-                                            <img src='{{ STATIC_URL }}img/{{ file_img }}.png' width='18' height='27'/>
-                                        </attr>
-                                    {% endfor %}
-                                </td>
-                                <td><img src='{{ STATIC_URL }}img/wind.png' width='30' height='30' /></td>
-                            </tr>
-                            <tr>
-                                <td>{{ forecast.temperature }}<small><small><em> °C</em></small></small></td>
-                                <td>{{ forecast.wind_speed }}<small><small><em> м/с</em></small></small></td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-            {% endif %}
-        {% endfor %}
-    </table>
+        </table>
+    {% endfor %}
 </div>

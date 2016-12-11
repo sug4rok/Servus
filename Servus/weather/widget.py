@@ -1,85 +1,57 @@
 ﻿# coding=utf-8
 from datetime import datetime, timedelta
 
-from django.contrib.contenttypes.models import ContentType
-
 from plugins.utils import get_used_plugins_by
 from .models import WeatherValue
-from .utils import CLOUDS_RANGE, FALLS_RANGE
 
 
-def common_forecast(date):
+def nearest(items, pivot):
+    return min(items, key=lambda x: abs(x - pivot))
+
+
+def nearest_forecast(plugin, begin, end, pivot):
+    forecasts = WeatherValue.objects.filter(object_id=plugin.id, datetime__range=[begin, end])
+    if forecasts.count():
+        nearest_hour = nearest(forecasts.values_list('datetime', flat=True), pivot)
+        return forecasts.get(datetime=nearest_hour)
+    return None
+
+
+def get_forecast(plugin, date):
     """
-    Функция получения некоторых усредненных данных прогноза погоды для активированных погодных API,
-    отображаемых на Главной странице.
+    Функция получения прогноза погоды на заданную дату для ночи и дня.
+    
+    :param plugin: object Объект модели плагина прогноза погоды.
     :param date: datetime День, для которого будем усреднять прогноз.
-    :returns: словарь, с данными о температуре, скорости ветра и соответствующим облачности и
-    осадкам файлам PNG.
+    :returns: tuple Кортеж из двух объектов с данными прогноза погоды для ночи и дня.
     """
 
-    # Создаем список объектов Weather, всех активированных прогнозных API,
-    # приходящихся на переданный в функциию день с 12:00 до 16:00 включительно
-    # (будем считать, что день у нас с 12 до 16 часов ;)).
-    dt1 = datetime(date.year, date.month, date.day, 12)
-    dt2 = datetime(date.year, date.month, date.day, 16)
+    # Задаем граничные данные для ночи и дня (часы)
+    year, month, day = date.year, date.month, date.day
+    night_begin = datetime(year, month, day, 0)
+    night_end = datetime(year, month, day, 5)
+    day_begin = datetime(year, month, day, 10)
+    day_end = datetime(year, month, day, 19)
+    day_pivot = datetime(year, month, day, 12)
 
-    # Получаем все используемые модели плагинов типа 'Forecast'
-    f_objs = get_used_plugins_by(plugin_type='Forecast')
-
-    # Получаем кортеж объектов, учавствующих в усреднении (on_sidebar=True).
-    sidebar_objs = (f for f in f_objs if f.on_sidebar)
-
-    # Для каждого объекта forecast получаем последние данные из таблицы weather_weathervalue.
-    w_objs = reduce(lambda res, f: res + tuple(WeatherValue.objects.filter(
-        content_type_id=ContentType.objects.get_for_model(f).id, object_id=f.id, datetime__range=[dt1, dt2])),
-        sidebar_objs, ())
-
-    amount_data = len(w_objs)
-    if amount_data:
-        forecast = {'temperature': [], 'wind_speed': [], 'clouds_img': [], 'falls_img': [], 'wind_direction': []}
-
-        for f in forecast:
-            for o in w_objs:
-                forecast[f].append(getattr(o, f))
-    else:
-        return None
-
-    # Заполняем словарь forecast снова, теперь уже усредненными данными
-    temperature = round(float(sum(forecast['temperature'])) / amount_data, 0)
-    for f_k, f_v in forecast.iteritems():
-        if f_k == 'falls_img':
-            tmp_data1 = sum([float(f[1]) for f in f_v if f != 'na']) / amount_data
-
-            if tmp_data1 > 0.5:
-                if temperature > 2:
-                    tmp_data1 = '1'
-                elif temperature < 0:
-                    tmp_data1 = '3'
-                else:
-                    tmp_data1 = '2'
-                tmp_data2 = sum([float(f[3]) for f in f_v if f != 'na']) / amount_data
-            else:
-                tmp_data1, tmp_data2 = '0', 0.0
-
-            file_img = 't%sd%.0f' % (tmp_data1, tmp_data2)
-            forecast[f_k] = [(file_img, FALLS_RANGE[file_img])]
-        elif f_k == 'clouds_img':
-            tmp_data1 = sum([float(f[2]) for f in f_v if f != 'na']) / amount_data
-            file_img = 'cd%.0f' % tmp_data1
-            forecast[f_k] = [(file_img, CLOUDS_RANGE[file_img[2]])]
-        elif f_k == 'temperature':
-            forecast[f_k] = '%d' % temperature
-        else:
-            forecast[f_k] = '%d' % round(float(sum(f_v)) / amount_data, 0)
-    forecast['day'] = date.strftime('%d %b')
-    return forecast
+    return (nearest_forecast(plugin, night_begin, night_end, night_begin),
+            nearest_forecast(plugin, day_begin, day_end, day_pivot))
 
 
 def get_widget_data():
     """
     Функция для получения данных для отображение краткой сводки прогноза погоды на сегодня и завтра
-    на Главной странице
+    на Главной странице.
+    
     :return: list Погодные данные
     """
 
-    return common_forecast(datetime.today()), common_forecast(datetime.today() + timedelta(days=1))
+    result = []
+
+    # Получаем все используемые модели плагинов типа 'Forecast'
+    for plugin in get_used_plugins_by(plugin_type='Forecast'):
+        today = get_forecast(plugin, datetime.today())
+        tomorrow = get_forecast(plugin, datetime.today() + timedelta(days=1))
+        result.append((plugin, (('Сегодня', today), ('Завтра', tomorrow))))
+
+    return result

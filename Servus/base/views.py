@@ -32,10 +32,6 @@ def call_template(request, *args, **kwargs):
 
     # Словарь для передачи параметров в render
     params = {'site_name': SITE_NAME, 'theme': THEME, 'tabs': Application.objects.filter(is_tab=1)}
-    
-    request.session.save()
-    current_session = request.session.session_key
-    params['unviewed_events'] = get_amount_events(7, session_key=current_session)
 
     if args:
         params.update(args[0])
@@ -50,3 +46,30 @@ def call_template(request, *args, **kwargs):
         return render(request, templ_path, params)
 
     raise Http404()
+
+
+def amount_events(request, template, days=1):
+    """
+    Функция, выводящая количество и важность событий на указанную в template
+    страницу за определенное количество дней.
+
+    :param request: django request.
+    :param template: str Шаблон страницы, на которой будет отображено количество
+    событий.    
+    :param days: int Количество дней, за которые нужно вывести список событий.
+    """
+
+    request.session.save()
+    current_session = request.session.session_key
+    params = get_amount_events(days, session_key=current_session)
+
+    return call_template(
+        request,
+        params,
+        templ_path=template
+    )
+
+
+def navbar_events(request):
+    """" Количество непросмотренных событий для отображения в меню """
+    return amount_events(request, 'base/navbar_events.html', days=7)

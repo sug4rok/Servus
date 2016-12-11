@@ -18,7 +18,10 @@
                 <li>
                     <a href='/{{ tab.name }}/'>{{ tab.tab_name }}
                         {% if tab.name == 'events' %}
-                            <span class='badge alert-{{ unviewed_events.level }}'>{{ unviewed_events.amount }}</span>
+                            <span id='navbar_events' style='margin-left:5px;'></span>
+                            <script async>
+                                reload_div('navbar_events', 10000);
+                            </script>
                         {% endif %}
                     </a>
                 </li>

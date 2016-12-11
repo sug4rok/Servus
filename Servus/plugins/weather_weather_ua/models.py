@@ -32,13 +32,6 @@ class WeatherUa(models.Model):
             MinValueValidator(0)
         ]
     )
-    on_sidebar = models.BooleanField(
-        default=False,
-        verbose_name='Участвует в усреднении',
-        help_text='Отметьте, если данный прогноз должен учитываться при расчете усредненной оценки \
-            прогноза погоды в виде виджета на Главной странице.<br>\
-           (Отмечать, по понятным причинам, имеет смысл прогнозы для одного и того же города)'
-    )
 
     def get_url(self):
         return 'http://xml.weather.ua/1.2/forecast/%s?dayf=4?lang=ru' % self.city_id

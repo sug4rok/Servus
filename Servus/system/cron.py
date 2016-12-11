@@ -13,7 +13,6 @@ class PerfomArduinoCommands(CJB):
     RUN_EVERY_MINS = 1
 
     def do(self):
-        t_start = time.time()
         controllers = get_used_plugins_by(plugin_type='Controller')
 
         if controllers:

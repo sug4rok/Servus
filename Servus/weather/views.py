@@ -30,7 +30,8 @@ def get_bg_styles(forecast_times):
     Прогноза погоды в зависимости от времени дня (datetime) прогноза.
     Значения кортежа - два вида класса w_day и w_night для отображения "дневных" и "ночных" ячеек
     соответсвенно.
-    :param wp: id объекта WeatherProvider, для которого получаем данные
+
+    :param forecast_times: list Список объектов datetime
     """
 
     return tuple(('w_day' if 8 < t.hour <= 20 else 'w_night' for t in forecast_times))

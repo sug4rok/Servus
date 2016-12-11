@@ -21,6 +21,7 @@ class ApplicationAdmin(admin.ModelAdmin):
         """
         Отображение полей в зависимости от значения is_widget и is_tab, чтобы
         не отображать поля, в которых нет необходимости.
+        :param request: django request
         """
 
         if obj is not None:

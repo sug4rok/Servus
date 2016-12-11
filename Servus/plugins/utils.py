@@ -56,6 +56,7 @@ def get_used_plugins_by(plugin_type=None, package=None, container=None):
 
     :param plugin_type: str Тип плагинов, напремер "Forecast".
     :param package: str Модуль плагина, например "plugins.system_ping".
+    :param container: str Контейнер - приложение, к которому принадлежит плагин.
     :returns: list Плагины типа plugin_type.
     """
 

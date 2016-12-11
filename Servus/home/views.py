@@ -23,7 +23,10 @@ def widgets_data(request, widget_apps, widget_type='tiled', plan_id=0):
             try:
                 widget_data = {}
                 get_widget_data = getattr(widget, 'get_widget_data')
-                widget_data = get_widget_data(plan_id) if plan_id else get_widget_data()
+                try:
+                    widget_data = get_widget_data(plan_id) if plan_id else get_widget_data()
+                except:
+                    pass
 
                 # Если есть данные для виджета, добавляем его html-страницу к списку страниц виджетов
                 if widget_data:
