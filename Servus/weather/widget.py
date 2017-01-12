@@ -20,7 +20,7 @@ def nearest_forecast(plugin, begin, end, pivot):
 def get_forecast(plugin, date):
     """
     Функция получения прогноза погоды на заданную дату для ночи и дня.
-    
+
     :param plugin: object Объект модели плагина прогноза погоды.
     :param date: datetime День, для которого будем усреднять прогноз.
     :returns: tuple Кортеж из двух объектов с данными прогноза погоды для ночи и дня.
@@ -38,11 +38,15 @@ def get_forecast(plugin, date):
             nearest_forecast(plugin, day_begin, day_end, day_pivot))
 
 
+def not_empty(data_tuple):
+    return not all(item is None for item in data_tuple)
+
+
 def get_widget_data():
     """
     Функция для получения данных для отображение краткой сводки прогноза погоды на сегодня и завтра
     на Главной странице.
-    
+
     :return: list Погодные данные
     """
 
@@ -50,8 +54,16 @@ def get_widget_data():
 
     # Получаем все используемые модели плагинов типа 'Forecast'
     for plugin in get_used_plugins_by(plugin_type='Forecast'):
+        tmp_tuple = ()
+
         today = get_forecast(plugin, datetime.today())
+        if not_empty(today):
+            tmp_tuple += (('Сегодня', today), )
+
         tomorrow = get_forecast(plugin, datetime.today() + timedelta(days=1))
-        result.append((plugin, (('Сегодня', today), ('Завтра', tomorrow))))
+        if not_empty(tomorrow):
+            tmp_tuple += (('Завтра', tomorrow), )
+
+        result.append((plugin, tmp_tuple))
 
     return result

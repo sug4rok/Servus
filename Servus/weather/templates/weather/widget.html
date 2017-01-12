@@ -8,14 +8,13 @@
 
             <tr>
                 {% for day, data in forecast %}
-                <td colspan='2'>{{ day }}</td>
+                    <td colspan='{{ data|length }}'>{{ day }}</td>
                 {% endfor %}
             </tr>
             <tr>
                 {% for day, data in forecast %}
                     {% for d in data %}
                         <td>
-                        {% if d %}
                             <img src='{{ STATIC_URL }}img/{{ d.clouds_img }}.png' width='30' height='25'/>
                             <br/>
                             <img src='{{ STATIC_URL }}img/{{ d.falls_img }}.png' width='18' height='27'/>
@@ -35,9 +34,6 @@
                                 {{ d.temperature }}<sub> °C</sub>
                                 {{ d.wind_speed }}<sub> м/с</sub>
                             </small>
-                        {% else %}
-                            <img src='{{ STATIC_URL }}img/na.png' width='24' height='24'/>
-                        {% endif %}
                         </td>
                     {% endfor %}
                 {% endfor %}
