@@ -147,7 +147,6 @@ SESSION_COOKIE_AGE = 99999999
 # Tasks for django-cron
 CRON_CLASSES = [
     # 'django_cron.cron.FailedRunsNotificationCronJob',
-    'base.cron.DelOutdatedDCLogs',
     'base.cron.DelOutdatedEvents',
     'slideshow.cron.SlideshowJob',
     # 'events.cron.EmailsSendJob',
@@ -161,6 +160,8 @@ CRON_CLASSES = [
     # 'weather.cron.GetWeatherJob',
     # 'plugins.system_ping.cron.GetPingStatus',
 ]
+
+DJANGO_CRON_DELETE_LOGS_OLDER_THAN = 32
 
 LOGGING = {
     'version': 1,

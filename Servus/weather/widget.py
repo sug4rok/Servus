@@ -39,7 +39,7 @@ def get_forecast(plugin, date):
 
 
 def not_empty(data_tuple):
-    return not all(item is None for item in data_tuple)
+    return filter(lambda item: item is not None, data_tuple)
 
 
 def get_widget_data():
@@ -57,11 +57,13 @@ def get_widget_data():
         tmp_tuple = ()
 
         today = get_forecast(plugin, datetime.today())
-        if not_empty(today):
+        today = not_empty(today)
+        if today:
             tmp_tuple += (('Сегодня', today), )
 
         tomorrow = get_forecast(plugin, datetime.today() + timedelta(days=1))
-        if not_empty(tomorrow):
+        tommorrow = not_empty(tomorrow)
+        if tomorrow:
             tmp_tuple += (('Завтра', tomorrow), )
 
         result.append((plugin, tmp_tuple))
