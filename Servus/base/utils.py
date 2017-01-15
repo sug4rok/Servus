@@ -9,7 +9,7 @@ class CJB(CronJobBase):
     """
 
     RUN_EVERY_MINS, RUN_AT_TIMES, code = (None, None, None)
-    # MIN_NUM_FAILURES = 5
+    MIN_NUM_FAILURES = 10
     # FAILED_RUNS_CRONJOB_EMAILS_PREFIX = 'Ошибка выполнения задания: '
     ALLOW_PARALLEL_RUNS = True
     schedule = Schedule(

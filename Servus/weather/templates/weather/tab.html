@@ -7,14 +7,14 @@
             <caption>{%  if city %}<em>{{ city }}</em>. {% endif %}Прогноз погоды по данным <em>{{ weather_provider }}</em></caption>
             {% for field, caption, measure, values in values_set %}
                 <tr align='center'>
-                    <th class='weather'>{{ caption }}
+                    <th class='small_gray'>{{ caption }}
                         {% if measure %}
                             , <small><em>{{ measure }}</em></small>
                         {% endif %}
                     </th>
                     {% if field == 'datetime' %}
                         {% for datetime, bg_style in values %}
-                            <td class='weather {{ bg_style }}'>
+                            <td class='small_gray {{ bg_style }}'>
                                 {{ datetime|date:'l' }}<br>
                                 <nobr>{{ datetime|date:'d E' }}</nobr><br>
                                 {{ datetime|date:'H:i' }}
@@ -22,7 +22,7 @@
                         {% endfor %}
                     {% elif field == 'clouds' %}
                         {% for file_img, clouds, descr, bg_style in values %}
-                            <td class='weather {{ bg_style }}'>
+                            <td class='small_gray {{ bg_style }}'>
                                 <attr title='{{ descr }}{% if clouds %} (облачность {{ clouds }}%){% endif %}'>
                                     <img src='{{ STATIC_URL }}img/{{ file_img }}.png' width='30' height='25'/>
                                 </attr>
@@ -30,7 +30,7 @@
                         {% endfor %}
                     {% elif field == 'precipitation' %}
                         {% for file_img, precipitation, descr, bg_style in values %}
-                            <td class='weather {{ bg_style }}'>
+                            <td class='small_gray {{ bg_style }}'>
                                 <attr title='{{ descr }}{% if precipitation %} ({{ precipitation }}мм воды / 6 часов{% endif %}'>
                                     {% if file_img == 'na' %}
                                         <img src='{{ STATIC_URL }}img/{{ file_img }}.png' width='30' height='30'/>
@@ -42,7 +42,7 @@
                         {% endfor %}
                     {% elif field == 'wind_speed' %}
                         {% for wind_speed, wind_dir, bg_style in values %}
-                            <td class='weather {{ bg_style }}'>
+                            <td class='small_gray {{ bg_style }}'>
                                 {{ wind_speed }}
                                 {% if wind_speed %}
                                     <img style='
@@ -61,7 +61,7 @@
                         {% endfor %}
                     {% else %}
                         {% for value, bg_style in values %}
-                            <td class='weather {{ bg_style }}'>{{ value }}</td>
+                            <td class='small_gray {{ bg_style }}'>{{ value }}</td>
                         {% endfor %}
                     {% endif %}
             {% endfor %}

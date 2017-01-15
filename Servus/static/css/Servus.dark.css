@@ -6,7 +6,6 @@
 caption{
     color: #5bc0de;
     font-weight: bold;
-    font-size: 90%;
     padding-bottom: 5px;
 }
 .nopadding{
@@ -19,6 +18,10 @@ caption{
 }
 .padding5px{
     padding: 5px;
+}
+.small_gray{
+    color: #a7a7a7;
+    font-size: 80%;
 }
 /*Slideshow*/
 .fullscreen_img{
@@ -73,11 +76,6 @@ table.tab_short{
 }
 
 /*Weather*/
-.weather{
-    vertical-align:middle;
-    color: #a7a7a7;
-    font-size: 70%;
-}
 th{
     font-weight: bold;
 }

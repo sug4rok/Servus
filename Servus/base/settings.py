@@ -146,7 +146,7 @@ SESSION_COOKIE_AGE = 99999999
 
 # Tasks for django-cron
 CRON_CLASSES = [
-    # 'django_cron.cron.FailedRunsNotificationCronJob',
+    'django_cron.cron.FailedRunsNotificationCronJob',
     'base.cron.DelOutdatedEvents',
     'slideshow.cron.SlideshowJob',
     # 'events.cron.EmailsSendJob',

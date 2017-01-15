@@ -41,7 +41,7 @@ def ping(host):
                 result = response
                 counter = 2
 
-            time.sleep(5)
+            time.sleep(15)
 
         if host.online != result:
             host.online = result

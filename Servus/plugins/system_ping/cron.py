@@ -9,7 +9,7 @@ class GetPingStatus(CJB):
     CronJobBase класс для ping'а сетевых устройств и записи их доступности.
     """
 
-    RUN_EVERY_MINS = 5
+    RUN_EVERY_MINS = 1
 
     def do(self):
 

@@ -3,9 +3,8 @@
 </a>
 <div class='panel-body widget tiled'>
     {% for plugin, forecast in weather %}
-        <h5 class='text-left'><strong>{{ plugin }}</strong></h5>
         <table class='tab_short table-condensed'>
-
+            <caption>{{ plugin }}:</caption>
             <tr>
                 {% for day, data in forecast %}
                     <td colspan='{{ data|length }}'>{{ day }}</td>

@@ -3,11 +3,18 @@
 </div>
 <div class='panel-body widget tiled'>
     <table class='tab_short table table-condensed'>
-        {%  for host, status, color in system_ping %}
+        {%  for host in system_ping %}
             <tr>
-                <th>{{ host }}</th>
+                <th>{{ host.name }}</th>
                 <td>
-                    <span class='{{ status }}' style='color: {{ color }};'></span>
+                    {% if host.online %}
+                        <img src='{{ STATIC_URL }}img/host_online.png' width='24' height='24'/>
+                    {% else %}
+                        <img src='{{ STATIC_URL }}img/host_offline.png' width='24' height='24'/>
+                    {% endif %}
+                </td>
+                <td class='small_gray'>
+                    {{ host.last_changed|date:'Y-m-d H:m' }}
                 </td>
             </tr>
         {%  endfor %}
