@@ -40,6 +40,7 @@ class WeatherUa(models.Model):
         return self.city
 
     class Meta(object):
+        db_table = 'weather_weatherua_ext'
         verbose_name = 'прогноз weather.ua'
         verbose_name_plural = 'Прогнозы погоды от weather.ua'
 

@@ -41,6 +41,7 @@ class SensorYL83(models.Model):
     )
 
     class Meta(object):
+        db_table = 'climate_sensoryl83_ext'
         verbose_name = 'Датчик YL-83'
         verbose_name_plural = 'Датчики YL-83'
 

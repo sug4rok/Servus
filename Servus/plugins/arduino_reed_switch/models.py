@@ -23,5 +23,6 @@ class ReedSwitch(OnOffSwitch):
     )
 
     class Meta(object):
+        db_table = 'home_reedswitch_ext'
         verbose_name = 'Геркон'
         verbose_name_plural = 'Герконы'

@@ -28,6 +28,7 @@ class SensorBH1750(models.Model):
     )
 
     class Meta(object):
+        db_table = 'climate_sensorbh1750_ext'
         verbose_name = 'Датчик BH1750'
         verbose_name_plural = 'Датчики BH1750'
 

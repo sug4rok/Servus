@@ -1,6 +1,4 @@
 ﻿# coding=utf-8
-from datetime import datetime
-
 from django.db import models
 
 from plugins.arduino.models import Arduino, set_command
@@ -39,6 +37,7 @@ class OnOffSwitch(models.Model):
     )
 
     class Meta(object):
+        db_table = 'home_onoffswitch_ext'
         verbose_name = 'Переключатель'
         verbose_name_plural = 'Переключатели'
 

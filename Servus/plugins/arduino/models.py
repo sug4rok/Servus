@@ -1,6 +1,5 @@
 ﻿# coding=utf-8
 import time
-from datetime import datetime
 import logging
 import serial
 
@@ -48,6 +47,7 @@ class Arduino(models.Model):
     )
 
     class Meta(object):
+        db_table = 'system_arduino_ext'
         verbose_name = 'Контроллер Arduino'
         verbose_name_plural = 'Контроллеры Arduino'
 

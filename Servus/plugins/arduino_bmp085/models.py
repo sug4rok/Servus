@@ -34,6 +34,7 @@ class SensorBMP(models.Model):
     )
 
     class Meta(object):
+        db_table = 'climate_sensorbmp_ext'
         verbose_name = 'Датчик BMP'
         verbose_name_plural = 'Датчики BMP085/BMP180'
 

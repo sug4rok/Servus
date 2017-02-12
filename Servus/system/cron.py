@@ -1,6 +1,4 @@
 ﻿# coding=utf-8
-import time
-
 from base.utils import CJB
 from plugins.utils import get_used_plugins_by
 

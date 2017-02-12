@@ -19,7 +19,7 @@ def get_plugins_by_package(package):
     """
     Функция возвращает список плагинов с названием модуля package.
 
-    :param package: str Модуль плагина, например "plugins.system_ping".
+    :param package: str Модуль плагина, например "plugins.system_ip_online".
     :returns: list Плагины модуля package.
     """
 
@@ -55,7 +55,7 @@ def get_used_plugins_by(plugin_type=None, package=None, container=None):
     которых равен True.
 
     :param plugin_type: str Тип плагинов, напремер "Forecast".
-    :param package: str Модуль плагина, например "plugins.system_ping".
+    :param package: str Модуль плагина, например "plugins.system_mac_online".
     :param container: str Контейнер - приложение, к которому принадлежит плагин.
     :returns: list Плагины типа plugin_type.
     """

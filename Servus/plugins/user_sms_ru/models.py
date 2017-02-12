@@ -36,6 +36,7 @@ class SMSRu(models.Model):
     )
 
     class Meta(object):
+        db_table = 'system_smsru_ext'
         verbose_name = 'sms.ru id'
         verbose_name_plural = 'sms.ru id'
 

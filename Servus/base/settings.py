@@ -1,12 +1,13 @@
 ﻿# coding=utf-8
 import os
+from sys import platform
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'ky-kr37p8k^qdos0dk(ijv9m%*8(zre2+s@yct%+w(2(z1$2h2'
 
-DEBUG = True
+DEBUG = False
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 INSTALLED_APPS = (
@@ -38,11 +39,12 @@ PLUGINS = (
     # 'plugins.arduino_bmp085',  # for connecting a BMP085/BMP180 sensor to the Arduino
     # 'plugins.arduino_bh1750',  # for connecting a BH1750 sensors (ambient light measurement) to the Arduino
     # 'plugins.arduino_yl83',  # for connecting a YL-83 raindrop sensors
-    # 'plugins.arduino_on_off_switch',  # on/off switch states
+    'plugins.arduino_on_off_switch',  # on/off switch states
     # 'plugins.arduino_reed_switch',  # reed switch sensors
     # 'plugins.weather_openweathermap',  # weather forecast from openweathermap.org
     # 'plugins.weather_weather_ua',  # weather from weather.ua
-    # 'plugins.system_ping',  # ping utility
+    'plugins.system_ip_online',  # ping utility
+    'plugins.system_mac_online',  # search for device mac address in the home network
 )
 
 INSTALLED_APPS += (PLUGINS + CONTAINER_APPS)
@@ -76,7 +78,7 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
             ],
-            'debug': True,
+            'debug': False,
         },
     },
 ]
@@ -115,6 +117,12 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = False
 
+if 'win' in platform:
+    OS = 'windows'
+elif 'linux' in platform:
+    OS = 'linux'
+else:
+    OS = 'unknown'
 
 # =================== #
 #   Servus settings   #
@@ -158,7 +166,8 @@ CRON_CLASSES = [
     # 'climate.cron.GetPressureData',
     # 'climate.cron.GetRaindropData',
     # 'weather.cron.GetWeatherJob',
-    # 'plugins.system_ping.cron.GetPingStatus',
+    # 'plugins.system_ip_online.cron.GetIPOnline',
+    # 'plugins.system_mac_online.cron.GetMACOnline',
 ]
 
 DJANGO_CRON_DELETE_LOGS_OLDER_THAN = 32

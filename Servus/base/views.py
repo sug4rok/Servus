@@ -55,7 +55,7 @@ def amount_events(request, template, days=1):
 
     :param request: django request.
     :param template: str Шаблон страницы, на которой будет отображено количество
-    событий.    
+    событий.
     :param days: int Количество дней, за которые нужно вывести список событий.
     """
 

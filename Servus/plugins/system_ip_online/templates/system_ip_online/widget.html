@@ -1,20 +1,20 @@
 <div class='btn btn-primary btn-sm btn-block disabled'>
-    Сеть
+    Сеть (статические IP)
 </div>
 <div class='panel-body widget tiled'>
     <table class='tab_short table table-condensed'>
-        {%  for host in system_ping %}
+        {%  for ip in system_ip_online %}
             <tr>
-                <th>{{ host.name }}</th>
+                <th>{{ ip.name }}</th>
                 <td>
-                    {% if host.online %}
+                    {% if ip.online %}
                         <img src='{{ STATIC_URL }}img/host_online.png' width='24' height='24'/>
                     {% else %}
                         <img src='{{ STATIC_URL }}img/host_offline.png' width='24' height='24'/>
                     {% endif %}
                 </td>
                 <td class='small_gray'>
-                    {{ host.last_changed|date:'Y-m-d H:m' }}
+                    {{ ip.last_changed|date:'Y-m-d H:i' }}
                 </td>
             </tr>
         {%  endfor %}

@@ -46,6 +46,7 @@ class OpenWeatherMap(models.Model):
         return self.city
 
     class Meta(object):
+        db_table = 'weather_openweathermap_ext'
         verbose_name = 'прогноз openweathermap.org'
         verbose_name_plural = 'Прогнозы погоды от openweathermap.org'
 

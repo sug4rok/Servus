@@ -64,48 +64,45 @@ class Plugins(object):
                 Location,
                 verbose_name='Расположение',
                 help_text='Место расположения объекта в помещении или вне его',
+                null=True,
             ),
             'is_used': models.BooleanField(
                 verbose_name='Задействован',
                 default=False
             ),
-            'parent': models.OneToOneField(plugin_model['object'], parent_link=True),
+            'parent': models.OneToOneField(plugin_model['object'],
+                                           on_delete=models.CASCADE,
+                                           primary_key=True,
+                                           parent_link=True),
             '__module__': plugin_model['container'] + '.models',  # Меняем имя модуля, содержащего новый класс
         }
 
-        if plugin_model.get('widget_type') is not None:
-            params['is_widget'] = models.BooleanField(
-                verbose_name='Виджет',
-                help_text='Имеет собственный виджет на Главной странице',
-                default=False
-            )
-
-            if plugin_model['widget_type'] == 'positioned':
-                params.update({
-                    'plan_image': models.ForeignKey(
-                        Plan,
-                        verbose_name='Планировка',
-                        null=True,
-                        default=None
-                    ),
-                    'horiz_position': models.PositiveSmallIntegerField(
-                        verbose_name='По горизонтали,%',
-                        default=0,
-                        validators=[
-                            MaxValueValidator(100),
-                            MinValueValidator(0)
-                        ],
-                        blank=True
-                    ),
-                    'vert_position': models.PositiveSmallIntegerField(
-                        verbose_name='По вертикали,%',
-                        default=0,
-                        validators=[
-                            MaxValueValidator(100),
-                            MinValueValidator(0)
-                        ],
-                        blank=True
-                    )})
+        if plugin_model['widget_type'] == 'positioned':
+            params.update({
+                'plan_image': models.ForeignKey(
+                    Plan,
+                    verbose_name='Планировка',
+                    null=True,
+                    default=None
+                ),
+                'horiz_position': models.PositiveSmallIntegerField(
+                    verbose_name='По горизонтали,%',
+                    default=0,
+                    validators=[
+                        MaxValueValidator(100),
+                        MinValueValidator(0)
+                    ],
+                    blank=True
+                ),
+                'vert_position': models.PositiveSmallIntegerField(
+                    verbose_name='По вертикали,%',
+                    default=0,
+                    validators=[
+                        MaxValueValidator(100),
+                        MinValueValidator(0)
+                    ],
+                    blank=True
+                )})
 
         return type(plugin_model['name'], (plugin_model['object'],), params)
 
@@ -131,7 +128,6 @@ class Plugins(object):
             if container not in plugin_models:
                 plugin_models[container] = []
             plugin_models[container].append(new_plugin_model)
-
         return plugin_models
 
 PLUGIN_MODELS = Plugins().get_plugin_models()

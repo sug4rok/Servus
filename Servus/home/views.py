@@ -10,7 +10,7 @@ from plugins.utils import get_widget_plugin_names
 logger = logging.getLogger(__name__)
 
 
-def widgets_data(request, widget_apps, widget_type='tiled', plan_id=0):
+def widgets_data(widget_apps, widget_type='tiled', plan_id=0):
     params = {}
     widget_pages = []
 
@@ -43,17 +43,27 @@ def widgets_data(request, widget_apps, widget_type='tiled', plan_id=0):
     return params
 
 
+def get_widget_apps(wt):
+    """
+    :param wt: str Строка 'positioned' или 'tiled' - тип виджета
+    :returns: list Список приложений и приложений-плагинов указанного в параметре типа.
+    """
+
+    apps = Application.objects.filter(is_widget=1, widget_type=wt).values_list('name', flat=True)
+    plugins = get_widget_plugin_names(wt)
+
+    return list(apps) + plugins
+
+
 def positioned(request, plan_id=1):
     """
-    Контроллер для ajax-запроса обновления информации на Главной странице.
-    Получаем список приложений, для которых создан позиционный виджет (т.е. поле is_widget=True).
+    Контроллер для ajax-запроса данных для обновления информации позиционных виджетов на Главной странице.
     :param request: django request
+    :param plan_id: int ID планировки помещения
     """
 
-    # Получаем данные с виджетов приложений
-    widget_apps = get_widget_plugin_names('positioned')
-
-    params = widgets_data(request, widget_apps, widget_type='positioned', plan_id=int(plan_id))
+    widget_apps = get_widget_apps('positioned')
+    params = widgets_data(widget_apps, widget_type='positioned', plan_id=int(plan_id))
 
     return call_template(
         request,
@@ -64,17 +74,12 @@ def positioned(request, plan_id=1):
 
 def tiled(request):
     """
-    Контроллер для ajax-запроса обновления информации на Главной странице.
-    Получаем список приложений, для которых создан плиточный виджет (т.е. поле is_widget=True).
+    Контроллер для ajax-запроса данных для обновления информации плиточных виджетов на Главной странице.
     :param request: django request
     """
 
-    # Получаем данные с виджетов приложений
-    apps = Application.objects.filter(is_widget=1).values_list('name', flat=True)
-    plugins = get_widget_plugin_names('tiled')
-    widget_apps = list(apps) + plugins
-
-    params = widgets_data(request, widget_apps, widget_type='tiled')
+    widget_apps = get_widget_apps('tiled')
+    params = widgets_data(widget_apps, widget_type='tiled')
 
     return call_template(
         request,

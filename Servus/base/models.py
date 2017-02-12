@@ -1,5 +1,8 @@
 ﻿# coding=utf-8
+import re
+
 from django.db import models
+from django.forms import fields
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 from home.models import Plan
@@ -8,6 +11,7 @@ WIDGET_CHOICES = (
     ('tiled', 'Плиточный'),
     ('positioned', 'Позиционный'),
 )
+MAC_TEMPLATE = re.compile(r'([0-9a-f]{2}[:-]){5}([0-9a-f]{2})', re.IGNORECASE)
 
 
 class Location(models.Model):
@@ -21,6 +25,7 @@ class Location(models.Model):
         verbose_name='Расположение',
         help_text='Место, где размещается контролируемый объект',
         blank=True,
+        null=True,
         unique=True
     )
 
@@ -111,3 +116,28 @@ class Application(models.Model):
 
     def __unicode__(self):
         return self.name
+
+
+class MACAddressFormField(fields.RegexField):
+    default_error_messages = {
+        'invalid': 'Введите правильный MAC-адрес (допускаются тире и двоеточия)',
+    }
+
+    def __init__(self, *args, **kwargs):
+        super(MACAddressFormField, self).__init__(MAC_TEMPLATE, *args, **kwargs)
+
+
+class MACAddressField(models.Field):
+    empty_strings_allowed = False
+
+    def __init__(self, *args, **kwargs):
+        kwargs['max_length'] = 17
+        super(MACAddressField, self).__init__(*args, **kwargs)
+
+    def get_internal_type(self):
+        return 'CharField'
+
+    def formfield(self, **kwargs):
+        defaults = {'form_class': MACAddressFormField}
+        defaults.update(kwargs)
+        return super(MACAddressField, self).formfield(**defaults)

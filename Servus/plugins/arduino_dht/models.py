@@ -56,6 +56,7 @@ class SensorDHT(models.Model):
     )
 
     class Meta(object):
+        db_table = 'climate_sensordht_ext'
         verbose_name = 'Датчик DHT'
         verbose_name_plural = 'Датчики DHT'
 

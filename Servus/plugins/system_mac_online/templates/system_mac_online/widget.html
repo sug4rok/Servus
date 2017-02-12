@@ -1,0 +1,26 @@
+<div class='btn btn-primary btn-sm btn-block disabled'>
+    Сеть (MAC-адреса)
+</div>
+<div class='panel-body widget tiled'>
+    <table class='tab_short table table-condensed'>
+        {%  for mac in system_mac_online %}
+            <tr>
+                {% if mac.name == 'unknown' %}
+                    <th style='color:red'>{{ mac.mac }}</th>
+                {% else %}
+                    <th>{{ mac.name }}</th>
+                {% endif %}
+                <td>
+                    {% if mac.online %}
+                        <img src='{{ STATIC_URL }}img/host_online.png' width='24' height='24'/>
+                    {% else %}
+                        <img src='{{ STATIC_URL }}img/host_offline.png' width='24' height='24'/>
+                    {% endif %}
+                </td>
+                <td class='small_gray'>
+                    {{ mac.last_changed|date:'Y-m-d H:i' }}
+                </td>
+            </tr>
+        {%  endfor %}
+    </table>
+</div>

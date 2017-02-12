@@ -62,7 +62,7 @@ def get_widget_data():
             tmp_tuple += (('Сегодня', today), )
 
         tomorrow = get_forecast(plugin, datetime.today() + timedelta(days=1))
-        tommorrow = not_empty(tomorrow)
+        tomorrow = not_empty(tomorrow)
         if tomorrow:
             tmp_tuple += (('Завтра', tomorrow), )
 

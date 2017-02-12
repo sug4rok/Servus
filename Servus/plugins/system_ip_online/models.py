@@ -1,10 +1,10 @@
 ﻿# coding=utf-8
 from django.db import models
 
-MODEL = 'PingHost'
+MODEL = 'IPAddress'
 
 
-class PingHost(models.Model):
+class IPAddress(models.Model):
     """
     Модель для хранения информации о сетевых устройствах и их доступности
     в сети.
@@ -16,13 +16,14 @@ class PingHost(models.Model):
 
     name = models.CharField(
         max_length=50,
-        verbose_name='Имя/название хоста',
-        unique=False
+        verbose_name='Имя/название устройства',
+        unique=False,
     )
     ip_address = models.GenericIPAddressField(
         default='0.0.0.0',
         verbose_name='IP-адрес',
         protocol='IPv4',
+        unique=True,
     )
     online = models.BooleanField(
         default=False,
@@ -34,8 +35,9 @@ class PingHost(models.Model):
     )
 
     class Meta(object):
-        verbose_name = 'хост'
-        verbose_name_plural = 'Сетевые устройства'
+        db_table = 'system_ipaddress_ext'
+        verbose_name = 'IP-адрес'
+        verbose_name_plural = 'IP-адреса устройств'
 
     def __unicode__(self):
         return self.ip_address
