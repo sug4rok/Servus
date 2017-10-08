@@ -72,6 +72,12 @@ class Arduino(models.Model):
             if self.state[0]:
                 for command in commands:
                     sensor = command.content_object
+                    # Если сенсор был удален, а команда все еще не выполнена
+                    # (is_done == False), удаляем команду
+                    if sensor is None:
+                        command.delete()
+                        continue
+
                     result = self.send(sensor.name, command.command)
 
                     if result is not None:
@@ -104,9 +110,7 @@ class Arduino(models.Model):
         """
         Передача команды arduino и возврат полученных от микроконтроллера данных.
         :param sensor: str Наименование датчика. Используется только для логированя ошибок.
-        :param command: str Команда arduino. Команда должна быть вида 't10', где
-            t - индикатор для скетча arduino, говорящий о том, что далее работа с датчиком
-            температуры; 10 - номер вывода (pin) arduino, к которому подключе датчик
+        :param command: str Команда arduino. Примеры команд: 'dht22:10\n', 'bmp:62\n'
         :returns: результат работы переданной arduino команды
         """
 
@@ -119,7 +123,6 @@ class Arduino(models.Model):
                     command = 'ser%s:%s' % (self.port, command)
 
                 self.ser.write(str(command))
-                # time.sleep(1)  # На тестовом макете работало без паузы
                 try:
                     result = self.ser.readline()
                     # Отсекаем от результата последние два служебных символа
@@ -130,6 +133,8 @@ class Arduino(models.Model):
                         result = None
                     else:
                         self.state = (True, u'OK')
+                        if result.strip() == '':
+                            result = None
                 except Exception as err:
                     self.state = (False, u'Датчик %s: %s' % (sensor, err))
             else:
@@ -214,5 +219,5 @@ def set_command(sensor, command):
         state = (False, 'Очередь комманд превысила %s' % max_number_commands)
 
     if state[0] is not True:
-        event_setter('system', state[1], 3, delay=4, email=True)
+        event_setter('system', state[1], 3, delay=4, email=False)
         logger.error(state[1])
