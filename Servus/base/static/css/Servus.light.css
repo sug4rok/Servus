@@ -19,6 +19,10 @@ caption{
 .padding5px{
     padding: 5px;
 }
+.small_gray{
+    color: #777;
+    font-size: 80%;
+}
 /*Slideshow*/
 .fullscreen_img{
     background-size: contain;
@@ -73,11 +77,6 @@ table.tab_short{
 }
 
 /*Weather*/
-.small_gray{
-    vertical-align:middle;
-    color: #777;
-    font-size: 70%;
-}
 th{
     font-weight: bold;
 }
