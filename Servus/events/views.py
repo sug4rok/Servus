@@ -2,7 +2,7 @@
 from django.contrib.sessions.models import Session
 
 from base.views import call_template
-from .utils import get_events, ALERTS
+from .utils import get_events
 from .models import Event
 
 
@@ -16,7 +16,7 @@ def events(request):
     """
 
     days = 14
-    params = {'active_app_name': 'events', 'events_list': get_events(days), 'alerts': ALERTS}
+    params = {'active_app_name': 'events', 'events_list': get_events(days)}
 
     request.session.save()
     current_session = request.session.session_key

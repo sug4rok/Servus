@@ -1,6 +1,7 @@
 ﻿# coding=utf-8
 import os
 from sys import platform
+from locale import setlocale, LC_ALL
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -35,12 +36,12 @@ CONTAINER_APPS = (
 PLUGINS = (
     # 'plugins.user_sms_ru',  # Sending sms through the website sms.ru
     'plugins.arduino',  # Arduino controller
-    # 'plugins.arduino_dht',  # for connecting a DHT sensor (DHT11, DHT22) to the Arduino
-    # 'plugins.arduino_bmp085',  # for connecting a BMP085/BMP180 sensor to the Arduino
     # 'plugins.arduino_bh1750',  # for connecting a BH1750 sensors (ambient light measurement) to the Arduino
-    # 'plugins.arduino_yl83',  # for connecting a YL-83 raindrop sensors
+    # 'plugins.arduino_bmp085',  # for connecting a BMP085/BMP180 sensor to the Arduino
+    # 'plugins.arduino_dht',  # for connecting a DHT sensor (DHT11, DHT22) to the Arduino
     'plugins.arduino_on_off_switch',  # on/off switch states
     # 'plugins.arduino_reed_switch',  # reed switch sensors
+    # 'plugins.arduino_yl83',  # for connecting a YL-83 raindrop sensors
     # 'plugins.weather_openweathermap',  # weather forecast from openweathermap.org
     # 'plugins.weather_weather_ua',  # weather from weather.ua
     'plugins.system_ip_online',  # ping utility
@@ -112,7 +113,8 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 TIME_ZONE = 'Europe/Moscow'
-LANGUAGE_CODE = 'ru-ru'
+LANGUAGE_CODE = 'ru-RU'
+setlocale(LC_ALL, 'ru_RU.UTF-8')
 USE_I18N = True
 USE_L10N = True
 USE_TZ = False
@@ -128,21 +130,17 @@ else:
 #   Servus settings   #
 # =================== #
 SITE_NAME = 'Servus'
-SPEAKER_NAME = 'Servus'
 
 # Bootstrap theme (dark or light)
 THEME = 'dark'
 
-# Arduino COM port number
-# (in Windows port number = port number - 1)
-# (in Linux Debian number = 'ttyACM0'
-PORT = 1
+ALERTS = {0: 'default', 1: 'success', 2: 'info', 3: 'warning', 4: 'danger'}
 
 # Настройки почтового аккаунта gmail для отправки писем
 # Запуск эмулятора почтового сервера: python -m smtpd -n -c DebuggingServer localhost:587
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-# EMAIL_USE_TLS = True
+EMAIL_USE_TLS = True
 EMAIL_HOST = 'localhost'  # 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'user@gmail.com'
@@ -161,10 +159,10 @@ CRON_CLASSES = [
     # 'events.cron.SMSSendJob',
     # 'system.cron.PerfomArduinoCommands',
     # 'home.cron.GetOnOffSwitchState',
-    # 'climate.cron.GetTempHumidData',
     # 'climate.cron.GetAmbientLightData',
     # 'climate.cron.GetPressureData',
     # 'climate.cron.GetRaindropData',
+    # 'climate.cron.GetTempHumidData',
     # 'weather.cron.GetWeatherJob',
     # 'plugins.system_ip_online.cron.GetIPOnline',
     # 'plugins.system_mac_online.cron.GetMACOnline',

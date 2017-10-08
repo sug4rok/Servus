@@ -2,7 +2,7 @@
 from django.http import Http404
 from django.shortcuts import render
 
-from base.settings import SITE_NAME, THEME
+from base.settings import SITE_NAME, THEME, ALERTS
 from .models import Application
 from events.utils import get_amount_events
 
@@ -31,7 +31,8 @@ def call_template(request, *args, **kwargs):
     """
 
     # Словарь для передачи параметров в render
-    params = {'site_name': SITE_NAME, 'theme': THEME, 'tabs': Application.objects.filter(is_tab=1)}
+    params = {'site_name': SITE_NAME, 'theme': THEME, 'alerts': ALERTS,
+              'tabs': Application.objects.filter(is_tab=1)}
 
     if args:
         params.update(args[0])
