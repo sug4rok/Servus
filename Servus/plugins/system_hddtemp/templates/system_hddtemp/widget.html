@@ -1,0 +1,15 @@
+<div class='widget'>
+{% for id, name, horiz, vert, level, temp in system_hddtemp %}
+
+    <div style='position: absolute;' id='{{ name }}'>
+        <div style='position: relative;'>
+            <img class='positioned_img' src='{{ STATIC_URL }}img/{{ theme }}_hddtemp_{{ alerts|get_alert:level }}.png' />
+            <div class='positioned_text' style='top: 26px;'>{{ temp }}<sub> °C</sub></div>
+        </div>
+    </div>
+
+    <script>
+        positioning_widget({{ id }}, '{{ name }}', {{ horiz }}, {{ vert }});
+    </script>
+{% endfor %}
+</div>

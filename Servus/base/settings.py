@@ -44,6 +44,7 @@ PLUGINS = (
     # 'plugins.arduino_yl83',  # for connecting a YL-83 raindrop sensors
     # 'plugins.weather_openweathermap',  # weather forecast from openweathermap.org
     # 'plugins.weather_weather_ua',  # weather from weather.ua
+    # 'plugins.system_hddtemp',  # temperature HDD in linux (need to install hddtemp)
     'plugins.system_ip_online',  # ping utility
     'plugins.system_mac_online',  # search for device mac address in the home network
 )
@@ -164,6 +165,7 @@ CRON_CLASSES = [
     # 'climate.cron.GetRaindropData',
     # 'climate.cron.GetTempHumidData',
     # 'weather.cron.GetWeatherJob',
+    # 'plugins.system_hddtemp.cron.GetHDDTemp', 
     # 'plugins.system_ip_online.cron.GetIPOnline',
     # 'plugins.system_mac_online.cron.GetMACOnline',
 ]
