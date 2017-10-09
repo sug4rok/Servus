@@ -20,7 +20,7 @@ class MACAddress(models.Model):
     mac = MACAddressField(
         verbose_name='MAC-адрес устройства',
         help_text='MAC-адрес любого носимого устройства (телефон, часы и пр.), <br>\
-            подключенного к той же сети, что и сервер.',
+            подключенного к той же сети, что и сервер. Формат: 11:22:33:aa:bb:cc',
         unique=True,
     )
     online = models.BooleanField(
@@ -41,5 +41,5 @@ class MACAddress(models.Model):
         return self.mac
 
     def save(self, *args, **kwargs):
-        self.mac = self.mac.replace('-', ':')
+        self.mac = self.mac.replace('-', ':').lower()
         super(MACAddress, self).save(*args, **kwargs)

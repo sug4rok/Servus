@@ -44,7 +44,7 @@ def get_mac(ip):
     subprocess_ping(ip)
 
     process = Popen(['arp', '-a', ip], stdout=PIPE)
-    arp = process.communicate()[0]
+    arp, err = process.communicate()
     mac = MAC_TEMPLATE.search(arp)
 
     if mac:

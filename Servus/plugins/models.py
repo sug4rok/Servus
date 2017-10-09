@@ -70,6 +70,10 @@ class Plugins(object):
                 verbose_name='Задействован',
                 default=False
             ),
+            'level': models.SmallIntegerField(
+                default=2,
+                editable=False,
+            ),
             'parent': models.OneToOneField(plugin_model['object'],
                                            on_delete=models.CASCADE,
                                            primary_key=True,

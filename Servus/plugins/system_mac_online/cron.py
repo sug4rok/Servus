@@ -43,7 +43,7 @@ class GetMACOnline(CJB):
         for mac in macs_online:
             set_mac_status(mac, True)
 
-        macs_db = MACAddress.objects.filter().values_list('mac', flat=True)
+        macs_db = MACAddress.objects.values_list('mac', flat=True)
         for mac in macs_db:
             if mac not in macs_online:
                 set_mac_status(mac, False)
