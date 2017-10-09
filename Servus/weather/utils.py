@@ -104,33 +104,35 @@ class WG(object):
         return 'Weather getter class for %s weather provider' % self.wp
 
 
-def set_weather_events(dt, temp, wind_speed, falls_img):
+def set_weather_events(city, dt, temp, wind_speed, falls_img):
     """
     Функция записи событий о прогнозируемых экстремальных погодных условиях.
 
+    :city: населенный пункт
     :param dt: объект datetime с датой потенциального события
     :param temp: температура воздуха
     :param wind_speed: скорость ветра
     :param falls_img: возможное количество осадков (см. weather_getter.py)
     """
 
-    event_day = dt.strftime('%d %b')
+    event_day = dt.strftime('%B %d')
+    event_header = u'{0}/{1}: '.format(city, event_day.decode('utf-8'))
 
     if 30 <= temp <= 35:
-        event_setter('weather', u'%s: Будет жарко (выше 30 C)' % event_day, 2, delay=48)
+        event_setter('weather', event_header + u'будет жарко (выше 30 C)', 2, delay=48)
     elif temp > 35:
-        event_setter('weather', u'%s: Будет очень жарко! (выше 35 C)' % event_day, 3, email=True)
+        event_setter('weather', event_header + u'будет очень жарко! (выше 35 C)', 3, email=True)
     elif -25 <= temp < -15:
-        event_setter('weather', u'%s: Будет холодно (ниже -15 C)' % event_day, 2, delay=48)
+        event_setter('weather', event_header + u'будет холодно (ниже -15 C)', 2, delay=48)
     elif temp < -25:
-        event_setter('weather', u'%s: Будет очень холодно! (ниже -25 C)' % event_day, 3, email=True)
+        event_setter('weather', event_header + u'будет очень холодно! (ниже -25 C)', 3, email=True)
 
     if 11 <= wind_speed < 17:
-        event_setter('weather', u'%s: Сильный ветер (более 11 м/с)' % event_day, 2, delay=48)
+        event_setter('weather', event_header + u'сильный ветер (более 11 м/с)', 2, delay=48)
     elif 17 <= wind_speed < 25:
-        event_setter('weather', u'%s: Шторм! (скорость ветра более 17 м/с)' % event_day, 3, email=True)
+        event_setter('weather', event_header + u' шторм! (скорость ветра более 17 м/с)', 3, email=True)
     elif wind_speed >= 25:
-        event_setter('weather', u'%s: УРАГАН! (скорость ветра более 25 м/с)' % event_day, 4, delay=6,
+        event_setter('weather', event_header + u'УРАГАН! (скорость ветра более 25 м/с)', 4, delay=6,
                      sms=True, email=True)
 
     if falls_img in ['t1d3', 't2d3', 't3d3']:
@@ -152,32 +154,34 @@ def weather_setter(weather_data):
         dt = weather['datetime']
 
         if dt >= datetime.now():
-            obj_wp = WeatherValue.objects.create(content_object=weather['wp'])
-            obj_wp.datetime = dt
+            obj_wp = weather['wp']
+            
+            obj_wv = WeatherValue.objects.create(content_object=obj_wp)
+            obj_wv.datetime = dt
 
             if 'clouds' in weather:
-                obj_wp.clouds = int(weather['clouds'])
+                obj_wv.clouds = int(weather['clouds'])
             if 'precipitation' in weather:
-                obj_wp.precipitation = float(weather['precipitation'])
+                obj_wv.precipitation = float(weather['precipitation'])
 
             temp = int(weather['temperature'])
-            obj_wp.temperature = temp
+            obj_wv.temperature = temp
 
-            obj_wp.pressure = int(weather['pressure'])
-            obj_wp.humidity = int(weather['humidity'])
+            obj_wv.pressure = int(weather['pressure'])
+            obj_wv.humidity = int(weather['humidity'])
 
             wind_speed = int(weather['wind_speed'])
-            obj_wp.wind_speed = wind_speed
+            obj_wv.wind_speed = wind_speed
 
-            obj_wp.wind_direction = int(weather['wind_direction'])
-            obj_wp.clouds_img = weather['clouds_img']
+            obj_wv.wind_direction = int(weather['wind_direction'])
+            obj_wv.clouds_img = weather['clouds_img']
 
             falls_img = weather['falls_img']
-            obj_wp.falls_img = falls_img
+            obj_wv.falls_img = falls_img
 
-            obj_wp.save()
+            obj_wv.save()
 
-            set_weather_events(dt, temp, wind_speed, falls_img)
+            set_weather_events(obj_wp.city, dt, temp, wind_speed, falls_img)
 
 
 def get_weather(wp):
