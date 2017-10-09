@@ -1,8 +1,8 @@
 <div class='widget'>
-{% for id, name, horiz, vert, ambient_light in arduino_bh1750 %}
+{% for id, name, horiz, vert, level, ambient_light in arduino_bh1750 %}
     <div style='position: absolute;' id='{{ name }}'>
         <div style='position: relative;'>
-            <img class='positioned_img' src='{{ STATIC_URL }}img/ambient_light_{{ theme }}_info.png' />
+            <img class='positioned_img' src='{{ STATIC_URL }}img/{{ theme }}_ambient_light_{{ alerts|get_alert:level }}.png' />
             <div class='positioned_text' style='top: 26px;'>{{ ambient_light }}<sub> лк</sub></div>
         </div>
     </div>

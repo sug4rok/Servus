@@ -1,9 +1,9 @@
 <div class='widget'>
-{% for id, name, horiz, vert, temp, humid in arduino_dht %}
+{% for id, name, horiz, vert, level, temp, humid in arduino_dht %}
 
     <div style='position: absolute;' id='{{ name }}'>
         <div style='position: relative;'>
-            <img class='positioned_img' src='{{ STATIC_URL }}img/temp_humid_{{ theme }}_info.png' />
+            <img class='positioned_img' src='{{ STATIC_URL }}img/{{ theme }}_temp_humid_{{ alerts|get_alert:level }}.png' />
             <div class='positioned_text' style='left: 5px; top: 5px; line-height: 1.5;'>
                 {{ temp }}<sub> °C</sub><br>
                 {{ humid }}<sub> %</sub>

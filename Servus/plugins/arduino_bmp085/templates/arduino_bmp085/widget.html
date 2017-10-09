@@ -1,8 +1,8 @@
 <div class='widget'>
-{% for id, name, horiz, vert, press in arduino_bmp085 %}
+{% for id, name, horiz, vert, level, press in arduino_bmp085 %}
     <div style='position: absolute;' id='{{ name }}'>
         <div style='position: relative;'>
-            <img class='positioned_img' src='{{ STATIC_URL }}img/pressure_{{ theme }}_info.png' />
+            <img class='positioned_img' src='{{ STATIC_URL }}img/{{ theme }}_pressure_{{ alerts|get_alert:level }}.png' />
             <div class='positioned_text' style='top: 2px;'>
                 {{ press }}<sub> мм рт.ст.</sub>
             </div>

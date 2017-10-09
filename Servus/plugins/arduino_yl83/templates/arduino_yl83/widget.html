@@ -1,9 +1,9 @@
 <div class='widget'>
-{% for id, name, horiz, vert, raindrop in arduino_yl83 %}
+{% for id, name, horiz, vert, level, raindrop in arduino_yl83 %}
 
     <div style='position: absolute;' id='{{ name }}'>
         <div style='position: relative;'>
-            <img class='positioned_img' src='{{ STATIC_URL }}img/rain_{{ raindrop }}_{{ theme }}_info.png' />
+            <img class='positioned_img' src='{{ STATIC_URL }}img/{{ theme }}_rain_{{ raindrop }}_{{ alerts|get_alert:level }}.png' />
         </div>
     </div>
 

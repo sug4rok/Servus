@@ -18,4 +18,4 @@ def get_widget_data(plan_id):
     switches = [sw for sw in switches if sw.plan_image_id == plan_id]
 
     return [(plan_id, sw.name, sw.horiz_position, sw.vert_position,
-             sw.location_type, get_state(sw.state)) for sw in switches]
+             sw.level, sw.location_type, get_state(sw.state)) for sw in switches]
