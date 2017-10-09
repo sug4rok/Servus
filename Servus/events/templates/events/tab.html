@@ -2,12 +2,9 @@
 
 {% block content %}
     {% for event in events_list %}
-        <div class='alert alert-{{ alerts|get_alert:event.level }} event_lvl'>
-            <div class='event_src'>
-                <img src='{{ STATIC_URL }}img/{{ event.source }}.png' width='20' height='20'/>&nbsp;
-                [{{ event.datetime|date:'M-d H:m' }}]
-            </div>
-            {{ event.message }}
+        <div class='alert alert-{{ alerts|get_alert:event.level }} event_text'>
+			<div class='sprite_events sprite-{{ event.source }}'></div>
+            [{{ event.datetime|date:'M-d H:m' }}] {{ event.message }}
         </div>
     {%  empty %}
         <small>отсутствуют :)</small>

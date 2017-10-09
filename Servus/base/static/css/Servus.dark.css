@@ -64,14 +64,23 @@ table.tab_short{
     margin: 0 auto;
     width: 100%;
 }
-.event_src{
-    float:left;
-    margin-right: 10px;
-    font-size: 90%;    
+
+/*Events*/
+.sprite_events {
+    background-image: url(/static/img/sprite_events.png);
+    background-repeat: no-repeat;
+	float: left;
+	margin-right: 5px;
+    width: 20px;
+    height: 20px;
 }
-.event_lvl{
-    padding: 5px;
-    margin: 5px;
+.sprite-climate {background-position: -5px -5px}
+.sprite-slideshow {background-position: -35px -5px}
+.sprite-system {background-position: -5px -35px}
+.sprite-weather {background-position: -35px -35px}
+.event_text{
+	margin: 3px;
+    padding: 5px; 
     font-size: 90%;
 }
 
