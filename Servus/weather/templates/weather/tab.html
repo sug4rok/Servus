@@ -24,7 +24,7 @@
                         {% for file_img, clouds, descr, bg_style in values %}
                             <td class='small_gray {{ bg_style }}'>
                                 <attr title='{{ descr }}{% if clouds %} (облачность {{ clouds }}%){% endif %}'>
-                                    <img src='{{ STATIC_URL }}img/{{ file_img }}.png' width='30' height='25'/>
+									<i class='sprite_weather sprite_c sprite-{{ file_img }}'></i>
                                 </attr>
                             </td>
                         {% endfor %}
@@ -33,9 +33,9 @@
                             <td class='small_gray {{ bg_style }}'>
                                 <attr title='{{ descr }}{% if precipitation %} ({{ precipitation }}мм воды / 6 часов{% endif %}'>
                                     {% if file_img == 'na' %}
-                                        <img src='{{ STATIC_URL }}img/{{ file_img }}.png' width='30' height='30'/>
+                                        <img src='{{ STATIC_URL }}img/na.png' width='30' height='30'/>
                                     {% else %}
-                                        <img src='{{ STATIC_URL }}img/{{ file_img }}.png' width='18' height='27'/>
+										<i class='sprite_weather sprite_t sprite-{{ file_img }}'></i>
                                     {% endif %}
                                 </attr>
                             </td>
@@ -43,20 +43,17 @@
                     {% elif field == 'wind_speed' %}
                         {% for wind_speed, wind_dir, bg_style in values %}
                             <td class='small_gray {{ bg_style }}'>
-                                {{ wind_speed }}
                                 {% if wind_speed %}
-                                    <img style='
-                                            -moz-transform: rotate({{ wind_dir }}deg);
-                                            -ms-transform: rotate({{ wind_dir }}deg);
-                                            -webkit-transform:rotate({{ wind_dir }}deg);
-                                            -o-transform: rotate({{ wind_dir }}deg);
-                                            transform: rotate({{ wind_dir }}deg);
-                                        '
-                                        src='{{ STATIC_URL }}img/wd.png'
-                                        width='24'
-                                        height='24'
-                                    />
+									<i class='sprite_weather sprite-wd'
+									   style='-moz-transform: rotate({{ wind_dir }}deg);
+                                              -ms-transform: rotate({{ wind_dir }}deg);
+                                              -webkit-transform:rotate({{ wind_dir }}deg);
+                                              -o-transform: rotate({{ wind_dir }}deg);
+                                              transform: rotate({{ wind_dir }}deg);
+											  float: left;'>
+								    </i>
                                 {% endif %}
+								<div style='float: left;'>{{ wind_speed }}</div>
                             </td>
                         {% endfor %}
                     {% else %}

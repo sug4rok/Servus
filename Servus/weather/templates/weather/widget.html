@@ -14,25 +14,18 @@
                 {% for day, data in forecast %}
                     {% for d in data %}
                         <td>
-                            <img src='{{ STATIC_URL }}img/{{ d.clouds_img }}.png' width='30' height='25'/>
-                            <br/>
-                            <img src='{{ STATIC_URL }}img/{{ d.falls_img }}.png' width='18' height='27'/>
-                            <img style='
-                                    -moz-transform: rotate({{ d.wind_direction }}deg);
-                                    -ms-transform: rotate({{ d.wind_direction }}deg);
-                                    -webkit-transform:rotate({{ d.wind_direction }}deg);
-                                    -o-transform: rotate({{ d.wind_direction }}deg);
-                                    transform: rotate({{ d.wind_direction }}deg);
-                                '
-                                src='{{ STATIC_URL }}img/wd.png'
-                                width='24'
-                                height='24'
-                            />
-                            <br/>
-                            <small>
-                                {{ d.temperature }}<sub> °C</sub>
-                                {{ d.wind_speed }}<sub> м/с</sub>
-                            </small>
+							<div class='sprite_weather sprite_c sprite-{{ d.clouds_img }}' ></div>
+							<div class='sprite_weather sprite_t sprite-{{ d.falls_img }}' style='float: left;'></div>
+							<div style='float: left; clear: right; font-size: 90%'>{{ d.temperature }}<sub> °C</sub></div>
+							<div class='sprite_weather sprite-wd'
+							   style='-moz-transform: rotate({{ d.wind_direction }}deg);
+									  -ms-transform: rotate({{ d.wind_direction }}deg);
+									  -webkit-transform:rotate({{ d.wind_direction }}deg);
+									  -o-transform: rotate({{ d.wind_direction }}deg);
+									  transform: rotate({{ d.wind_direction }}deg);
+									  float: left;
+									  clear: left;'></div>
+							<div style='float: left; font-size: 90%'>{{ d.wind_speed }}<sub> м/с</sub></div>
                         </td>
                     {% endfor %}
                 {% endfor %}

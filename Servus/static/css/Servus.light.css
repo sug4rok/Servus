@@ -92,3 +92,51 @@ th{
 td.w_night{
     background: #f0f0f8
 }
+.sprite_weather {
+    background-image: url(/static/img/sprite_weather.png);
+    background-repeat: no-repeat;
+    display: block
+}
+.sprite_c {
+    width: 30px;
+    height: 25px
+}
+.sprite_t {
+    width: 18px;
+    height: 27px
+}
+.sprite-cd0 {background-position: -5px -5px;}
+.sprite-cd1 {background-position: -45px -5px}
+.sprite-cd2 {background-position: -85px -5px}
+.sprite-cd3 {background-position: -125px -5px}
+.sprite-cd4 {background-position: -5px -40px}
+.sprite-cd5 {background-position: -45px -40px}
+.sprite-cn0 {background-position: -85px -40px}
+.sprite-cn1 {background-position: -125px -40px}
+.sprite-cn2 {background-position: -5px -75px}
+.sprite-cn3 {background-position: -45px -75px}
+.sprite-cn4 {background-position: -85px -75px}
+.sprite-cn5 {background-position: -125px -75px}
+.sprite-t0d0 {background-position: -165px -5px}
+.sprite-t1d0 {background-position: -165px -42px}
+.sprite-t1d1 {background-position: -165px -79px}
+.sprite-t1d2 {background-position: -5px -116px}
+.sprite-t1d3 {background-position: -33px -116px}
+.sprite-t1d4 {background-position: -61px -116px}
+.sprite-t1d5 {background-position: -89px -116px}
+.sprite-t1d6 {background-position: -117px -116px}
+.sprite-t2d0 {background-position: -145px -116px}
+.sprite-t2d1 {background-position: -5px -153px}
+.sprite-t2d2 {background-position: -33px -153px}
+.sprite-t2d3 {background-position: -61px -153px}
+.sprite-t2d4 {background-position: -89px -153px}
+.sprite-t3d0 {background-position: -117px -153px}
+.sprite-t3d1 {background-position: -145px -153px}
+.sprite-t3d2 {background-position: -193px -5px}
+.sprite-t3d3 {background-position: -193px -42px}
+.sprite-t3d4 {background-position: -193px -79px}
+.sprite-wd {
+    width: 24px;
+    height: 24px;
+    background-position: -173px -116px
+}
