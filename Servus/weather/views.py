@@ -86,8 +86,7 @@ def get_wind(wp):
 def weather(request):
     global bg_styles
 
-    params = {}
-    forecast = []
+    params = {'active_app_name': 'weather', 'forecast': []}
 
     # Получаем все модели плагинов типа 'Forecast'
     forecasts = get_used_plugins_by(plugin_type='Forecast')
@@ -123,8 +122,6 @@ def weather(request):
                 values.append(field_values)
 
             site = wp.get_url().split('/')[2].split('.')
-            forecast.append((site[-2] + '.' + site[-1], values, wp.city))
-
-        params = {'active_app_name': 'weather', 'forecast': forecast}
+            params['forecast'].append((site[-2] + '.' + site[-1], values, wp.city))
 
     return call_template(request, params)
