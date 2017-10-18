@@ -193,7 +193,7 @@ LOGGING = {
     },
     'handlers': {
         'production_file': {
-            'level': 'INFO',
+            'level': 'WARNING',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(BASE_DIR, 'logs/product.log'),
             'maxBytes': 1024 * 1024 * 5,  # 5 MB

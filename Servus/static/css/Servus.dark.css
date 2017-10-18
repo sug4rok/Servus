@@ -46,11 +46,6 @@ caption{
     padding: 5px;
     margin: 0 auto;
 }
-.positioned_img{
-    position:absolute;
-    width:48px;
-    height:48px;
-}
 .positioned_text{
     position:absolute;
     width:48px;
@@ -64,6 +59,97 @@ table.tab_short{
     margin: 0 auto;
     width: 100%;
 }
+.sprite_home {
+    background-image: url(/static/img/sprite_home.png);
+    background-repeat: no-repeat;
+    display: block;
+}
+.sprite_48 {
+    width: 48px;
+    height: 48px;
+}
+.sprite_24 {
+    width: 24px;
+    height: 24px;
+}
+.sprite-dark_ambient_light_danger {background-position: -5px -5px;}
+.sprite-dark_ambient_light_info {background-position: -63px -5px;}
+.sprite-dark_ambient_light_warning {background-position: -121px -5px;}
+.sprite-dark_door_closed_danger {background-position: -179px -5px;}
+.sprite-dark_door_closed_info {background-position: -237px -5px;}
+.sprite-dark_door_closed_warning {background-position: -295px -5px;}
+.sprite-dark_door_opened_danger {background-position: -353px -5px;}
+.sprite-dark_door_opened_info {background-position: -411px -5px;}
+.sprite-dark_door_opened_warning {background-position: -5px -63px;}
+.sprite-dark_hddtemp_danger {background-position: -63px -63px;}
+.sprite-dark_hddtemp_info {background-position: -121px -63px;}
+.sprite-dark_hddtemp_warning {background-position: -179px -63px;}
+.sprite-dark_off_info {background-position: -237px -63px;}
+.sprite-dark_on_info {background-position: -295px -63px;}
+.sprite-dark_pressure_danger {background-position: -353px -63px;}
+.sprite-dark_pressure_info {background-position: -411px -63px;}
+.sprite-dark_pressure_warning {background-position: -5px -121px;}
+.sprite-dark_rain_0_danger {background-position: -63px -121px;}
+.sprite-dark_rain_0_info {background-position: -121px -121px;}
+.sprite-dark_rain_0_warning {background-position: -179px -121px;}
+.sprite-dark_rain_1_danger {background-position: -237px -121px;}
+.sprite-dark_rain_1_info {background-position: -295px -121px;}
+.sprite-dark_rain_1_warning {background-position: -353px -121px;}
+.sprite-dark_rain_2_danger {background-position: -411px -121px;}
+.sprite-dark_rain_2_info {background-position: -5px -179px;}
+.sprite-dark_rain_2_warning {background-position: -63px -179px;}
+.sprite-dark_rain_3_danger {background-position: -121px -179px;}
+.sprite-dark_rain_3_info {background-position: -179px -179px;}
+.sprite-dark_rain_3_warning {background-position: -237px -179px;}
+.sprite-dark_temp_humid_danger {background-position: -295px -179px;}
+.sprite-dark_temp_humid_info {background-position: -353px -179px;}
+.sprite-dark_temp_humid_warning {background-position: -411px -179px;}
+.sprite-dark_window_closed_danger {background-position: -5px -237px;}
+.sprite-dark_window_closed_info {background-position: -63px -237px;}
+.sprite-dark_window_closed_warning {background-position: -121px -237px;}
+.sprite-dark_window_opened_danger {background-position: -179px -237px;}
+.sprite-dark_window_opened_info {background-position: -237px -237px;}
+.sprite-dark_window_opened_warning {background-position: -295px -237px;}
+.sprite-light_ambient_light_danger {background-position: -353px -237px;}
+.sprite-light_ambient_light_info {background-position: -411px -237px;}
+.sprite-light_ambient_light_warning {background-position: -5px -295px;}
+.sprite-light_door_closed_danger {background-position: -63px -295px;}
+.sprite-light_door_closed_info {background-position: -121px -295px;}
+.sprite-light_door_closed_warning {background-position: -179px -295px;}
+.sprite-light_door_opened_danger {background-position: -237px -295px;}
+.sprite-light_door_opened_info {background-position: -295px -295px;}
+.sprite-light_door_opened_warning {background-position: -353px -295px;}
+.sprite-light_hddtemp_danger {background-position: -411px -295px;}
+.sprite-light_hddtemp_info {background-position: -5px -353px;}
+.sprite-light_hddtemp_warning {background-position: -63px -353px;}
+.sprite-light_off_info {background-position: -121px -353px;}
+.sprite-light_on_info {background-position: -179px -353px;}
+.sprite-light_pressure_danger {background-position: -237px -353px;}
+.sprite-light_pressure_info {background-position: -295px -353px;}
+.sprite-light_pressure_warning {background-position: -353px -353px;}
+.sprite-light_rain_0_danger {background-position: -411px -353px;}
+.sprite-light_rain_0_info {background-position: -5px -411px;}
+.sprite-light_rain_0_warning {background-position: -63px -411px;}
+.sprite-light_rain_1_danger {background-position: -121px -411px;}
+.sprite-light_rain_1_info {background-position: -179px -411px;}
+.sprite-light_rain_1_warning {background-position: -237px -411px;}
+.sprite-light_rain_2_danger {background-position: -295px -411px;}
+.sprite-light_rain_2_info {background-position: -353px -411px;}
+.sprite-light_rain_2_warning {background-position: -411px -411px;}
+.sprite-light_rain_3_danger {background-position: -469px -5px;}
+.sprite-light_rain_3_info {background-position: -469px -63px;}
+.sprite-light_rain_3_warning {background-position: -469px -121px;}
+.sprite-light_temp_humid_danger {background-position: -469px -179px;}
+.sprite-light_temp_humid_info {background-position: -469px -237px;}
+.sprite-light_temp_humid_warning {background-position: -469px -295px;}
+.sprite-light_window_closed_danger {background-position: -469px -353px;}
+.sprite-light_window_closed_info {background-position: -469px -411px;}
+.sprite-light_window_closed_warning {background-position: -5px -469px;}
+.sprite-light_window_opened_danger {background-position: -63px -469px;}
+.sprite-light_window_opened_info {background-position: -121px -469px;}
+.sprite-light_window_opened_warning {background-position: -179px -469px;}
+.sprite-tiled_host_offline {background-position: -527px -5px;}
+.sprite-tiled_host_online {background-position: -527px -39px;}
 
 /*Events*/
 .sprite_events {
