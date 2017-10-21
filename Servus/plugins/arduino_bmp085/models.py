@@ -4,6 +4,7 @@ from django.db import models
 
 from climate.models import PressureValue
 from plugins.arduino.models import Arduino, set_command
+from events.utils import event_setter
 
 MODEL = 'SensorBMP'
 
@@ -67,4 +68,19 @@ class SensorBMP(models.Model):
             else:
                 PressureValue.objects.create(content_object=self, pressure=press)
 
-                # TODO: Создать функцию событий атм. давления  set_pressure_event(sensor, press)
+            self.set_event(press)
+
+    def set_event(self, press):
+        """
+        Запись в журнал событий данных, находящихся за пределами нормы.
+        :param press: int Значение атмосферного давления
+        """
+
+        if press < 740 or press > 780:
+            msg = u'Атмосферное давление слишком далеко от номры'
+            event_setter('climate', msg, 3)
+            self.level = 3
+        else:
+            self.level = 2
+
+        self.save()

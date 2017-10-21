@@ -1,5 +1,6 @@
 ﻿# coding=utf-8
 from django.db import models
+from events.utils import event_setter
 
 MODEL = 'HDDTemp'
 
@@ -47,3 +48,31 @@ class HDDTemp(models.Model):
 
     def __unicode__(self):
         return '/dev/' + self.name
+
+    def set_result(self, result):
+        if result is not None:
+            try:
+                self.temperature = result
+                self.set_event(result)
+            except ValueError:
+                pass
+
+    def set_event(self, temp):
+        """
+        Запись в журнал событий данных, находящихся за пределами нормы.
+        :param temp: int Значение температуры
+        """
+        
+        if temp <= 20 or temp >= 50:
+            msg = u'Температура HDD вышла из безопасного диапазона ({0}°C)'.format(temp)
+            event_setter('system', msg, 4, email=True)
+            self.level = 4
+        elif temp <= 25 or temp >= 45:
+            msg = u'Температура HDD близка к критичной ({0}°C)'.format(temp)
+            event_setter('system', msg, 3)
+            self.level = 3
+        else:
+            self.level = 2
+
+        self.save()
+        

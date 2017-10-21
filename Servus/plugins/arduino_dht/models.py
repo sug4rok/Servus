@@ -5,7 +5,7 @@ from django.db import models
 
 from climate.models import TempHumidValue
 from plugins.arduino.models import Arduino, set_command
-from .utils import check_dht_data, set_climate_event
+from events.utils import event_setter
 
 MODEL = 'SensorDHT'
 
@@ -74,7 +74,7 @@ class SensorDHT(models.Model):
                 humid, temp = map(lambda x: int(round(x)), [humid, temp])
 
                 # Проверяем полученные данные на возможные ошибки показаний.
-                if check_dht_data(temp, humid, self.type):
+                if self.check_dht_data(temp, humid):
                     # Добавляем данные датчика в таблицу БД только, если они отличаются от
                     # предыдущего показания, иначе обновляем время у предыдущего показания.
                     # Это сделано для более быстрой выгрузки данных для графиков, т.к.
@@ -91,6 +91,55 @@ class SensorDHT(models.Model):
                                                       temperature=temp,
                                                       humidity=humid)
 
-                    set_climate_event(self, humid, temp)
+                    self.set_event(temp)
             except ValueError:
                 pass
+
+    def set_event(self, temp):
+        """
+        Запись в журнал событий данных, находящихся за пределами нормы.
+        :param temp: int Значение температуры
+        """
+
+        level = 2
+        if self.location_type == 'inside':
+            if 28 < temp <= 35 or 15 <= temp < 19:
+                msg = u'{0}: Температура вне нормы 19-28 С'.format(self.name)
+                event_setter('climate', msg, 3)
+                level = 3
+            elif temp > 35 or temp < 15:
+                msg = u'{0}: Температура за границами 15-35 С'.format(self.name)
+                event_setter('climate', msg, 4, delay=1, email=True)
+                level = 4
+
+        elif self.location_type == 'outside':
+            if temp > 35:
+                msg = u'{0}: Температура на улице более 35 С'.format(self.name)
+                event_setter('climate', msg, 3)
+                level = 3
+            elif temp < -15:
+                msg = u'{0}: Температура на улице менее -15 С'.format(self.name)
+                event_setter('climate', msg, 3)
+                level = 3
+
+        self.level = level
+        self.save()
+
+    def check_dht_data(self, temp, humid):
+        """
+        Проверка показаний датчика температуры и влажности на определенные условия.
+        Функция нужна для многократной проверки показаний, если они превысили некоторые
+        пороговые значения, т.к. датчики иногда врут, а повторный опрос происходит раз
+        в 5 мин (см. RUN_EVERY_MINS).
+        Для DHT11 и DHT21: 0 < temp < 50 +-2C, 20 < humid < 80 +-5%
+        Для DHT22: -40 < temp < 125 +-0.5C, 0 < humid < 100 +-5%
+
+        :param temp: int Значение температуры
+        :param humid: int Значение влажности
+        :returns: возвращает True, если показания попали за границы "нормальных"
+        """
+
+        if self.type == 'dht11' or self.type == 'dht21':
+            return temp < 50 or temp > 0 or humid > 20 or humid < 80
+        else:
+            return temp < 125 or temp > -40 or humid > 0 or humid < 100

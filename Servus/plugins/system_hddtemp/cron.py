@@ -29,12 +29,4 @@ class GetHDDTemp(CJB):
 
                 if temp and temp.isdigit():
                     temp = int(temp)
-                    hdd.temperature = temp
-                    hdd.save()
-
-                    if temp <= 20 or temp >= 50:
-                        msg = u'Температура HDD вышла из безопасного диапазона ({0}°C)'.format(temp)
-                        event_setter('system', msg, 4, email=True)
-                    elif temp <= 25 or temp >= 45:
-                        msg = u'Температура HDD близка к критичной ({0}°C)'.format(temp)
-                        event_setter('system', msg, 3)
+                    hdd.set_result(temp)
