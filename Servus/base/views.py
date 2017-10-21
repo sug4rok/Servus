@@ -4,7 +4,7 @@ from django.shortcuts import render
 
 from base.settings import SITE_NAME, THEME, ALERTS
 from .models import Application
-from events.utils import get_amount_events
+from events.utils import get_events
 
 
 def get_tab_options(active_app_name):
@@ -60,9 +60,17 @@ def amount_events(request, template, days=1):
     :param days: int Количество дней, за которые нужно вывести список событий.
     """
 
+    n_days_events = get_events(days)
+    params = {'amount': 0, 'level': ALERTS[0]}
+    
     request.session.save()
     current_session = request.session.session_key
-    params = get_amount_events(days, session_key=current_session)
+    
+    if n_days_events:
+        new_events = n_days_events.exclude(session_keys__session_key=current_session).values_list('level', flat=True)
+        
+        amount = len(new_events)
+        params = {'amount': amount, 'level': ALERTS[max(new_events) if amount else 0]}
 
     return call_template(
         request,

@@ -1,7 +1,7 @@
 # coding=utf-8
 from datetime import datetime, timedelta
 
-from base.settings import INSTALLED_APPS, ALERTS
+from base.settings import INSTALLED_APPS
 from .models import Event
 
 
@@ -19,25 +19,6 @@ def get_events(days):
         return events
     except Event.DoesNotExist:
         return []
-
-
-def get_amount_events(days, session_key=None):
-    """
-    Функция, выводящая количесво событий и их кретичность для определенной сессии.
-    (См. описание к функции get_events).
-
-    :param days: int Количество дней, для который нужно узнать количество новых событий.
-    :returns: dict Словарь с количеством и уровнем важности непросмотренных событий.
-    """
-
-    try:
-        events_short = Event.objects.filter(datetime__gte=datetime.now() - timedelta(days=days)).exclude(
-            session_keys__session_key=session_key).values_list('level', flat=True)
-
-        amount = len(events_short)
-        return {'amount': amount, 'level': ALERTS[max(events_short) if amount else 0]}
-    except Event.DoesNotExist:
-        return {'amount': 0, 'level': ALERTS[0]}
 
 
 def event_setter(source, message, level, delay=24, sms=False, email=False):

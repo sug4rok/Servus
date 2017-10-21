@@ -109,7 +109,7 @@ class SensorDHT(models.Model):
                 level = 3
             elif temp > 35 or temp < 15:
                 msg = u'{0}: Температура за границами 15-35 С'.format(self.name)
-                event_setter('climate', msg, 4, delay=1, email=True)
+                event_setter('climate', msg, 4, email=True)
                 level = 4
 
         elif self.location_type == 'outside':
