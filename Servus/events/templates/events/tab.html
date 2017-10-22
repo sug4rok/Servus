@@ -9,4 +9,8 @@
     {%  empty %}
         <small>отсутствуют :)</small>
     {% endfor %}
+
+    <script async>
+        $.get('/set_viewed_events/');
+    </script>
 {% endblock %}

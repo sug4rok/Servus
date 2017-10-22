@@ -15,15 +15,23 @@ def events(request):
     :param request: django request
     """
 
+    return call_template(request, {'active_app_name': 'events', 'events_list': get_events(14)})
+
+
+def set_viewed_events(request):
     two_week_events = get_events(14)
-    params = {'active_app_name': 'events', 'events_list': two_week_events}
 
     request.session.save()
     current_session = request.session.session_key
 
-    if two_week_events:
+    if two_week_events.count():
         new_events = two_week_events.exclude(session_keys__session_key=current_session)
-        for event in new_events:
-            event.session_keys.add(Session.objects.get(pk=current_session))
+        if new_events.count():
+            so = Session.objects.get(pk=current_session)
+            for event in new_events:
+                try:
+                    event.session_keys.add(so)
+                except IntegrityError:
+                    continue
 
-    return call_template(request, params)
+    return call_template(request, {})

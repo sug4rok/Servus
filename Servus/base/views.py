@@ -69,7 +69,7 @@ def amount_events(request, template, days=1):
     if n_days_events:
         new_events = n_days_events.exclude(session_keys__session_key=current_session).values_list('level', flat=True)
         
-        amount = len(new_events)
+        amount = new_events.count()
         params = {'amount': amount, 'level': ALERTS[max(new_events) if amount else 0]}
 
     return call_template(
