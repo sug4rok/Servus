@@ -43,7 +43,7 @@ class SensorBMP(models.Model):
         return self.name
 
     def set_command(self):
-        cmd = 'bmp:%d\n' % self.height_sealevel
+        cmd = 'bmp:%d' % self.height_sealevel
         set_command(self, cmd)
 
     def set_result(self, result):
@@ -77,7 +77,7 @@ class SensorBMP(models.Model):
         """
 
         if press < 740 or press > 780:
-            msg = u'Атмосферное давление слишком далеко от номры'
+            msg = u'Атмосферное давление слишком далеко от нормы'
             event_setter('climate', msg, 3)
             self.level = 3
         else:

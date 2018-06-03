@@ -49,7 +49,7 @@ class SensorYL83(models.Model):
         return self.name
 
     def set_command(self):
-        cmd = 'rain:%d\n' % self.controller_pin
+        cmd = 'rain:%d' % self.controller_pin
         set_command(self, cmd)
 
     def set_result(self, result):

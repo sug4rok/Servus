@@ -1,7 +1,6 @@
 ﻿# coding=utf-8
 from subprocess import Popen, PIPE
 from base.utils import CJB
-from events.utils import event_setter
 from plugins.utils import get_used_plugins_by
 
 

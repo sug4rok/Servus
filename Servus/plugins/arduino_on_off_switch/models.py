@@ -45,7 +45,7 @@ class OnOffSwitch(models.Model):
         return self.name
 
     def set_command(self):
-        cmd = 'sw_state:%d\n' % self.controller_pin
+        cmd = 'sw_state:%d' % self.controller_pin
         set_command(self, cmd)
 
     def set_result(self, result):

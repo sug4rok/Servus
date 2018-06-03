@@ -122,7 +122,7 @@ class Arduino(models.Model):
                 if self.master:
                     command = 'ser%s:%s' % (self.port, command)
 
-                self.ser.write(str(command))
+                self.ser.write('%s\n' % (str(command), ))
                 try:
                     result = self.ser.readline()
                     # Отсекаем от результата последние два служебных символа

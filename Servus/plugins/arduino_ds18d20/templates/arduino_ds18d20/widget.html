@@ -1,0 +1,17 @@
+<div class='widget'>
+{% for id, name, horiz, vert, level, temp in arduino_ds18d20 %}
+
+    <div style='position: absolute;' id='{{ name }}'>
+        <div style='position: relative;'>
+			<i class='sprite_home sprite_48 sprite-{{ theme }}_temp_humid_{{ alerts|get_alert:level }}'></i>
+            <div class='positioned_text' style='left: 5px; top: 5px; line-height: 1.5;'>
+                {{ temp }}<sub> °C</sub><br>
+				-
+            </div>
+        </div>
+    </div>
+    <script>
+        positioning_widget({{ id }}, '{{ name }}', {{ horiz }}, {{ vert }});
+    </script>
+{% endfor %}
+</div>

@@ -36,7 +36,7 @@ class SensorBH1750(models.Model):
         return self.name
 
     def set_command(self):
-        cmd = 'bh1750:\n'
+        cmd = 'bh1750:'
         set_command(self, cmd)
 
     def set_result(self, result):

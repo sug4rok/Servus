@@ -39,6 +39,7 @@ PLUGINS = (
     # 'plugins.arduino_bh1750',  # for connecting a BH1750 sensors (ambient light measurement) to the Arduino
     # 'plugins.arduino_bmp085',  # for connecting a BMP085/BMP180 sensor to the Arduino
     # 'plugins.arduino_dht',  # for connecting a DHT sensor (DHT11, DHT22) to the Arduino
+    # 'plugins.arduino_ds18d20',  # for connecting a DS18D20 sensor to the Arduino
     'plugins.arduino_on_off_switch',  # on/off switch states
     # 'plugins.arduino_reed_switch',  # reed switch sensors
     # 'plugins.arduino_yl83',  # for connecting a YL-83 raindrop sensors
@@ -110,22 +111,26 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+CONN_MAX_AGE = 60
+
+if 'win' in platform:
+    OS = 'windows'
+    LOCALE = 'Russian'
+elif 'linux' in platform:
+    OS = 'linux'
+    LOCALE = 'ru_RU.utf8'
+else:
+    OS = 'unknown'
+    LOCALE = ''
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 TIME_ZONE = 'Europe/Moscow'
 LANGUAGE_CODE = 'ru-RU'
-setlocale(LC_ALL, 'ru_RU.UTF-8')
+setlocale(LC_ALL, LOCALE)
 USE_I18N = True
 USE_L10N = True
 USE_TZ = False
-
-if 'win' in platform:
-    OS = 'windows'
-elif 'linux' in platform:
-    OS = 'linux'
-else:
-    OS = 'unknown'
 
 # =================== #
 #   Servus settings   #
@@ -165,7 +170,7 @@ CRON_CLASSES = [
     # 'climate.cron.GetRaindropData',
     # 'climate.cron.GetTempHumidData',
     # 'weather.cron.GetWeatherJob',
-    # 'plugins.system_hddtemp.cron.GetHDDTemp', 
+    # 'plugins.system_hddtemp.cron.GetHDDTemp',
     # 'plugins.system_ip_online.cron.GetIPOnline',
     # 'plugins.system_mac_online.cron.GetMACOnline',
 ]

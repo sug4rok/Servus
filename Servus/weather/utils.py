@@ -108,7 +108,7 @@ def set_weather_events(city, dt, temp, wind_speed, falls_img):
     """
     Функция записи событий о прогнозируемых экстремальных погодных условиях.
 
-    :city: населенный пункт
+    :param city: населенный пункт
     :param dt: объект datetime с датой потенциального события
     :param temp: температура воздуха
     :param wind_speed: скорость ветра

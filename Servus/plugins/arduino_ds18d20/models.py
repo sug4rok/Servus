@@ -7,13 +7,7 @@ from climate.models import TempHumidValue
 from plugins.arduino.models import Arduino, set_command
 from events.utils import event_setter
 
-MODEL = 'SensorDHT'
-
-DHT_TYPES = (
-    ('dht11', 'DHT11'),
-    ('dht21', 'DHT21'),
-    ('dht22', 'DHT22'),
-)
+MODEL = 'SensorDS18D20'
 
 LOCATION_TYPES = (
     ('inside', 'В помещении'),
@@ -22,10 +16,9 @@ LOCATION_TYPES = (
 )
 
 
-class SensorDHT(models.Model):
+class SensorDS18D20(models.Model):
     """
-    Модель для добавления новых датчиков влажности и температуры DHT
-    (DHT11, DHT21 и DHT22).
+    Модель для добавления новых датчиков температуры DS18D20.
     """
 
     CONTAINER = 'climate'
@@ -36,11 +29,6 @@ class SensorDHT(models.Model):
         max_length=20,
         verbose_name='Системное имя',
         unique=True
-    )
-    type = models.SlugField(
-        choices=DHT_TYPES,
-        default='dht11',
-        verbose_name='Тип датчика',
     )
     controller = models.ForeignKey(
         Arduino,
@@ -56,25 +44,23 @@ class SensorDHT(models.Model):
     )
 
     class Meta(object):
-        db_table = 'climate_sensordht_ext'
-        verbose_name = 'Датчик DHT'
-        verbose_name_plural = 'Датчики DHT'
+        db_table = 'climate_sensords18d20_ext'
+        verbose_name = 'Датчик DS18D20'
+        verbose_name_plural = 'Датчики DS18D20'
 
     def __unicode__(self):
         return self.name
 
     def set_command(self):
-        cmd = '%s:%d' % (self.type, self.controller_pin)
+        cmd = 'ds18d20:%d' % (self.controller_pin,)
         set_command(self, cmd)
 
     def set_result(self, result):
         if result is not None:
             try:
-                humid, temp = map(float, result.split(':'))
-                humid, temp = map(lambda x: int(round(x)), [humid, temp])
-
+                temp = int(result)
                 # Проверяем полученные данные на возможные ошибки показаний.
-                if self.check_dht_data(temp, humid):
+                if self.check_data(temp):
                     # Добавляем данные датчика в таблицу БД только, если они отличаются от
                     # предыдущего показания, иначе обновляем время у предыдущего показания.
                     # Это сделано для более быстрой выгрузки данных для графиков, т.к.
@@ -83,13 +69,13 @@ class SensorDHT(models.Model):
                         value = TempHumidValue.objects.filter(object_id=self.id).latest('id')
                     except TempHumidValue.DoesNotExist:
                         value = None
-                    if value is not None and value.temperature == temp and value.humidity == humid:
+                    if value is not None and value.temperature == temp:
                         value.datetime = datetime.now()
                         value.save()
                     else:
                         TempHumidValue.objects.create(content_object=self,
                                                       temperature=temp,
-                                                      humidity=humid)
+                                                      humidity=0)
 
                     self.set_event(temp)
             except ValueError:
@@ -125,21 +111,16 @@ class SensorDHT(models.Model):
         self.level = level
         self.save()
 
-    def check_dht_data(self, temp, humid):
+    def check_data(self, temp):
         """
         Проверка показаний датчика температуры и влажности на определенные условия.
         Функция нужна для многократной проверки показаний, если они превысили некоторые
         пороговые значения, т.к. датчики иногда врут, а повторный опрос происходит раз
         в 5 мин (см. RUN_EVERY_MINS).
-        Для DHT11 и DHT21: 0 < temp < 50 +-2C, 20 < humid < 80 +-5%
-        Для DHT22: -40 < temp < 125 +-0.5C, 0 < humid < 100 +-5%
+        Для DS18D20: -55 < temp < 125 +-0.5C
 
         :param temp: int Значение температуры
-        :param humid: int Значение влажности
         :returns: возвращает True, если показания попали за границы "нормальных"
         """
 
-        if self.type == 'dht11' or self.type == 'dht21':
-            return temp < 50 or temp > 0 or humid > 20 or humid < 80
-        else:
-            return temp < 125 or temp > -40 or humid > 0 or humid < 100
+        return temp < 125 or temp > -55

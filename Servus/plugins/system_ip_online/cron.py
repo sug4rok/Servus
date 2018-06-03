@@ -15,9 +15,9 @@ def set_host_status(host):
 
         msg = u'%s %s' % (host.name, u'снова доступен' if result else u'больше не доступен')
         if result:
-            event_setter('system', msg, 1, email=True, delay=1)
+            event_setter('system', msg, 1, delay=1)
         else:
-            event_setter('system', msg, 3, email=True, delay=1)
+            event_setter('system', msg, 3, delay=1)
 
 
 class GetIPOnline(CJB):
