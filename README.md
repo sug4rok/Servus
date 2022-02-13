@@ -1,9 +1,6 @@
 Servus
 ======
-[![Code Health](https://landscape.io/github/sug4rok/Servus/master/landscape.svg?style=flat)](https://landscape.io/github/sug4rok/Servus/master)
-
-Home Information System based on Django MVC
-
+## Home Information System based on Django MVC
 
 Depends
 --------
